@@ -1,0 +1,12 @@
+# 独立 clone 的第三方/课程仓库，不作为本仓库内容
+cpp-microservice-scaffold/
+
+# 编译产物（无扩展名的可执行文件）
+gflags/main
+gtest/global
+gtest/simple
+spdlog/stdout
+
+# 日志
+spdlog/logs/
+
