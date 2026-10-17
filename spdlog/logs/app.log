@@ -1,0 +1,7 @@
+[2026-10-17 09:23:51.024] [trace] [stdout.cc:32] trace：控制台 + app.log
+[2026-10-17 09:23:51.024] [debug] [stdout.cc:33] debug：控制台 + app.log
+[2026-10-17 09:23:51.024] [info] [stdout.cc:34] info：控制台 + app.log
+[2026-10-17 09:23:51.024] [warning] [stdout.cc:35] warn：控制台 + app.log
+[2026-10-17 09:23:51.024] [error] [stdout.cc:36] error：控制台 + app.log + error.log
+[2026-10-17 09:23:51.024] [critical] [stdout.cc:37] critical：控制台 + app.log + error.log
+[2026-10-17 09:23:51.024] [info] [stdout.cc:40] 无参数日志
