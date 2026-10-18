@@ -359,6 +359,15 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 - 密码改为加盐 SHA-256（64 位十六进制 = 32 位盐 + 32 位摘要），`setPassword` 存哈希、
   `passwdLogin` 校验，兼容历史明文密码；新增 1 个单测（哈希/校验/盐随机/明文兼容）。
 
+### 2026-10-18（第五轮：联调工具与收尾）
+
+- 重写文件服务工具 `tools/file-client/file_client.cc`：支持上传（图片 RPC / 视频 HTTP attachment）、
+  下载（`--download_id`）、`--session_id/--file/--mime/--output`，移除无用 MQ 依赖与注释代码；
+  实测图片上传/下载字节一致、视频上传成功；已加入 install（`build/bin/file_client`）；
+- `SvcWatcher` 退出优化：resync 用 condition_variable 等待、析构立即唤醒、置 `_destroying` 防重入、
+  调用 `Watcher::Cancel()`；CLI 退出更干脆（库仍会打印一行无害的 watcher 警告）；
+- 文档：README/部署手册补充 CLI 用法，测试数量更新为 8 项。
+
 ---
 
 ## 九、下一步（交接）

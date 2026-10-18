@@ -99,8 +99,10 @@ mysql -h <mysql_host> -uroot -p < deploy/sql/data.sql
 
 ```bash
 ./scripts/smoke-test.sh        # 网关/会话/列表 4 项
-ctest --test-dir build         # 7 个单元测试
+ctest --test-dir build         # 8 个单元测试
 python3 scripts/e2e-test.py --session <sid> --admin   # 端到端 18 项
+python3 scripts/check-client-api.py                   # 客户端接口一致性
+./build/bin/file_client --session_id=<sid> --file=tools/file-client/jj.jpg --mime=image/jpeg
 curl -s http://127.0.0.1:10000/status | head
 ```
 

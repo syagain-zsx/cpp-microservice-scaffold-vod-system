@@ -126,7 +126,7 @@ cmake --build build -j$(nproc)
 
 ```bash
 ./scripts/smoke-test.sh      # 网关 + 会话 + 列表（4 项）
-ctest --test-dir build       # 7 个单元测试
+ctest --test-dir build       # 8 个单元测试
 curl -s http://127.0.0.1:10000/status | head   # brpc 状态页
 
 # 端到端（需要已登录会话；--admin 额外验证审核上架）
@@ -194,7 +194,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | M3 接口联调（登录/上传/转码/HLS/互动） | ✅ |
 | M4 客户端联调 | 🔄（接口 38/38 一致，待 Windows 构建验证） |
 | M5 业务闭环（服务端） | ✅（转码/HLS/点赞/弹幕/关注/审核） |
-| M6 测试与部署（gtest 7 项 / Docker 编排） | 🔄 |
+| M6 测试与部署（gtest 8 项 / Docker 编排） | 🔄 |
 | M7 文档、学习笔记、面试材料 | ✅ |
 | M8 性能优化与压测 | ✅（列表 3s 缓存：290 → ~800 QPS，2.8x） |
 
