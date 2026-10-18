@@ -131,6 +131,9 @@ curl -s http://127.0.0.1:10000/status | head   # brpc 状态页
 
 # 端到端（需要已登录会话；--admin 额外验证审核上架）
 python3 scripts/e2e-test.py --session <sessionId> --admin
+
+# 客户端接口一致性（静态检查，不依赖 Qt）
+python3 scripts/check-client-api.py
 ```
 
 ---
@@ -162,6 +165,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | [docs/04-interview.md](docs/04-interview.md) | 面试讲述稿、高频问答、简历模板 |
 | [docs/05-performance.md](docs/05-performance.md) | 压测方法、基线数据、优化清单 |
 | [docs/06-code-walkthrough.md](docs/06-code-walkthrough.md) | 代码导读：阅读顺序、改动场景、调试技巧 |
+| [docs/07-client-integration.md](docs/07-client-integration.md) | 客户端联调：接口映射、构建、联调顺序 |
 | [docs/notes/](docs/notes/README.md) | 中间件学习笔记（Redis/MQ/RPC/ODB/HLS） |
 
 ---
@@ -184,7 +188,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | M1 统一构建系统（scaffold + 5 服务） | ✅ |
 | M2 服务可运行（etcd 注册 + 网关响应） | ✅ |
 | M3 接口联调（登录/上传/转码/HLS/互动） | ✅ |
-| M4 客户端联调 | ⬜（需 Windows + Qt6 + libmpv） |
+| M4 客户端联调 | 🔄（接口 38/38 一致，待 Windows 构建验证） |
 | M5 业务闭环（服务端） | ✅（转码/HLS/点赞/弹幕/关注/审核） |
 | M6 测试与部署（gtest 7 项 / Docker 编排） | 🔄 |
 | M7 文档、学习笔记、面试材料 | ✅ |

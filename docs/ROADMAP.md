@@ -155,7 +155,7 @@ vod-system/
 | **M1** 构建系统 | 一次构建出全部产物 | 脚手架 CMake、统一服务端构建、FFmpeg 本地前缀 | `cmake --build build` 产出 5 个可执行文件 | ✅ 已完成 |
 | **M2** 服务端可运行 | 5 个服务能启动、注册到 etcd | 配置文件、启动脚本、端口、日志 | `etcdctl get --prefix /` 能看到 4 个注册节点；`curl :10000/` 有响应 | ✅ 已完成 |
 | **M3** 核心接口联调 | 登录/视频/文件主链路通 | 用 `file_client`、curl 或脚本验证 RPC | 能完成"注册登录 → 上传 → 建视频 → 列表查询" | ✅ 已完成（含转码/HLS/点赞/弹幕） |
-| **M4** 客户端打通 | BitPlayer 能连真实后端 | 接口地址配置、编译、修 bug | 登录、首页、播放页可用 | 1.5 周 |
+| **M4** 客户端打通 | BitPlayer 能连真实后端 | 接口地址配置、编译、修 bug | 登录、首页、播放页可用 | 🔄 接口 38/38 一致，构建与运行待 Windows 验证 |
 | **M5** 业务闭环 | 转码 + HLS 播放 + 互动 | FFmpeg 转码链路、弹幕、点赞、关注、搜索 | 上传的 mp4 能自动转 HLS 并在客户端播放，互动数据正确 | 🔄 服务端已完成（转码/HLS/点赞/弹幕/关注/审核），客户端播放待 M4 |
 | **M6** 质量与部署 | 可交付 | 清理死代码、补测试、docker-compose、一键脚本 | `docker compose up` 起全栈；gtest 通过 | 🔄 进行中（测试/脚本/编排已完成，Docker 未在本环境验证） |
 | **M7** 文档与求职 | 能讲出来 | 架构文档、学习笔记、面试题、简历 | docs 完整；能脱稿讲 10 分钟 | 1 周 |
@@ -348,6 +348,14 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 - **性能优化**：首页列表加 3s 短缓存（protobuf 存 Redis），`allVideoList`
   20 并发 276 → **765 QPS**，50 并发 290 → **804 QPS**（p99 346 → 94ms），约 2.8 倍；
 - 文档同步：`docs/05-performance.md` 增加优化对比，`docs/04-interview.md` 增加发现抖动/日志崩溃两个真实排错案例。
+
+### 2026-10-18（第四轮：客户端联调准备）
+
+- 新增 `scripts/check-client-api.py`：静态比对客户端 `netclient` 调用与服务端 `http.proto`，
+  **38/38 接口一致、JSON 字段全部匹配**（`pageIndex` 等驼峰字段由 brpc 自动映射）；
+- 新增 `docs/07-client-integration.md`：页面↔接口映射、`config.ini`/libmpv 说明、Windows 构建步骤、
+  8 步联调顺序与已知差异（分页从 1 开始、上传是裸字节流、列表 3s 缓存、ES 降级）；
+- 新增 `client/BitPlayer/build-windows.ps1`：一行命令完成 MinGW 配置 + 构建，并检查 libmpv。
 
 ---
 

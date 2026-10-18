@@ -862,10 +862,8 @@ namespace svc_gateway {
         const std::string *ssid = http_cntl->http_request().uri().GetQuery("sessionId");
         const std::string *rid = http_cntl->http_request().uri().GetQuery("requestId");
         try {
-            // if (!ssid) {
-            //     throw vp_error::VPException(vp_error::VpError::SESSION_INVALID);
-            // }
-            // _svc_data->judgePermission(*ssid, uri);
+            // 注意：m3u8 / ts 分片由播放器（mpv）按 URL 直接拉取，请求里不一定带 sessionId，
+            // 所以 downloadVideo 不做会话鉴权，file_id（20 位随机串）作为不可预测的访问凭证。
             //2. 提取请求中的图片文件ID（http请求的查询字符串中）
             const std::string *file_id = http_cntl->http_request ().uri().GetQuery("fileId");
             if (!file_id) {

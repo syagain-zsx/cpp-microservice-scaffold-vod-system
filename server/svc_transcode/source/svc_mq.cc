@@ -112,13 +112,12 @@ namespace svc_transcode {
         api_message::HLSTranscodeMsg msg;
         bool ret = msg.ParseFromArray(body, len);
         if (ret == false) {
-            ERR("文件删除消息反序列化失败！");
+            ERR("转码消息反序列化失败！");
             return;
         }
         for (int i = 0; i < msg.video_id_size(); i++) {
             std::string video_id = msg.video_id(i);
-            // 直接转码，若遇到较大的视频，处理时间过长会导致amqpcpp事件循环退出
-            // transcode(video_id);
+            // 转码耗时较长，放到工作线程池里执行，避免阻塞 amqpcpp 的事件循环
             auto task = std::bind(&TranscodeMQ::transcode, this, video_id);
             _worker->addTask(std::move(task));
             DBG("视频转码任务添加成功: {}", video_id);
