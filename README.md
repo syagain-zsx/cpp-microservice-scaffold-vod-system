@@ -147,7 +147,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | [docs/ROADMAP.md](docs/ROADMAP.md) | 长远目标、里程碑、学习路线、简历模板 |
 | [docs/02-api.md](docs/02-api.md) | 接口清单、错误码、curl 联调示例 |
 | [docs/01-architecture.md](docs/01-architecture.md) | 服务划分、代码分层、数据模型、关键流程 |
-| docs/03-deploy.md | 部署手册（M6 补齐） |
+| [docs/03-deploy.md](docs/03-deploy.md) | 部署手册（本地实测 + Docker）、常见问题 |
 | docs/notes/ | 中间件学习笔记（持续更新） |
 
 ---
@@ -171,6 +171,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | M2 服务可运行（etcd 注册 + 网关响应） | ✅ |
 | M3 接口联调（登录/上传/转码/HLS/互动） | ✅ |
 | M4–M5 客户端与业务闭环 | ⬜ |
-| M6–M8 测试、部署、优化 | ⬜ |
+| M6 测试与部署（gtest 7 项 / Docker 编排） | 🔄 |
+| M7–M8 文档、面试材料、优化 | ⬜ |
 
 详见 [docs/ROADMAP.md](docs/ROADMAP.md)。

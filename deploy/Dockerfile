@@ -1,12 +1,26 @@
-# 1. 拉取运行环境镜像
-FROM crpi-50dgs1uofzodc9pn.cn-chengdu.personal.cr.aliyuncs.com/dev-envronment/ubuntu:22.04
-# 2. 设置工作路径
+# ============================================================
+# 笺流（JianLiu）运行镜像
+#
+# 构建前提（在仓库根目录）：
+#   ./scripts/build.sh          # 产出 build/bin/*
+#   ./scripts/package.sh        # 收集运行期 .so 到 deploy/depend/
+#   docker build -f deploy/Dockerfile -t jianliu/vod:latest .
+# ============================================================
+FROM ubuntu:22.04
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates gettext-base curl \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
-# 3. 拷贝必要文件到容器内：程序文件，启动脚本，运行依赖。
-COPY ./build/bin/ /bin/
-COPY ./depend/ /usr/lib/
-COPY ./entrypoint.sh /bin/
-# 4. 为要执行的程序和脚本赋予可执行权限。
-RUN chmod +x /bin/*
-# 5. 设置入口启动命令
+
+COPY build/bin/ /bin/
+COPY deploy/entrypoint.sh /bin/
+
+# 运行期依赖（FFmpeg 等，由 scripts/package.sh 收集）
+COPY deploy/depend/ /usr/local/lib/jianliu/
+RUN chmod +x /bin/* \
+    && echo "/usr/local/lib/jianliu" > /etc/ld.so.conf.d/jianliu.conf \
+    && ldconfig
+
 ENTRYPOINT ["/bin/entrypoint.sh"]

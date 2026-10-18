@@ -57,7 +57,7 @@
 | 无 root 权限（sudo 需密码） | 不能 `apt install ffmpeg` | ✅ 已解决：`apt-get download` + `dpkg -x` 到 `~/local/ffmpeg`，CMake 通过 `JIANLIU_FFMPEG_ROOT` 引用 |
 | `dev-icsearch` 不解析/9200 不通 | 搜索功能不可用 | ✅ 已降级：video 服务捕获连接异常，`_enabled=false`，搜索返回空，其余业务正常；待 ES 恢复后自动启用 |
 | 客户端依赖 mpv DLL（108 MB，未入库） | 客户端无法直接运行 | 仓库提供 `client/README.md` 说明下载方式；`.gitignore` 排除 |
-| 课程遗留 `data_test`（16 个独立小工程） | 目录噪音、无法统一构建 | M6 阶段改写为 gtest 用例，移入 `server/tests/` |
+| 课程遗留 `data_test`（16 个独立小工程） | 目录噪音、无法统一构建 | ✅ 已删除，改为 `server/tests/` 的 7 个 gtest 用例（JSON/工具/M3U8） |
 | 课程代码里注释掉的死代码、重复 `INSTALL()` | 可读性差 | 逐服务清理（M6） |
 
 ---
@@ -157,7 +157,7 @@ vod-system/
 | **M3** 核心接口联调 | 登录/视频/文件主链路通 | 用 `file_client`、curl 或脚本验证 RPC | 能完成"注册登录 → 上传 → 建视频 → 列表查询" | ✅ 已完成（含转码/HLS/点赞/弹幕） |
 | **M4** 客户端打通 | BitPlayer 能连真实后端 | 接口地址配置、编译、修 bug | 登录、首页、播放页可用 | 1.5 周 |
 | **M5** 业务闭环 | 转码 + HLS 播放 + 互动 | FFmpeg 转码链路、弹幕、点赞、关注、搜索 | 上传的 mp4 能自动转 HLS 并在客户端播放，互动数据正确 | 1.5 周 |
-| **M6** 质量与部署 | 可交付 | 清理死代码、补测试、docker-compose、一键脚本 | `docker compose up` 起全栈；gtest 通过 | 1 周 |
+| **M6** 质量与部署 | 可交付 | 清理死代码、补测试、docker-compose、一键脚本 | `docker compose up` 起全栈；gtest 通过 | 🔄 进行中（测试/脚本/编排已完成，Docker 未在本环境验证） |
 | **M7** 文档与求职 | 能讲出来 | 架构文档、学习笔记、面试题、简历 | docs 完整；能脱稿讲 10 分钟 | 1 周 |
 | **M8** 优化与压测 | 有数据支撑 | 缓存命中、连接池、RPC 压测、转码耗时 | 一张压测/优化对比表 | 可穿插 |
 
@@ -313,11 +313,23 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 4. ES 不可用时 video 服务 `abort()` → 改为告警 + 搜索降级；
 5. 转码服务不认识 redis/etcd 参数 → 启动脚本按服务裁剪 gflags。
 
+### 2026-10-18（第二轮：质量与部署）
+
+- 删除 `server/data_test`（16 个无法构建的旧工程），新增 `server/tests/`：
+  `test_json.cc`（JSON/字符串/随机串/文件读写）+ `test_m3u8.cc`（m3u8 解析与写回），
+  **7 个 gtest 用例全部通过**（`ctest --test-dir build`）；
+- 修复 FFmpeg 私有前缀的运行时问题：链接加 `-Wl,--disable-new-dtags` 生成 `DT_RPATH`，
+  让 `libavformat` 的间接依赖（libgme/libvpx 等）也能被找到，二进制不再依赖 `LD_LIBRARY_PATH`；
+- 部署编排适配新目录：`deploy/Dockerfile`、`deploy/docker-compose.yml`、`scripts/package.sh`（收集 .so），
+  镜像把依赖库放 `/usr/local/lib/jianliu` 避免覆盖系统库；
+- 新增 `docs/03-deploy.md`：本地部署（实测）+ Docker（未验证）+ 常见问题；
+- 验证 gflags 行为：`--flagfile` 中的未知参数会被忽略（Docker 共用一份配置可行），命令行传未知参数会报错。
+
 ---
 
 ## 九、下一步（交接）
 
 1. **M4**：在 Windows 侧用 Qt 6.7 构建 BitPlayer，`config.ini` 指向网关 `http://<host>:10000`，跑登录/首页/播放；
-2. **M5**：补管理员审核链路（checkVideo/saleVideo/haltVideo）、关注、搜索（待 ES 可用）；
-3. 写 `docs/01-architecture.md`、`docs/02-api.md`（含本次联调的 curl 样例）；
-4. 清理 `server/data_test`（16 个旧测试工程）→ 改为 gtest 用例。
+2. **M5**：补关注链路（newAttention/delAttention）与搜索（待 ES 可用）；
+3. 学习笔记 `docs/notes/`：Redis 缓存一致性、RabbitMQ 延迟队列、brpc+etcd 服务发现、ODB、HLS；
+4. 面试材料 `docs/04-interview.md`：项目讲述模板 + 高频问题。

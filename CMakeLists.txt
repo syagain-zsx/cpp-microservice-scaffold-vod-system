@@ -29,5 +29,24 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE PATH "安装前缀" FORCE)
 endif()
 
+# FFmpeg 使用独立前缀时，把库目录写进 RPATH，避免每次都要设置 LD_LIBRARY_PATH
+if(JIANLIU_FFMPEG_ROOT)
+    set(CMAKE_BUILD_RPATH "${JIANLIU_FFMPEG_ROOT}/lib;${JIANLIU_FFMPEG_ROOT}/lib/x86_64-linux-gnu")
+    set(CMAKE_INSTALL_RPATH "${JIANLIU_FFMPEG_ROOT}/lib;${JIANLIU_FFMPEG_ROOT}/lib/x86_64-linux-gnu")
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    # 使用旧式 DT_RPATH（可被传递依赖继承），否则 libavformat 的间接依赖
+    # （libgme/libvpx 等）在运行时找不到
+    add_link_options(-Wl,--disable-new-dtags)
+endif()
+
 add_subdirectory(scaffold)
 add_subdirectory(server)
+
+# ------------------------------------------------------------
+# 单元测试（可关闭：-DBUILD_TESTS=OFF）
+# ------------------------------------------------------------
+option(BUILD_TESTS "构建单元测试" ON)
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(server/tests)
+endif()
