@@ -156,7 +156,7 @@ vod-system/
 | **M2** 服务端可运行 | 5 个服务能启动、注册到 etcd | 配置文件、启动脚本、端口、日志 | `etcdctl get --prefix /` 能看到 4 个注册节点；`curl :10000/` 有响应 | ✅ 已完成 |
 | **M3** 核心接口联调 | 登录/视频/文件主链路通 | 用 `file_client`、curl 或脚本验证 RPC | 能完成"注册登录 → 上传 → 建视频 → 列表查询" | ✅ 已完成（含转码/HLS/点赞/弹幕） |
 | **M4** 客户端打通 | BitPlayer 能连真实后端 | 接口地址配置、编译、修 bug | 登录、首页、播放页可用 | 1.5 周 |
-| **M5** 业务闭环 | 转码 + HLS 播放 + 互动 | FFmpeg 转码链路、弹幕、点赞、关注、搜索 | 上传的 mp4 能自动转 HLS 并在客户端播放，互动数据正确 | 1.5 周 |
+| **M5** 业务闭环 | 转码 + HLS 播放 + 互动 | FFmpeg 转码链路、弹幕、点赞、关注、搜索 | 上传的 mp4 能自动转 HLS 并在客户端播放，互动数据正确 | 🔄 服务端已完成（转码/HLS/点赞/弹幕/关注/审核），客户端播放待 M4 |
 | **M6** 质量与部署 | 可交付 | 清理死代码、补测试、docker-compose、一键脚本 | `docker compose up` 起全栈；gtest 通过 | 🔄 进行中（测试/脚本/编排已完成，Docker 未在本环境验证） |
 | **M7** 文档与求职 | 能讲出来 | 架构文档、学习笔记、面试题、简历 | docs 完整；能脱稿讲 10 分钟 | 1 周 |
 | **M8** 优化与压测 | 有数据支撑 | 缓存命中、连接池、RPC 压测、转码耗时 | 一张压测/优化对比表 | 可穿插 |
@@ -325,11 +325,17 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 - 新增 `docs/03-deploy.md`：本地部署（实测）+ Docker（未验证）+ 常见问题；
 - 验证 gflags 行为：`--flagfile` 中的未知参数会被忽略（Docker 共用一份配置可行），命令行传未知参数会报错。
 
+**业务闭环补验（服务端）**
+
+- 关注/取关：user2 对 user1 `newAttention` → `followerCount 0→1`、`isFollowing=false→true`；`delAttention` 后回到 0；
+- 搜索降级：ES 不可用时 `keyVideoList` 返回 `errorCode=0` + 空列表，服务不崩溃；
+- 缓存回写：`setPlay` 后 video 日志出现「延迟将缓存播放量同步到数据库中」，队列链路正常。
+
 ---
 
 ## 九、下一步（交接）
 
 1. **M4**：在 Windows 侧用 Qt 6.7 构建 BitPlayer，`config.ini` 指向网关 `http://<host>:10000`，跑登录/首页/播放；
-2. **M5**：补关注链路（newAttention/delAttention）与搜索（待 ES 可用）；
-3. 学习笔记 `docs/notes/`：Redis 缓存一致性、RabbitMQ 延迟队列、brpc+etcd 服务发现、ODB、HLS；
-4. 面试材料 `docs/04-interview.md`：项目讲述模板 + 高频问题。
+2. 学习笔记 `docs/notes/`：Redis 缓存一致性、RabbitMQ 延迟队列、brpc+etcd 服务发现、ODB、HLS；
+3. 客户端联调时补齐：m3u8 播放、弹幕渲染、上传进度、分页；
+4. 可选优化：消息 confirm/幂等、缓存穿透保护、Prometheus 指标。
