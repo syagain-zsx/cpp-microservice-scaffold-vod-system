@@ -90,23 +90,22 @@ namespace JianLiuMq {
                            .onError([=, this](const char *message) {
                                ERR("绑定队列失败: {}-{} - {}", exchange, queue, message);
                                _cv.notify_all();
-                               abort();
                            });
                     })
                     .onError([=, this](const char *message) {
                         ERR("声明队列失败: {} - {}", queue, message);
                         _cv.notify_all();
-                        abort(); // 终止程序
                     });
             })
            .onError([=, this](const char *message) {
                 ERR("声明交换机失败: {} - {}", exchange, message);
                 _cv.notify_all();
-                abort(); // 终止程序
             });
         if (_cv.wait_for(lock, std::chrono::seconds(30)) == std::cv_status::timeout) {
-            ERR("声明交换机/队列超时(30s)，请检查 RabbitMQ 状态: {} / {}", exchange, queue);
-            abort();
+            // 不再 abort：RabbitMQ 短暂不可用时服务继续运行（发布/订阅会失败并记录日志），
+            // 避免一个中间件抖动把整个服务进程带走。
+            ERR("声明交换机/队列超时(30s)，MQ 降级运行: {} / {}", exchange, queue);
+            return;
         }
     }
     void MQClient::declare(const declare_settings &settings) {        //1. 判断当前是否是延时队列
@@ -139,15 +138,14 @@ namespace JianLiuMq {
             .onError([&](const char *message) {
                 ERR("订阅队列消息失败: {}", message);
                 _cv.notify_all();
-                abort(); // 终止程序
             })
             .onSuccess([&](){
                 DBG("订阅队列消息成功: {}", queue);
                 _cv.notify_all();
             });
         if (_cv.wait_for(lock, std::chrono::seconds(30)) == std::cv_status::timeout) {
-            ERR("订阅队列超时(30s)，请检查 RabbitMQ 状态: {}", queue);
-            abort();
+            ERR("订阅队列超时(30s)，MQ 降级运行: {}", queue);
+            return;
         }
     }
     // 有些场景下，我们程序只进行消息的处理，没有其他业务，因此就希望能够阻塞当前主线程

@@ -4,8 +4,9 @@
 > 服务端已通过 `scripts/e2e-test.py` 验证（18/18）。
 >
 > **验证进展（2026-10-18）**：客户端已在 Linux（Qt 6.2.4 + libmpv 0.34）下**编译通过**，
-> 并以 `QT_QPA_PLATFORM=offscreen` 启动，成功 `tempLogin`、从服务端拉取 7 个视频；
-> Windows 图形界面与播放链路待实机验证。
+> 在 Xvfb 虚拟显示中完成完整链路验证：启动 → tempLogin → 首页列表 + 封面 → 点击播放 HLS 视频 →
+> 弹幕/点赞计数展示（截图见 [docs/images/home.png](images/home.png)、[player.png](images/player.png)）；
+> Windows 图形界面待实机验证。
 
 ---
 
