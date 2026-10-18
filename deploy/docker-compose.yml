@@ -1,0 +1,116 @@
+networks:
+  dev-network:
+    external: true
+    name: dev-environment_dev-network
+# 1. 配置docker-compose版本
+version: '3.8'
+# 2. 定义服务
+services:
+# 3. 针对服务进行配置
+  gateway:
+#   1. 构建容器
+    build: 
+#     1. 设置构建上下文路径
+      context: .
+#     2. 设置dockerfile文件名
+      dockerfile: dockerfile
+#   2. 设置容器名称
+    container_name: gateway_service
+#   4. 设置挂载映射配置文件
+    volumes:
+      - ./global.conf:/conf/global.conf:rw
+#   3. 设置容器环境变量
+    environment:
+      - CONF_FILE=/conf/global.conf
+      - EXEC_FILE=/bin/gateway_server
+      - LISTEN_PORT=10000
+      - USER_SVC_NAME=user
+      - FILE_SVC_NAME=file
+      - VIDEO_SVC_NAME=video
+#   5. 设置映射端口
+    ports:
+      - "10000:10000"
+#   6. 设置重启策略
+    restart: always
+#   7. 健康检测
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://gateway:10000/" ]
+      start_period: 10s
+      retries: 10
+      interval: 5s
+    networks:
+      - dev-network
+  file:
+    build: 
+      context: .
+      dockerfile: dockerfile
+    container_name: file_service
+    volumes:
+      - ./global.conf:/conf/global.conf:rw
+    environment:
+      - CONF_FILE=/conf/global.conf
+      - EXEC_FILE=/bin/file_server
+      - LISTEN_PORT=10001
+      - REGISTRY_NAME=file
+      - REGISTRY_ADDR=file:10001
+    ports:
+      - "10001:10001"
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://file:10001/" ]
+      start_period: 10s
+      retries: 10
+      interval: 5s
+  user:
+    build: 
+      context: .
+      dockerfile: dockerfile
+    container_name: user_service
+    volumes:
+      - ./global.conf:/conf/global.conf:rw
+    environment:
+      - CONF_FILE=/conf/global.conf
+      - EXEC_FILE=/bin/user_server
+      - LISTEN_PORT=10002
+      - REGISTRY_NAME=user
+      - REGISTRY_ADDR=user:10002
+    ports:
+      - "10002:10002"
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://user:10002/" ]
+      start_period: 10s
+      retries: 10
+      interval: 5s
+  video:
+    build: 
+      context: .
+      dockerfile: dockerfile
+    container_name: video_service
+    volumes:
+      - ./global.conf:/conf/global.conf:rw
+    environment:
+      - CONF_FILE=/conf/global.conf
+      - EXEC_FILE=/bin/video_server
+      - LISTEN_PORT=10003
+      - REGISTRY_NAME=video
+      - REGISTRY_ADDR=video:10003
+    ports:
+      - "10003:10003"
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://video:10003/" ]
+      start_period: 10s
+      retries: 10
+      interval: 5s
+  transcode:
+    build: 
+      context: .
+      dockerfile: dockerfile
+    container_name: transcode_service
+    volumes:
+      - ./global.conf:/conf/global.conf:rw
+    environment:
+      - CONF_FILE=/conf/global.conf
+      - EXEC_FILE=/bin/transcode_server
+    restart: always

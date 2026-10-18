@@ -1,92 +1,174 @@
-# cpp-microservice-scaffold-vod-system
+# 视频点播系统（VOD System）
 
-基于 C++ 的微服务脚手架实践仓库：将视频点播（VOD）系统中常用的中间件客户端封装为可复用模块，并为每个模块提供可直接编译运行的示例代码。
+> C++17 微服务化视频点播系统：**网关 + 用户 / 视频 / 文件 / 转码 5 个服务 + Qt6 桌面客户端**，
+> 覆盖日志、RPC、服务注册发现、消息队列、缓存、ORM、搜索引擎、分布式文件存储、HLS 转码等中间件实践。
+
+<p align="center">
+  <em>一个可以从头讲清楚、跑起来、写进简历的 C++ 微服务项目</em>
+</p>
+
+---
+
+## 架构总览
+
+```text
+ Qt6 客户端 (BitPlayer)
+        │  HTTP + protobuf
+        ▼
+ ┌──────────────┐
+ │   gateway    │ :10000   统一入口，参数校验、会话鉴权、服务路由
+ └──┬────┬───┬──┘
+    │    │   │   brpc（服务发现：etcd）
+    ▼    ▼   ▼
+ ┌──────┐ ┌──────┐ ┌──────┐        ┌───────────┐
+ │ user │ │video │ │ file │        │ transcode │
+ │:10002│ │:10003│ │:10001│        │  (MQ 消费) │
+ └──┬───┘ └──┬───┘ └──┬───┘        └─────┬─────┘
+    │        │        │                  │
+    ▼        ▼        ▼                  ▼
+  MySQL   MySQL    FastDFS  ◄──────── FFmpeg HLS
+  Redis   Redis    MySQL
+  邮件     ES 搜索  Redis
+           │
+           └── RabbitMQ（延迟队列：缓存同步 / 删除文件 / 转码任务）
+```
+
+**核心链路**：上传视频 → 文件服务落 FastDFS → 视频服务落库并投递转码消息 → 转码服务拉取、切片、回传 →
+客户端拉取 m3u8 播放。缓存采用「先写 Redis，延迟消息异步回写 MySQL」的策略。
+
+---
+
+## 技术栈
+
+| 层次 | 技术 | 用途 |
+| --- | --- | --- |
+| 语言/构建 | C++17、CMake 3.16+ | 服务端 |
+| RPC | brpc + protobuf | 服务间通信、HTTP 网关 |
+| 注册中心 | etcd（租约 + watch） | 服务注册与发现 |
+| 消息队列 | RabbitMQ（DLX 延迟队列） | 转码任务、缓存同步、文件删除 |
+| 缓存 | Redis（redis++） | 会话、视频信息、计数 |
+| 数据库 | MySQL 8 + ODB 2.5 | 持久化、ORM |
+| 搜索 | Elasticsearch（elasticlient） | 视频标题/简介检索 |
+| 文件存储 | FastDFS | 视频、封面、切片存储 |
+| 转码 | FFmpeg（libavformat） | MP4 → HLS（m3u8 + ts） |
+| 日志 | spdlog | 同步/异步、轮转 |
+| 客户端 | Qt 6.7 + libmpv | 桌面播放器（Windows 构建） |
+
+---
 
 ## 目录结构
 
 ```text
 .
-├── .gitignore                      # 忽略编译产物、日志、生成代码等
-├── .vscode/                        # VS Code 构建任务与 C++ 配置
-└── cpp-microservice-scaffold/
-    ├── source/                     # 脚手架封装库（头文件 + 实现）
-    └── example/                    # 各中间件的独立示例，每个目录自带 makefile
+├── CMakeLists.txt          # 顶层构建入口
+├── scaffold/               # bite_scaffold 基础库（中间件客户端封装）
+│   └── bite_scaffold/      # log util rpc etcd mq redis odb elastic fdfs hls mail
+├── server/
+│   ├── common/             # 错误码、缓存同步抽象
+│   ├── data/               # ODB 实体 + DAO
+│   ├── proto/              # 6 个 proto 定义
+│   ├── svc_gateway/        # 网关
+│   ├── svc_user/           # 用户服务
+│   ├── svc_video/          # 视频服务
+│   ├── svc_file/           # 文件服务
+│   └── svc_transcode/      # 转码服务
+├── client/
+│   ├── BitPlayer/          # Qt6 客户端
+│   └── BitPlayerMockServer/# 客户端联调用的 Mock 服务
+├── deploy/                 # docker-compose / Dockerfile / 配置 / SQL
+├── docs/                   # 架构、接口、部署、学习笔记、面试题
+├── examples/               # 脚手架各模块示例（学习用，不参与主构建）
+├── scripts/                # build.sh / fetch-ffmpeg.sh / 运行脚本
+└── tools/                  # file_client 等联调工具
 ```
 
-## 模块一览（`source/`）
+---
 
-| 模块 | 命名空间 | 说明 | 主要依赖 |
-| --- | --- | --- | --- |
-| `log.h/.cc` | `bitelog` | spdlog 日志封装：同步/异步、文件轮转、`DBG/INF/WRN/ERR` 宏 | spdlog、fmt |
-| `util.h/.cc` | `biteutil` | JSON 序列化/反序列化，失败时返回 `std::optional` | jsoncpp |
-| `rpc.h/.cc` | `biterpc` | brpc 信道管理：节点增删、负载选择 | brpc、protobuf |
-| `etcd.h/.cc` | `bitesvc` | 基于 etcd 的服务注册与发现（`SvcProvider`、`wait_for_connection`） | etcd-cpp-apiv3 |
-| `mq.h/.cc` | `bitemq` | RabbitMQ 客户端：交换机类型、死信队列、消息 TTL | amqpcpp、libev |
-| `redis.h/.cc` | `biteredis` | redis++ 连接池封装（`RedisFactory`） | redis++、hiredis |
-| `odb.h/.cc` | `biteodb` | ODB + MySQL 数据库工厂（`DBFactory`） | ODB、MySQL Client |
-| `elastic.h/.cc` | `biteics` | Elasticsearch 客户端封装与查询文档构建 | elasticlient、cpr |
-| `fdfs.h/.cc` | `bitefdfs` | FastDFS 客户端封装：上传/下载/删除、连接池 | fastdfs、fastcommon |
-| `hls.h/.cc` | `bitehls` | 基于 FFmpeg 的 HLS 切片与播放列表生成 | FFmpeg（avformat/avcodec/avutil） |
-| `mail.h/.cc` | `bitecode` | 邮箱验证码发送（基于 curl，服务商地址可配置） | libcurl、OpenSSL |
+## 快速开始（服务端）
 
-## 示例一览（`example/`）
+### 1. 依赖
 
-| 示例 | 内容 |
+Ubuntu 22.04 下需要：`g++ cmake make protobuf-compiler odb libodb-*-dev
+libbrpc-dev brpc libetcd-cpp-api-dev libamqpcpp-dev libev-dev libredis++-dev
+libhiredis-dev libspdlog-dev libfmt-dev libjsoncpp-dev libcurl4-openssl-dev
+libssl-dev libgflags-dev libleveldb-dev libmysqlclient-dev
+libelasticlient-dev libcpr-dev libwebsocketpp-dev libfastcommon-dev`
+
+> 没有 root 权限时，FFmpeg 用 `scripts/fetch-ffmpeg.sh` 解到 `~/local/ffmpeg`，见脚本注释。
+
+### 2. 构建
+
+```bash
+./scripts/build.sh                # 默认 Debug，产物在 build/ 与 build/bin
+# 或手动：
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DBITE_FFMPEG_ROOT=$HOME/local/ffmpeg/usr
+cmake --build build -j$(nproc)
+```
+
+### 3. 配置与运行
+
+配置通过 gflags 传入，`deploy/conf/global.conf` 是课程原版的 docker-compose 配置（`${XXX}` 由 `envsubst` 注入）。
+本地联调直接用脚本：
+
+```bash
+./scripts/run-dev.sh start     # 启动 5 个服务（日志在 logs/）
+./scripts/run-dev.sh status
+./scripts/run-dev.sh stop
+```
+
+数据库初始化脚本见 [`deploy/sql/`](deploy/sql/)。
+
+服务端口：网关 `10000`、文件 `10001`、用户 `10002`、视频 `10003`。
+
+---
+
+## 客户端
+
+`client/BitPlayer` 是 Qt 6.7 工程（Windows + MinGW 构建），依赖 libmpv 的 DLL：
+
+```bash
+# 在 Windows / Qt Creator 中打开 client/BitPlayer/CMakeLists.txt
+# 运行前在同目录放置 config.ini：
+# [server]
+# serverIp=192.168.131.128
+# serverPort=10000
+```
+
+mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/dll/`。
+
+---
+
+## 文档
+
+| 文档 | 内容 |
 | --- | --- |
-| `amqpcpp` | 简单发布/订阅、死信队列发布/订阅 |
-| `brpc` | 同步/异步/HTTP RPC 服务端与客户端（`cal.proto`） |
-| `elasticsearch` | ES 客户端基本使用 |
-| `etcd` | 服务注册与发现（单键、目录两种方式） |
-| `fastdfs` | 文件上传、下载、删除 |
-| `ffmpeg` | HLS 切片与 HTTP 播放服务 |
-| `gflags` | 命令行参数解析（含父子进程示例） |
-| `gtest` | 单元测试：基础、全局环境、局部测试 |
-| `httplib` | HTTP 服务端/客户端与静态资源托管 |
-| `jsoncpp` | JSON 序列化与反序列化 |
-| `mail` | 邮件验证码发送 |
-| `odb` | ORM 增删改查（`crud`/`example`/`group`/`limit`/`native`/`view`） |
-| `protobuf` | Protobuf 序列化与反序列化 |
-| `redis` | string/hash/list/set/zset/pipeline/transaction/watch |
-| `spdlog` | 同步与异步日志输出 |
-| `websocketpp` | WebSocket 服务端 |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | 长远目标、里程碑、学习路线、简历模板 |
+| docs/01-architecture.md | 架构与数据流（M2 补齐） |
+| docs/02-api.md | 接口清单（M3 补齐） |
+| docs/03-deploy.md | 部署手册（M6 补齐） |
+| docs/notes/ | 中间件学习笔记（持续更新） |
 
-## 环境要求
+---
 
-- Linux（Ubuntu 20.04+ / Debian 11+ 验证），g++ 支持 C++14 及以上
-- 常用依赖可尝试通过包管理器安装：
+## 设计要点（面试可讲）
 
-```bash
-sudo apt install -y build-essential cmake \
-  libgflags-dev libprotobuf-dev protobuf-compiler \
-  libjsoncpp-dev libspdlog-dev libfmt-dev libgtest-dev \
-  libcurl4-openssl-dev libssl-dev libhiredis-dev \
-  libboost-system-dev libmysqlclient-dev \
-  libavformat-dev libavcodec-dev libavutil-dev
-```
+1. **为什么 brpc + etcd**：brpc 单机多线程 + bthread，吞吐高；etcd 租约保活 + watch 实现服务上下线实时感知。
+2. **延迟队列做缓存同步**：Redis 先写、MQ 延迟消息异步刷 MySQL，兼顾性能与最终一致性；用 DLX + TTL 实现延迟。
+3. **转码异步化**：上传接口只落库 + 投递消息，转码服务独立消费，避免长耗时阻塞网关。
+4. **ODB 而非裸 SQL**：实体与表结构同源，编译期检查字段，多数据库可迁移；配合连接池使用。
+5. **FastDFS**：视频/切片文件量大，用 Tracker/Storage 架构水平扩展，业务侧只存 file_id。
 
-以下库通常需要源码编译安装：brpc、etcd-cpp-apiv3、cpr、elasticlient、fastdfs、amqpcpp、redis++、ODB、cpprestsdk、websocketpp。
+---
 
-## 编译与运行
+## 项目状态
 
-每个示例目录相互独立，直接使用自带的 makefile：
+| 阶段 | 状态 |
+| --- | --- |
+| M0 源码盘点、目录重构 | ✅ |
+| M1 统一构建系统（scaffold + 5 服务） | ✅ |
+| M2 服务可运行（etcd 注册 + 网关响应） | ✅ |
+| M3 接口联调 | 🔄 |
+| M4–M5 客户端与业务闭环 | ⬜ |
+| M6–M8 测试、部署、优化 | ⬜ |
 
-```bash
-cd cpp-microservice-scaffold/example/redis
-make          # 编译当前示例
-make clean    # 清理生成的可执行文件
-```
-
-需要生成代码的示例（如 `brpc`、`protobuf`、`odb`），请先执行 `protoc` / `odb-compiler` 生成对应源码，再运行 `make`。
-
-## 使用约定
-
-- 各模块统一使用 `bite` 前缀命名空间（如 `bitelog`、`biteredis`）。
-- 接口失败时优先返回 `std::optional`，由调用方判断并处理。
-- 连接参数集中放在 `xxx_settings` 结构体中，便于统一配置。
-- 日志统一通过 `bitelog_init()` 初始化，再使用 `DBG/INF/WRN/ERR` 宏输出。
-
-## 注意事项
-
-- 部分示例依赖外部服务（MySQL、Redis、etcd、RabbitMQ、Elasticsearch、FastDFS），运行前需先启动对应服务，并在示例代码中修改连接地址与账号密码。
-- 编译生成的可执行文件、目标文件、日志及代码生成产物已被 `.gitignore` 忽略，请勿手动提交。
-- 本仓库内容仅用于学习与技术交流。
+详见 [docs/ROADMAP.md](docs/ROADMAP.md)。

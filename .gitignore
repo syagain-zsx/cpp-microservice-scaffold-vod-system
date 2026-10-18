@@ -1,10 +1,5 @@
 # ============================================================
-# 其他独立 clone 的第三方/课程仓库，不属于本仓库内容
-# ============================================================
-cp-cpp-microservice-scaffold/
-
-# ============================================================
-# 构建目录（CMake / Makefile）
+# 构建目录
 # ============================================================
 build/
 build-*/
@@ -29,9 +24,12 @@ compile_commands.json
 *.dSYM/
 *.s
 *.ii
+a.out
+core
+core.*
 
 # ============================================================
-# 库文件
+# 库与可执行文件
 # ============================================================
 *.a
 *.lib
@@ -51,69 +49,36 @@ compile_commands.json
 *-odb.cxx
 *-odb.hxx
 *-odb.ixx
+generated/
 
 # ============================================================
-# 示例目录中由 makefile 生成的无扩展名可执行文件
+# 客户端：Qt 构建产物与本地运行时（不入库）
 # ============================================================
-cpp-microservice-scaffold/example/amqpcpp/dlx_publish
-cpp-microservice-scaffold/example/amqpcpp/dlx_subscribe
-cpp-microservice-scaffold/example/amqpcpp/simple_publish
-cpp-microservice-scaffold/example/amqpcpp/simple_subscribe
-cpp-microservice-scaffold/example/brpc/async_client
-cpp-microservice-scaffold/example/brpc/async_server
-cpp-microservice-scaffold/example/brpc/http_client
-cpp-microservice-scaffold/example/brpc/http_server
-cpp-microservice-scaffold/example/brpc/sync_client
-cpp-microservice-scaffold/example/brpc/sync_server
-cpp-microservice-scaffold/example/elasticsearch/client
-cpp-microservice-scaffold/example/etcd/dir_get
-cpp-microservice-scaffold/example/etcd/dir_put
-cpp-microservice-scaffold/example/etcd/simple_get
-cpp-microservice-scaffold/example/etcd/simple_put
-cpp-microservice-scaffold/example/fastdfs/download
-cpp-microservice-scaffold/example/fastdfs/remove
-cpp-microservice-scaffold/example/fastdfs/upload
-cpp-microservice-scaffold/example/ffmpeg/hls
-cpp-microservice-scaffold/example/ffmpeg/server
-cpp-microservice-scaffold/example/gflags/main
-cpp-microservice-scaffold/example/gtest/global
-cpp-microservice-scaffold/example/gtest/local
-cpp-microservice-scaffold/example/gtest/simple
-cpp-microservice-scaffold/example/httplib/client
-cpp-microservice-scaffold/example/httplib/server
-cpp-microservice-scaffold/example/jsoncpp/serialize
-cpp-microservice-scaffold/example/jsoncpp/test1
-cpp-microservice-scaffold/example/jsoncpp/test2
-cpp-microservice-scaffold/example/jsoncpp/test3
-cpp-microservice-scaffold/example/jsoncpp/unserialize
-cpp-microservice-scaffold/example/mail/mail
-cpp-microservice-scaffold/example/odb/crud/crud
-cpp-microservice-scaffold/example/odb/example/example
-cpp-microservice-scaffold/example/odb/group/group
-cpp-microservice-scaffold/example/odb/limit/limit
-cpp-microservice-scaffold/example/odb/native/native
-cpp-microservice-scaffold/example/odb/view/view
-cpp-microservice-scaffold/example/protobuf/serialize
-cpp-microservice-scaffold/example/redis/complement
-cpp-microservice-scaffold/example/redis/hash
-cpp-microservice-scaffold/example/redis/list
-cpp-microservice-scaffold/example/redis/pipeline
-cpp-microservice-scaffold/example/redis/set
-cpp-microservice-scaffold/example/redis/string
-cpp-microservice-scaffold/example/redis/transaction
-cpp-microservice-scaffold/example/redis/watch
-cpp-microservice-scaffold/example/redis/zset
-cpp-microservice-scaffold/example/spdlog/stdout
-cpp-microservice-scaffold/example/websocketpp/server
+client/**/build/
+client/**/build-*/
+client/**/*.user
+client/BitPlayer/mpv/dll/
+client/BitPlayer/mpv/mpv/
+client/BitPlayer/videos/
+client/BitPlayerMockServer/videos/
+client/BitPlayer/config.ini
+
+# ============================================================
+# 媒体 / 大文件（示例与测试用）
+# ============================================================
+*.mp4
+*.ts
+*.flv
+*.mkv
 
 # ============================================================
 # 日志与运行产物
 # ============================================================
 logs/
+temp/
+temp_path/
 *.log
 *.pid
-core
-core.*
 
 # ============================================================
 # 编辑器 / 系统临时文件
@@ -123,4 +88,3 @@ core.*
 *~
 .DS_Store
 Thumbs.db
-
