@@ -3,6 +3,7 @@
 #include "util.h"
 #include <thread>
 #include <sstream>
+#include <chrono>
 
 namespace JianLiuSvc {
 
@@ -32,8 +33,8 @@ bool SvcProvider::registry() {
     //1. 实例化etcd客户端对象
     etcd::Client  client(_reg_center_addr);
     wait_for_connection(client); //等待连接服务器成功
-    //2. 创建3s租约
-    auto lease_resp = client.leasegrant(3).get();
+    //2. 创建10s租约（3s 在负载高时容易过期，导致服务在注册中心反复上下线）
+    auto lease_resp = client.leasegrant(10).get();
     if (lease_resp.is_ok() == false) {
         ERR("创建租约失败: {}", lease_resp.error_message());
         return false;
@@ -45,11 +46,13 @@ bool SvcProvider::registry() {
         ERR("添加数据失败: {}", lease_resp.error_message());
         return false;
     }
+    DBG("服务注册成功: {} = {}", make_key(), _svc_addr);
     //5. 实例化保活对象，对租约进行保活
     auto handler = [this](const std::exception_ptr &eptr){
+        WRN("etcd 租约保活失败，重新注册服务: {}", _svc_name);
         this->registry();
     };
-    _keepalive.reset(new etcd::KeepAlive(_reg_center_addr, handler, 3, lease_id));
+    _keepalive.reset(new etcd::KeepAlive(_reg_center_addr, handler, 10, lease_id));
     return true;
 }
 
@@ -93,7 +96,14 @@ bool SvcWatcher::watch() {
     //1. 先实例化etcd客户端对象，并等待连接成功
     etcd::Client  client(_reg_center_addr);
     wait_for_connection(client); //等待连接服务器成功
-    //2. 浏览根目录，获取当前所有已经提供服务的节点信息
+    //2. 先建立 watch，再拉取全量：避免「ls 之后、watch 建立之前」注册的服务丢失
+    auto cb = std::bind(&SvcWatcher::callback, this, std::placeholders::_1);
+    _watcher.reset( new etcd::Watcher(_reg_center_addr, "/", cb, true)); //true表示递归监控目录下所有数据
+    _watcher->Wait([this](bool cond) {
+        if (cond == true) { return; }
+        this->watch();
+    });
+    //3. 浏览根目录，获取当前所有已经提供服务的节点信息（与 watch 事件重复的部分由 addNode 去重）
     auto resp = client.ls("/").get();
     if (resp.is_ok() == true) {
         auto values = resp.values(); //获取结果数据
@@ -104,14 +114,44 @@ bool SvcWatcher::watch() {
             if (_online_callback) _online_callback(svc_name, svc_addr);
         }
     }
-    //3. 监控根目录，获取服务上下线的通知进行对应处理
-    auto cb = std::bind(&SvcWatcher::callback, this, std::placeholders::_1);
-    _watcher.reset( new etcd::Watcher(_reg_center_addr, "/", cb, true)); //true表示递归监控目录下所有数据
-    _watcher->Wait([this](bool cond) {
-        if (cond == true) { return; }
-        this->watch();
-    });
+    //4. 周期性全量同步：修复链路抖动漏掉的事件，以及「同地址的新旧实例」下线误删
+    if (!_resync_thread.joinable()) {
+        _resync_thread = std::thread([this]() {
+            while (!_resync_stop) {
+                std::this_thread::sleep_for(std::chrono::seconds(5));
+                if (_resync_stop) {
+                    break;
+                }
+                this->resync();
+            }
+        });
+    }
     return true;
+}
+
+void SvcWatcher::resync() {
+    try {
+        etcd::Client client(_reg_center_addr);
+        auto resp = client.ls("/").get();
+        if (resp.is_ok() == false) {
+            WRN("周期性同步服务列表失败: {}", resp.error_message());
+            return;
+        }
+        for (auto &v : resp.values()) {
+            if (_online_callback) {
+                _online_callback(parse_key(v.key()), v.as_string());
+            }
+        }
+    } catch (const std::exception &e) {
+        WRN("周期性同步服务列表异常: {}", e.what());
+    }
+}
+
+SvcWatcher::~SvcWatcher() {
+    _resync_stop = true;
+    if (_resync_thread.joinable()) {
+        _resync_thread.join();
+    }
 }
 
 }

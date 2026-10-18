@@ -192,10 +192,17 @@ def main():
                                     "videoId": vid, "checkResult": True})
         if r.get("errorCode") == 0:
             check("checkVideo 审核通过", True)
-            r = api.post("allVideoList", {"requestId": "e2e-list2", "sessionId": sid,
-                                          "pageIndex": 1, "pageCount": 50})
-            ids = [v.get("videoId") for v in r.get("result", {}).get("videoList", [])]
-            check("审核后出现在首页", vid in ids)
+            # 首页列表有 3s 短缓存，轮询等待上架可见
+            found = False
+            deadline = time.time() + 10
+            while time.time() < deadline and not found:
+                r = api.post("allVideoList", {"requestId": "e2e-list2", "sessionId": sid,
+                                              "pageIndex": 1, "pageCount": 50})
+                ids = [v.get("videoId") for v in r.get("result", {}).get("videoList", [])]
+                found = vid in ids
+                if not found:
+                    time.sleep(1)
+            check("审核后出现在首页", found)
         elif r.get("errorCode") == 16:  # PERMISSION_DENIED
             skip("checkVideo", "当前用户不是管理员")
         else:

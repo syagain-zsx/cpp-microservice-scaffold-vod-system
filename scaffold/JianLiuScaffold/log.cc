@@ -1,4 +1,5 @@
 #include "log.h"
+#include <cstdio>
 
 namespace JianLiuLog
 {
@@ -7,6 +8,10 @@ namespace JianLiuLog
 
     void init(const log_settings &settings)
     {
+        // 0. 格式化参数不匹配时只打印错误，避免异常从日志路径传播到业务线程
+        spdlog::set_error_handler([](const std::string &msg) {
+            fprintf(stderr, "[spdlog] %s\n", msg.c_str());
+        });
         // 1. 判断日志器类型 - async/sync
         // 2. 判断输出目标 -- stdout, file
         // 3. 创建日志器

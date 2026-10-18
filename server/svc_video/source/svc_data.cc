@@ -503,6 +503,21 @@ namespace svc_video {
     }
     std::vector<api_message::VideoInfo> SvcData::getMainPageList(size_t page, size_t count) {
         std::vector<api_message::VideoInfo> result;
+        // 首页列表短缓存（3s）：热点页请求直接命中 Redis，避免重复的 DB/Redis 往返。
+        // 视频上下架/新增最多延迟 3s 可见，测试脚本需轮询。
+        const std::string cache_key = "cache_main_page_" + std::to_string(page) + "_" + std::to_string(count);
+        try {
+            auto cached = _redis->get(cache_key);
+            if (cached) {
+                api_message::AllVideoListResult cache_msg;
+                if (cache_msg.ParseFromString(*cached)) {
+                    return std::vector<api_message::VideoInfo>(cache_msg.videolist().begin(),
+                                                               cache_msg.videolist().end());
+                }
+            }
+        } catch (const std::exception &e) {
+            WRN("读取首页列表缓存失败: {}", e.what());
+        }
         try {
             //1. 初始化事务对象
             odb::transaction mtx(_mysql->begin());
@@ -513,6 +528,19 @@ namespace svc_video {
             result = getDetailVideoList(vid_list, mtx);
             //8. 提交事务
             mtx.commit();
+            //9. 写入列表短缓存
+            try {
+                api_message::AllVideoListResult cache_msg;
+                for (auto &video : result) {
+                    cache_msg.add_videolist()->CopyFrom(video);
+                }
+                std::string bytes;
+                if (cache_msg.SerializeToString(&bytes)) {
+                    _redis->setex(cache_key, 3, bytes);
+                }
+            } catch (const std::exception &e) {
+                WRN("写入首页列表缓存失败: {}", e.what());
+            }
             return result;
         }catch (const vp_error::VPException &e) {
             ERR("获取主页视频列表失败: {}", e.what());

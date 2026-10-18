@@ -159,7 +159,7 @@ vod-system/
 | **M5** 业务闭环 | 转码 + HLS 播放 + 互动 | FFmpeg 转码链路、弹幕、点赞、关注、搜索 | 上传的 mp4 能自动转 HLS 并在客户端播放，互动数据正确 | 🔄 服务端已完成（转码/HLS/点赞/弹幕/关注/审核），客户端播放待 M4 |
 | **M6** 质量与部署 | 可交付 | 清理死代码、补测试、docker-compose、一键脚本 | `docker compose up` 起全栈；gtest 通过 | 🔄 进行中（测试/脚本/编排已完成，Docker 未在本环境验证） |
 | **M7** 文档与求职 | 能讲出来 | 架构文档、学习笔记、面试题、简历 | docs 完整；能脱稿讲 10 分钟 | 1 周 |
-| **M8** 优化与压测 | 有数据支撑 | 缓存命中、连接池、RPC 压测、转码耗时 | 一张压测/优化对比表 | 🔄 基线已完成（scripts/bench.py + docs/05-performance.md） |
+| **M8** 优化与压测 | 有数据支撑 | 缓存命中、连接池、RPC 压测、转码耗时 | 一张压测/优化对比表 | ✅ 列表缓存 290→804 QPS（2.8x） |
 
 ### M1 任务清单
 
@@ -336,6 +336,18 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 - 搜索降级：ES 不可用时 `keyVideoList` 返回 `errorCode=0` + 空列表，服务不崩溃；
 - 缓存回写：`setPlay` 后 video 日志出现「延迟将缓存播放量同步到数据库中」，队列链路正常。
 
+### 2026-10-18（第三轮：联调、稳定性与性能）
+
+- 端到端脚本 `scripts/e2e-test.py` 完成并跑通 **18/18**（会话→上传→建视频→转码→m3u8/ts→审核上架→点赞/播放/弹幕）；
+- **修复服务发现抖动**（网关偶发 `SERVICE_NOT_FOUND`）：
+  1) etcd 租约 3s → 10s，避免高负载下过期；2) 先建 watch 再全量拉取，消除启动窗口丢事件；
+  3) 节点地址去重；4) 网关每 5s 周期性全量同步，自愈「同地址新旧实例」的误删；
+- 修复用户服务启动即崩溃：`DBG("...{}-{}", rid)` 占位符多于实参触发 spdlog 异常链，
+  修正日志并给 spdlog 设置只打印不抛出的错误处理器；
+- **性能优化**：首页列表加 3s 短缓存（protobuf 存 Redis），`allVideoList`
+  20 并发 276 → **765 QPS**，50 并发 290 → **804 QPS**（p99 346 → 94ms），约 2.8 倍；
+- 文档同步：`docs/05-performance.md` 增加优化对比，`docs/04-interview.md` 增加发现抖动/日志崩溃两个真实排错案例。
+
 ---
 
 ## 九、下一步（交接）
@@ -343,4 +355,4 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 1. **M4**：在 Windows 侧用 Qt 6.7 构建 BitPlayer，`config.ini` 指向网关 `http://<host>:10000`，跑登录/首页/播放；
 2. ✅ 学习笔记 `docs/notes/`：Redis 缓存、RabbitMQ 延迟队列、brpc+etcd、ODB、HLS 五篇已完成；
 3. 客户端联调时补齐：m3u8 播放、弹幕渲染、上传进度、分页；
-4. 可选优化：消息 confirm/幂等、缓存穿透保护、Prometheus 指标。
+4. 可选优化：Release 构建对比、批量查询用户、消息 confirm/幂等、Prometheus 指标。

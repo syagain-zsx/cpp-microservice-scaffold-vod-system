@@ -188,6 +188,6 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | M5 业务闭环（服务端） | ✅（转码/HLS/点赞/弹幕/关注/审核） |
 | M6 测试与部署（gtest 7 项 / Docker 编排） | 🔄 |
 | M7 文档、学习笔记、面试材料 | ✅ |
-| M8 性能优化与压测 | 🔄（基线 ~290 QPS，优化待做） |
+| M8 性能优化与压测 | ✅（列表 3s 缓存：290 → ~800 QPS，2.8x） |
 
 详见 [docs/ROADMAP.md](docs/ROADMAP.md)。

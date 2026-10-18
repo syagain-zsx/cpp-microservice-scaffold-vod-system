@@ -4,6 +4,8 @@
 #include <etcd/Watcher.hpp>
 #include <etcd/Response.hpp>
 #include <etcd/Value.hpp>
+#include <atomic>
+#include <thread>
 
 namespace JianLiuSvc {
     
@@ -30,15 +32,19 @@ namespace JianLiuSvc {
             //回调函数，在产生事件时，传入两个数据：1-服务名称，2-节点地址
             using ModCallbck = std::function<void(std::string, std::string)>;
             SvcWatcher(const std::string &reg_center_addr, ModCallbck &&online_callback, ModCallbck &&offline_callback);
+            ~SvcWatcher();
             // 数据监控并不针对单独数据，而是针对 / 目录
             bool watch();
         private:
             void callback(const etcd::Response &resp);
+            void resync();   // 周期性地重新拉取全量节点，修复漏掉的/误删的事件
             std::string parse_key(const std::string &key);// 从key中获取服务名称
         private:
             std::string _reg_center_addr; //注册中心地址
             ModCallbck _online_callback;  //服务上线回调函数
             ModCallbck _offline_callback; //服务下线回调函数
             std::shared_ptr<etcd::Watcher> _watcher; // 服务上下线监控对象
+            std::thread _resync_thread;   // 周期性全量同步线程
+            std::atomic<bool> _resync_stop{false};
     };
 }

@@ -40,6 +40,7 @@
 | `user_count_<uid>` | 用户统计 | `data/user_count.cc` |
 | `permission_role_<url>` | URL→角色 | `data/permission_role.cc` |
 | `user_identify_role_<uid>` | 用户身份角色 | `data/user_identify_role.cc` |
+| `cache_main_page_<page>_<count>` | 首页列表快照（protobuf，TTL=3s） | `svc_video/source/svc_data.cc` |
 
 > 注意 `cahce_video_` 是历史拼写错误（cache 写成 cahce），重命名需要迁移缓存，暂未改。
 
@@ -84,7 +85,13 @@ setPlay → VideoCountCache::incrPlayCount(vid)     // Redis INCR，不碰 MySQL
 
 关键点：**用 Redis 事务的 WATCH/MULTI 解决并发回写覆盖问题**，失败自动重试。
 
-### 2.5 连接池
+### 2.5 首页列表快照缓存（性能优化）
+
+`SvcData::getMainPageList` 把组装好的 `VideoInfo` 列表序列化（protobuf）后写入
+`cache_main_page_<page>_<count>`，TTL 3 秒；命中时直接返回，省掉下游的 id 列表查询、
+逐条详情回源和用户信息查询。实测 2 核 Debug 下 QPS 290 → 804（2.8x），代价是上下架最多延迟 3 秒可见。
+
+### 2.6 连接池
 
 `JianLiuRedis::RedisFactory::create()` 用 `sw::redis::ConnectionPoolOptions{size}`，
 所有 DAO 共享一个 `shared_ptr<sw::redis::Redis>`，线程安全。

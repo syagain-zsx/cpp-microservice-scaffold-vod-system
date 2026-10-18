@@ -30,7 +30,7 @@ namespace svc_user {
         response->set_requestid(rid);
         response->set_errorcode((int)res_status_code);
         response->set_errormsg(vp_error::vp_error_to_string(res_status_code));
-        DBG("临时登录处理完毕: {}-{}", rid);
+        DBG("临时登录处理完毕: {}", rid);
     }
     void UserServiceImpl::sessionLogin(::google::protobuf::RpcController* controller,
         const ::api_message::SessionLoginReq* request,

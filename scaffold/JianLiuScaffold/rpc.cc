@@ -6,6 +6,12 @@ namespace JianLiuRpc {
 Channels::Channels() : _idx(0) {};
 void Channels::insert(const std::string &addr) {
     std::unique_lock<std::mutex> lock(_mtx);
+    //0. 去重：watch 事件与全量拉取可能重复上报同一节点
+    for (auto &item : _channels) {
+        if (item.first == addr) {
+            return;
+        }
+    }
     //1. 实例化channel对象
     auto channel = std::make_shared<brpc::Channel>();
     brpc::ChannelOptions options;
