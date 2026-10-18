@@ -104,6 +104,9 @@ curl -s -X POST http://127.0.0.1:10000/HttpService/sessionLogin \
 > 本地联调可跳过邮件：直接向 `tbl_user_meta` / `tbl_user_identify_role_meta` 插入用户，
 > 再把 `tbl_session_meta.user_id` 指向该用户，删掉 Redis 里的 `vp_session_<sid>` 后重新 `sessionLogin`。
 
+> 注意：`passwdLogin` 成功会移除该用户的其它会话（单端登录），旧会话会变回访客。
+> 密码以加盐 SHA-256 存储；历史明文密码仍可登录（兼容逻辑见 `JianLiuUtil::Password`）。
+
 ---
 
 ## 3. 用户（user 服务）
