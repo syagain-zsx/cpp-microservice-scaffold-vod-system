@@ -380,6 +380,15 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 - **验证结果**：`QT_QPA_PLATFORM=offscreen` 启动客户端，成功 `tempLogin` 并拉取 7 个视频；
   播放画面/Windows 实机仍待用户验证。
 
+### 2026-10-18（第七轮：客户端清理与 Release 对比）
+
+- 客户端清理：删除未使用的 `hello/ping` 接口、`DataCenter` 对应信号与 `client/BitPlayer/test/`
+  课程草稿；重新编译通过，服务端日志确认仍能 tempLogin + 拉列表；
+- Release 构建（-O2/-O3）验证通过（`/tmp/build-release`，6 个可执行文件）；
+- 压测对比：Debug+缓存 765/804 QPS，Release+缓存 768/797 QPS —— **无显著差异**，
+  说明该读路径瓶颈在 Redis/网络往返与 JSON 序列化，优化应针对瓶颈而非编译器；
+- 服务已切回 Debug 构建运行，冒烟 4/4。
+
 ---
 
 ## 九、下一步（交接）
