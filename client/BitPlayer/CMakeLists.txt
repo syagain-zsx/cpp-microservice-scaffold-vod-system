@@ -97,6 +97,12 @@ target_link_libraries(BitPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 if(WIN32)
     # Windows：直接链接 mpv/dll 下的导入库（libmpv-2.dll）
     set(MPV_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/mpv/dll/libmpv-2.dll)
+    if(NOT EXISTS ${MPV_LIBRARY})
+        message(FATAL_ERROR
+            "缺少 libmpv：${MPV_LIBRARY}\n"
+            "请从 https://sourceforge.net/projects/mpv-player-windows/files/libmpv/ 下载 libmpv-2.dll，"
+            "放到 client/BitPlayer/mpv/dll/ 后重新配置。")
+    endif()
 else()
     # Linux/macOS：使用系统或私有前缀的 libmpv（便于在 Linux 上做编译检查）
     find_library(MPV_LIBRARY NAMES mpv)
