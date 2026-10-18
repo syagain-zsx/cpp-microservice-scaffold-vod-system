@@ -60,9 +60,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         model/datacenter.h model/datacenter.cpp
         model/data.h
         model/data.cpp
-        test/testJson.h
         netclient/netclient.h netclient/netclient.cpp
-        test/TestHttp.h
         confirmdialog.h confirmdialog.cpp
         BitPlayer.rc
 

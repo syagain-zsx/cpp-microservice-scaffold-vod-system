@@ -95,8 +95,6 @@ private:
 
 public:
     // 定义所有异步请求方法
-    void helloAsync();
-    void pingAsync();
 
     // 临时用户登录
     void loginTempUserAsync();
@@ -216,8 +214,6 @@ public:
     void delAdminAsync(const QString& userId);
 
 signals:
-    void helloDone();
-    void pingDone();
 
     // 临时用户登录成功
     void loginTempUserDone();

@@ -17,12 +17,6 @@ public:
     NetClient(model::DataCenter* dataCenter = nullptr);
     void setHTTPURL(const QString& HTTP_URL);
 
-    // 给服务器发送一个hell的请求，服务器相应world结果
-    void hello();
-
-    // ping请求
-    void ping();
-
     // 临时用户登录
     void loginTempUser();
 

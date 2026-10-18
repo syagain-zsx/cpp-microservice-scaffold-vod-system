@@ -397,17 +397,6 @@ AdminList *DataCenter::getAdminList()
     return adminList;
 }
 
-void DataCenter::helloAsync()
-{
-    httpClient.hello();
-}
-
-void DataCenter::pingAsync()
-{
-    httpClient.ping();
-}
-
-
 void DataCenter::loginTempUserAsync()
 {
     httpClient.loginTempUser();
