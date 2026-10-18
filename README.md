@@ -128,6 +128,9 @@ cmake --build build -j$(nproc)
 ./scripts/smoke-test.sh      # 网关 + 会话 + 列表（4 项）
 ctest --test-dir build       # 7 个单元测试
 curl -s http://127.0.0.1:10000/status | head   # brpc 状态页
+
+# 端到端（需要已登录会话；--admin 额外验证审核上架）
+python3 scripts/e2e-test.py --session <sessionId> --admin
 ```
 
 ---
