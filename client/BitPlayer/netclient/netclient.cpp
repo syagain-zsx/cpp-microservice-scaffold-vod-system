@@ -636,7 +636,7 @@ void NetClient::loadupBarrage(const QString &videoId, model::BarrageInfo barrage
     // 构造弹幕信息
     QJsonObject barrageJson;
     barrageJson["barrageContent"] = barrageInfo.text;
-    barrageJson["barrageTime"] = barrageInfo.playTime;
+    barrageJson["barrageTime"] = static_cast<qint64>(barrageInfo.playTime);
     reqBody["barrageInfo"] = barrageJson;
 
     // 2. 发送请求
@@ -1114,7 +1114,7 @@ void NetClient::uploadVideoDesc(const model::VideoDesc &videoDesc)
     videoInfoJson["videoFileId"] = videoDesc.videoFileId;
     videoInfoJson["photoFileId"] = videoDesc.photoFileId;
     videoInfoJson["videoTitle"] = videoDesc.videoTitle;
-    videoInfoJson["duration"] = videoDesc.duration;
+    videoInfoJson["duration"] = static_cast<qint64>(videoDesc.duration);
     videoInfoJson["videoDesc"] = videoDesc.videoDesc;
 
     auto kindAndTag = dataCenter->getKindAndTagClassPtr();

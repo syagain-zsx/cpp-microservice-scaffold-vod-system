@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 
 INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR}
@@ -54,7 +54,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         paginator.h paginator.cpp
         login.h login.cpp login.ui
         toast.h toast.cpp
-        mpv/mpv/render_gl.h mpv/mpv/stream_cb.h mpv/client.h mpv/render.h mpv/render_gl.h mpv/stream_cb.h
+        mpv/client.h mpv/render.h mpv/render_gl.h mpv/stream_cb.h
         mpv/mpvplayer.h mpv/mpvplayer.cpp
         bulletscreenitem.h bulletscreenitem.cpp
         model/datacenter.h model/datacenter.cpp
@@ -96,8 +96,17 @@ endif()
 
 target_link_libraries(BitPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
-set(MPV_DLL ${CMAKE_CURRENT_SOURCE_DIR}/mpv/dll/libmpv-2.dll) #设置mpv库目录
-target_link_libraries(BitPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${MPV_DLL} Qt6::Network)
+if(WIN32)
+    # Windows：直接链接 mpv/dll 下的导入库（libmpv-2.dll）
+    set(MPV_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/mpv/dll/libmpv-2.dll)
+else()
+    # Linux/macOS：使用系统或私有前缀的 libmpv（便于在 Linux 上做编译检查）
+    find_library(MPV_LIBRARY NAMES mpv)
+    if(NOT MPV_LIBRARY)
+        message(FATAL_ERROR "未找到 libmpv：Linux 请安装 libmpv-dev，Windows 请把 libmpv-2.dll 放到 mpv/dll/")
+    endif()
+endif()
+target_link_libraries(BitPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${MPV_LIBRARY} Qt6::Network)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
