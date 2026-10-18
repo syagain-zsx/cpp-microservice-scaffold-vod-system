@@ -111,8 +111,9 @@ endforeach()
 # ------------------------------------------------------------
 # 命令行工具（文件服务联调客户端）
 # ------------------------------------------------------------
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../tools/file-client/test.cc)
-    add_executable(file_client ${CMAKE_CURRENT_SOURCE_DIR}/../tools/file-client/test.cc)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../tools/file-client/file_client.cc)
+    add_executable(file_client ${CMAKE_CURRENT_SOURCE_DIR}/../tools/file-client/file_client.cc)
     target_include_directories(file_client PRIVATE ${COMMON_DIR} ${DATA_DIR} ${GEN_DIR})
     target_link_libraries(file_client PRIVATE videoplayer JianLiuScaffold::JianLiuScaffold)
+    install(TARGETS file_client DESTINATION bin)
 endif()

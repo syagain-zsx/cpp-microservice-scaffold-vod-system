@@ -6,6 +6,8 @@
 #include <etcd/Value.hpp>
 #include <atomic>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
 
 namespace JianLiuSvc {
     
@@ -46,5 +48,8 @@ namespace JianLiuSvc {
             std::shared_ptr<etcd::Watcher> _watcher; // 服务上下线监控对象
             std::thread _resync_thread;   // 周期性全量同步线程
             std::atomic<bool> _resync_stop{false};
+            std::atomic<bool> _destroying{false};
+            std::mutex _resync_mtx;
+            std::condition_variable _resync_cv;
     };
 }

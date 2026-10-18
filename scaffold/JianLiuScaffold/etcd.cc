@@ -100,7 +100,7 @@ bool SvcWatcher::watch() {
     auto cb = std::bind(&SvcWatcher::callback, this, std::placeholders::_1);
     _watcher.reset( new etcd::Watcher(_reg_center_addr, "/", cb, true)); //true表示递归监控目录下所有数据
     _watcher->Wait([this](bool cond) {
-        if (cond == true) { return; }
+        if (cond == true || _destroying.load()) { return; }
         this->watch();
     });
     //3. 浏览根目录，获取当前所有已经提供服务的节点信息（与 watch 事件重复的部分由 addNode 去重）
@@ -117,10 +117,13 @@ bool SvcWatcher::watch() {
     //4. 周期性全量同步：修复链路抖动漏掉的事件，以及「同地址的新旧实例」下线误删
     if (!_resync_thread.joinable()) {
         _resync_thread = std::thread([this]() {
-            while (!_resync_stop) {
-                std::this_thread::sleep_for(std::chrono::seconds(5));
-                if (_resync_stop) {
-                    break;
+            while (true) {
+                {
+                    std::unique_lock<std::mutex> lock(_resync_mtx);
+                    if (_resync_cv.wait_for(lock, std::chrono::seconds(5),
+                                            [this]() { return _resync_stop.load(); })) {
+                        break;
+                    }
                 }
                 this->resync();
             }
@@ -148,7 +151,15 @@ void SvcWatcher::resync() {
 }
 
 SvcWatcher::~SvcWatcher() {
-    _resync_stop = true;
+    _destroying = true;
+    if (_watcher) {
+        _watcher->Cancel();
+    }
+    {
+        std::lock_guard<std::mutex> lock(_resync_mtx);
+        _resync_stop = true;
+    }
+    _resync_cv.notify_all();
     if (_resync_thread.joinable()) {
         _resync_thread.join();
     }

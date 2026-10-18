@@ -134,6 +134,10 @@ python3 scripts/e2e-test.py --session <sessionId> --admin
 
 # 客户端接口一致性（静态检查，不依赖 Qt）
 python3 scripts/check-client-api.py
+
+# 文件服务 CLI（上传/下载）
+./build/bin/file_client --session_id=<sid> --file=tools/file-client/jj.jpg --mime=image/jpeg
+./build/bin/file_client --session_id=<sid> --download_id=<fileId> --output=/tmp/out.jpg
 ```
 
 ---
