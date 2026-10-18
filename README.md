@@ -161,6 +161,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | [docs/03-deploy.md](docs/03-deploy.md) | 部署手册（本地实测 + Docker）、常见问题 |
 | [docs/04-interview.md](docs/04-interview.md) | 面试讲述稿、高频问答、简历模板 |
 | [docs/05-performance.md](docs/05-performance.md) | 压测方法、基线数据、优化清单 |
+| [docs/06-code-walkthrough.md](docs/06-code-walkthrough.md) | 代码导读：阅读顺序、改动场景、调试技巧 |
 | [docs/notes/](docs/notes/README.md) | 中间件学习笔记（Redis/MQ/RPC/ODB/HLS） |
 
 ---

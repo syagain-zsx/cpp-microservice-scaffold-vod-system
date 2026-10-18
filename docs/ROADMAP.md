@@ -327,6 +327,8 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 - 从零构建验证：`BUILD_DIR=/tmp/build-check ./scripts/build.sh` 通过，产出 5 个可执行文件；
 - 压测基线：`allVideoList` 在 20 并发下 276 QPS（p50 68ms），50 并发下 290 QPS（p99 346ms），
   2 核 Debug 环境，脚本 `scripts/bench.py`，分析见 `docs/05-performance.md`。
+- 端到端回归脚本 `scripts/e2e-test.py`：会话→上传→建视频→转码→m3u8/ts→审核上架→点赞/播放/弹幕，
+  **18 项全部通过**。
 
 **业务闭环补验（服务端）**
 
