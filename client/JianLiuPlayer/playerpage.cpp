@@ -217,7 +217,13 @@ void PlayerPage::onPlayPositionChanged(int64_t playTime)
     QString totalTime = secondToTime(videoInfo.videoDuration);
     ui->videoDuration->setText(curPlayTime + "/" + totalTime);
 
-    ui->videoSlider->setPlayStep((double)playTime / videoInfo.videoDuration);
+    // 视频时长可能为 0（极短视频或探测失败），此时不能做除法，
+    // 否则会产生 inf/nan 传给进度条，触发非法 setGeometry
+    if(videoInfo.videoDuration > 0){
+        ui->videoSlider->setPlayStep((double)playTime / videoInfo.videoDuration);
+    }else{
+        ui->videoSlider->setPlayStep(0);
+    }
 
     // 更新弹幕数据
     showBulletScreen();
@@ -225,11 +231,10 @@ void PlayerPage::onPlayPositionChanged(int64_t playTime)
 
 void PlayerPage::onEndOfPlaylist()
 {
-    // 当整个视频播放结束之后，将播放按钮图标 以及 播放状态设置为暂停
+    // 播放结束后停在最后一帧，等待用户再次点击播放。
+    // 注意：不要自动重播，否则极短视频（不足 1 秒）会陷入无限重播
     isPlay = false;
-    ui->playBtn->setStyleSheet("border-image : url(:/images/PlayPage/zanting.png);");
-    // 重新加载视频
-    startPlaying();
+    ui->playBtn->setStyleSheet("border-image : url(:/images/PlayPage/bofang.png);");
 }
 
 void PlayerPage::onSetPlayProgress(double playRatio)
