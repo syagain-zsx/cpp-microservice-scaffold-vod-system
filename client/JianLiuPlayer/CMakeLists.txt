@@ -112,6 +112,14 @@ else()
 endif()
 target_link_libraries(JianLiuPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${MPV_LIBRARY} Qt6::Network)
 
+# Windows：构建后把 libmpv-2.dll 复制到可执行文件目录，避免运行时报「找不到 libmpv-2.dll」
+if(WIN32)
+    add_custom_command(TARGET JianLiuPlayer POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${MPV_LIBRARY}" "$<TARGET_FILE_DIR:JianLiuPlayer>"
+        COMMENT "复制 libmpv-2.dll 到输出目录")
+endif()
+
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
