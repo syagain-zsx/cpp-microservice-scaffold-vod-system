@@ -155,7 +155,7 @@ vod-system/
 | **M1** 构建系统 | 一次构建出全部产物 | 脚手架 CMake、统一服务端构建、FFmpeg 本地前缀 | `cmake --build build` 产出 5 个可执行文件 | ✅ 已完成 |
 | **M2** 服务端可运行 | 5 个服务能启动、注册到 etcd | 配置文件、启动脚本、端口、日志 | `etcdctl get --prefix /` 能看到 4 个注册节点；`curl :10000/` 有响应 | ✅ 已完成 |
 | **M3** 核心接口联调 | 登录/视频/文件主链路通 | 用 `file_client`、curl 或脚本验证 RPC | 能完成"注册登录 → 上传 → 建视频 → 列表查询" | ✅ 已完成（含转码/HLS/点赞/弹幕） |
-| **M4** 客户端打通 | BitPlayer 能连真实后端 | 接口地址配置、编译、修 bug | 登录、首页、播放页可用 | 🔄 接口 38/38 一致，构建与运行待 Windows 验证 |
+| **M4** 客户端打通 | BitPlayer 能连真实后端 | 接口地址配置、编译、修 bug | 登录、首页、播放页可用 | 🔄 Linux 下编译通过并连通服务端，Windows 图形/播放待验证 |
 | **M5** 业务闭环 | 转码 + HLS 播放 + 互动 | FFmpeg 转码链路、弹幕、点赞、关注、搜索 | 上传的 mp4 能自动转 HLS 并在客户端播放，互动数据正确 | 🔄 服务端已完成（转码/HLS/点赞/弹幕/关注/审核），客户端播放待 M4 |
 | **M6** 质量与部署 | 可交付 | 清理死代码、补测试、docker-compose、一键脚本 | `docker compose up` 起全栈；gtest 通过 | 🔄 进行中（测试/脚本/编排已完成，Docker 未在本环境验证） |
 | **M7** 文档与求职 | 能讲出来 | 架构文档、学习笔记、面试题、简历 | docs 完整；能脱稿讲 10 分钟 | 1 周 |
@@ -367,6 +367,18 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 - `SvcWatcher` 退出优化：resync 用 condition_variable 等待、析构立即唤醒、置 `_destroying` 防重入、
   调用 `Watcher::Cancel()`；CLI 退出更干脆（库仍会打印一行无害的 watcher 警告）；
 - 文档：README/部署手册补充 CLI 用法，测试数量更新为 8 项。
+
+### 2026-10-18（第六轮：客户端编译验证）
+
+- 在容器内用「apt 下载 + dpkg 解包」方式准备 Qt 6.2.4 Base 与 libmpv 0.34（私有前缀，不需要 root），
+  成功编译 `client/BitPlayer`（17MB 可执行文件）；
+- 修复 3 个真实问题：
+  1) Qt 组件名 `network` → `Network`（Linux 大小写敏感，Windows 下同样建议大写）；
+  2) CMake 源文件列表引用了已剔除的 `mpv/mpv/*.h`（导入时排除了该目录）；
+  3) `QJsonValue = int64_t` 在 Linux 上二义（`int64_t` 是 `long`，`qint64` 是 `long long`），显式转 `qint64`；
+- CMake 改为跨平台链接 mpv：Windows 用 `mpv/dll/libmpv-2.dll`，Linux 用系统 `libmpv`；
+- **验证结果**：`QT_QPA_PLATFORM=offscreen` 启动客户端，成功 `tempLogin` 并拉取 7 个视频；
+  播放画面/Windows 实机仍待用户验证。
 
 ---
 

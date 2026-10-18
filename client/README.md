@@ -46,6 +46,21 @@ cmake --build build -j
 
 产物：`build/BitPlayer.exe`（需要把 Qt 的 `windeployqt` 跑一遍，或将 Qt bin 加入 PATH）。
 
+### Linux 编译（可选，用于快速验证）
+
+CMake 已做平台适配（Windows 链接 `mpv/dll/libmpv-2.dll`，Linux 链接系统 `libmpv`），
+可在 Linux 上编译验证客户端代码：
+
+```bash
+# 依赖：Qt6 Base（Widgets/Network）、libmpv-dev、OpenGL 开发头文件
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+```
+
+> 已验证环境：Ubuntu 22.04 + Qt 6.2.4 + libmpv 0.34。
+> 编译通过，且 `QT_QPA_PLATFORM=offscreen` 启动后能成功 `tempLogin` 并拉取视频列表；
+> 播放画面需要 OpenGL/显示环境。
+
 ---
 
 ## 3. 运行配置
