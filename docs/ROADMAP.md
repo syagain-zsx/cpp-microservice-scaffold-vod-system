@@ -408,11 +408,24 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 - **上传流程 GUI 验证**：上传页选文件 → `uploadVideo` 成功 → 调 `ffmpeg/ffmpeg.exe` 截首帧并
   `uploadPhoto` 成功 → 填标题/简介/分类/标签 → 提交 `newVideo` → MQ 转码成功（数据库出现 status=1 的新视频）。
 
+### 2026-10-18（第十轮：收尾与总览）
+
+- 新增 `docs/08-project-summary.md`：一页纸项目总览（技术栈/架构/功能验证/质量证据/性能/亮点/限制/简历描述）；
+- 新增 `scripts/check-doc-links.py`：文档相对链接检查（16 个 md，0 失效）；
+- 用 Release 配置做一次**从零构建 + 安装 + ctest** 的最终验证，确认仓库可复现。
+
 ---
 
 ## 九、下一步（交接）
 
-1. **M4**：在 Windows 侧用 Qt 6.7 构建 BitPlayer，`config.ini` 指向网关 `http://<host>:10000`，跑登录/首页/播放；
-2. ✅ 学习笔记 `docs/notes/`：Redis 缓存、RabbitMQ 延迟队列、brpc+etcd、ODB、HLS 五篇已完成；
-3. 客户端联调时补齐：m3u8 播放、弹幕渲染、上传进度、分页；
-4. 可选优化：Release 构建对比、批量查询用户、消息 confirm/幂等、Prometheus 指标。
+项目主体已完成（服务端 + 客户端 + 文档 + 测试 + 性能），剩余事项：
+
+1. **Windows 实机验证**：用 Qt 6.7 构建 BitPlayer（需 `mpv/dll/libmpv-2.dll` 与 `ffmpeg/ffmpeg.exe`），
+   按 [07-client-integration.md](07-client-integration.md) 的 8 步走一遍；
+2. **Docker 编排实机验证**：`scripts/package.sh` 收集依赖 → `docker compose -f deploy/docker-compose.yml up -d --build`；
+3. 可选优化：
+   - 列表接口批量查询用户信息、权限结果本地缓存（减少 Redis 往返）
+   - RabbitMQ publisher confirm + 消费失败重试/死信
+   - Prometheus 指标（brpc 自带 bvar）与链路追踪
+   - 接入 Elasticsearch 恢复搜索（当前为降级状态）
+4. 求职材料：按 [04-interview.md](04-interview.md) 准备讲述稿与问答，README 中已有 4 张运行截图。

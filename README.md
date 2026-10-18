@@ -150,6 +150,9 @@ python3 scripts/e2e-test.py --session <sessionId> --admin
 # 客户端接口一致性（静态检查，不依赖 Qt）
 python3 scripts/check-client-api.py
 
+# 文档相对链接检查
+python3 scripts/check-doc-links.py
+
 # 文件服务 CLI（上传/下载）
 ./build/bin/file_client --session_id=<sid> --file=tools/file-client/jj.jpg --mime=image/jpeg
 ./build/bin/file_client --session_id=<sid> --download_id=<fileId> --output=/tmp/out.jpg
@@ -177,6 +180,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 
 | 文档 | 内容 |
 | --- | --- |
+| [docs/08-project-summary.md](docs/08-project-summary.md) | **项目一页纸总览（简历/面试用）** |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | 长远目标、里程碑、学习路线、简历模板 |
 | [docs/02-api.md](docs/02-api.md) | 接口清单、错误码、curl 联调示例 |
 | [docs/01-architecture.md](docs/01-architecture.md) | 服务划分、代码分层、数据模型、关键流程 |
@@ -209,7 +213,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | M3 接口联调（登录/上传/转码/HLS/互动） | ✅ |
 | M4 客户端联调 | ✅ Linux 下完整验证（登录/列表/封面/播放/弹幕）；Windows 实机待验证 |
 | M5 业务闭环（服务端） | ✅（转码/HLS/点赞/弹幕/关注/审核） |
-| M6 测试与部署（gtest 8 项 / Docker 编排） | 🔄 |
+| M6 测试与部署（gtest 8 项 + Docker 编排） | 🔄 测试完成，Docker 编排待实机验证 |
 | M7 文档、学习笔记、面试材料 | ✅ |
 | M8 性能优化与压测 | ✅（列表 3s 缓存：290 → ~800 QPS，2.8x） |
 
