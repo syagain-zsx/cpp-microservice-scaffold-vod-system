@@ -39,6 +39,15 @@ namespace JianLiuMq {
     }
     // 发送异步请求，结束事件循环，等待异步线程结束
     MQClient::~MQClient() {
+        if (!_async_thread.joinable()) {
+            return;
+        }
+        // 如果析构发生在事件循环线程内部（例如回调里释放了最后一个引用），
+        // join 自己会抛 "Resource deadlock avoided"，这里直接 detach
+        if (std::this_thread::get_id() == _async_thread.get_id()) {
+            _async_thread.detach();
+            return;
+        }
         ev_async_init(&_ev_async, MQClient::callback);
         ev_async_start(_ev_loop, &_ev_async);
         ev_async_send(_ev_loop, &_ev_async);
@@ -95,8 +104,8 @@ namespace JianLiuMq {
                 _cv.notify_all();
                 abort(); // 终止程序
             });
-        if (_cv.wait_for(lock, std::chrono::seconds(5)) == std::cv_status::timeout) {
-            ERR("声明交换机/队列超时(5s)，请检查 RabbitMQ 状态: {} / {}", exchange, queue);
+        if (_cv.wait_for(lock, std::chrono::seconds(30)) == std::cv_status::timeout) {
+            ERR("声明交换机/队列超时(30s)，请检查 RabbitMQ 状态: {} / {}", exchange, queue);
             abort();
         }
     }
@@ -136,8 +145,8 @@ namespace JianLiuMq {
                 DBG("订阅队列消息成功: {}", queue);
                 _cv.notify_all();
             });
-        if (_cv.wait_for(lock, std::chrono::seconds(5)) == std::cv_status::timeout) {
-            ERR("订阅队列超时(5s)，请检查 RabbitMQ 状态: {}", queue);
+        if (_cv.wait_for(lock, std::chrono::seconds(30)) == std::cv_status::timeout) {
+            ERR("订阅队列超时(30s)，请检查 RabbitMQ 状态: {}", queue);
             abort();
         }
     }

@@ -64,7 +64,7 @@ _declared(settings, args, false);                 // 再声明业务交换机/�
 
 - `Publisher::publish()` **永远发到业务交换机**（不区分是否延迟）；
 - `Subscriber::consume()` 对延迟队列**订阅 `dlx_` 队列**，普通队列订阅自身；
-- 声明是同步等待的：`condition_variable` + 5s 超时（防止 RabbitMQ 异常时永久挂起）。
+- 声明是同步等待的：`condition_variable` + 30s 超时（防止 RabbitMQ 异常时永久挂起）。
 
 ### 2.3 消息体
 
@@ -116,4 +116,4 @@ RabbitMQ 只检查队头消息是否过期，若队头 TTL 很长会阻塞后面
 1. 把 `cache_del_queue_info` 的 `delayed_ttl` 从 3 改到 10，重启 video，触发一次更新，观察日志时间差；
 2. 停掉 transcode，上传并创建视频，消息会积压在 `hls_transcode_queue`；看 video 仍返回成功（异步解耦）；
 3. 重启 transcode，观察积压消息被消费、HLS 生成；
-4. 在 `mq.cc` 的 `_declared` 里临时改错交换机类型，观察 5s 超时保护是否生效（会 abort 并打日志）。
+4. 在 `mq.cc` 的 `_declared` 里临时改错交换机类型，观察 30s 超时保护是否生效（会 abort 并打日志）。

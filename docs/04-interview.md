@@ -117,7 +117,7 @@ RTMP 基于 TCP 长连接、延迟低，适合直播推流。点播用 HLS。
 - 二进制找不到 `libavformat.so.58` / 间接依赖 `libgme.so.0`：FFmpeg 装在私有前缀，
   一开始只加 `RUNPATH`，但 RUNPATH 不传递给间接依赖，改成 `-Wl,--disable-new-dtags` 生成 `DT_RPATH` 解决；
 - ES 未启动导致 video 服务 `abort()`：改成捕获异常 + `_enabled=false` 降级，搜索返回空、其他功能正常；
-- 某次重启后 video 卡在 MQ 声明：`condition_variable` 无超时，声明失败时永久等待，加 5s 超时并快速失败。
+- 某次重启后 video 卡在 MQ 声明：`condition_variable` 无超时，声明失败时永久等待，加 30s 超时并快速失败。
 
 **Q：怎么验证系统是好的？**
 单元测试（gtest 7 项：JSON/字符串/随机串/文件/M3U8）+ 冒烟脚本（网关/会话/列表）+
