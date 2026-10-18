@@ -4,9 +4,10 @@
 > 服务端已通过 `scripts/e2e-test.py` 验证（18/18）。
 >
 > **验证进展（2026-10-18）**：客户端已在 Linux（Qt 6.2.4 + libmpv 0.34）下**编译通过**，
-> 在 Xvfb 虚拟显示中完成完整链路验证：启动 → tempLogin → 首页列表 + 封面 → 点击播放 HLS 视频 →
-> 弹幕/点赞计数展示（截图见 [docs/images/home.png](images/home.png)、[player.png](images/player.png)）；
-> Windows 图形界面待实机验证。
+> 在 Xvfb 虚拟显示中完成完整链路验证：启动 → tempLogin → 首页列表 + 封面 →
+> **密码登录（tester）** → 我的页面（关注/粉丝/点赞/播放统计 + 我的视频）→
+> 点击视频播放 HLS（m3u8 + ts）→ 弹幕输入框与点赞/播放计数展示；
+> 截图见 [docs/images/](images/)；Windows 图形界面待实机验证。
 
 ---
 

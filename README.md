@@ -13,12 +13,12 @@
 
 ## 界面预览
 
-| 首页（服务端真实数据） | 播放页（HLS + 弹幕） |
-| --- | --- |
-| ![首页](docs/images/home.png) | ![播放页](docs/images/player.png) |
+| 首页（服务端真实数据） | 播放页（HLS + 弹幕） | 我的（登录后） |
+| --- | --- | --- |
+| ![首页](docs/images/home.png) | ![播放页](docs/images/player.png) | ![我的](docs/images/profile.png) |
 
 > 截图来自 Linux + Xvfb 下的实际运行：客户端从网关拉取视频列表与封面，
-> 点击后通过 m3u8 + ts 播放转码后的视频。
+> 支持密码登录（tester 账号，点赞 7 / 播放 7），点击视频后通过 m3u8 + ts 播放转码后的 HLS。
 
 ---
 
