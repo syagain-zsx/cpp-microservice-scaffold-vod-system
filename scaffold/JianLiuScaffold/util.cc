@@ -4,6 +4,10 @@
 #include <random>
 #include <iomanip>
 #include <atomic>
+#include <cctype>
+#include <algorithm>
+#include <openssl/evp.h>
+#include <openssl/rand.h>
 
 namespace JianLiuUtil {
 
@@ -132,6 +136,82 @@ size_t Random::number(size_t min, size_t max) {
     std::mt19937 generator(rd());
     std::uniform_int_distribution<int> distribution(min, max);
     return distribution(generator);
+}
+
+namespace {
+    std::string hexEncode(const unsigned char *data, size_t len) {
+        static const char *digits = "0123456789abcdef";
+        std::string out;
+        out.reserve(len * 2);
+        for (size_t i = 0; i < len; i++) {
+            out.push_back(digits[data[i] >> 4]);
+            out.push_back(digits[data[i] & 0x0F]);
+        }
+        return out;
+    }
+
+    bool hexDecode(const std::string &hex, std::vector<unsigned char> &out) {
+        if (hex.size() % 2 != 0) {
+            return false;
+        }
+        auto nibble = [](char c) -> int {
+            if (c >= '0' && c <= '9') return c - '0';
+            if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+            if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+            return -1;
+        };
+        for (size_t i = 0; i < hex.size(); i += 2) {
+            int hi = nibble(hex[i]);
+            int lo = nibble(hex[i + 1]);
+            if (hi < 0 || lo < 0) {
+                return false;
+            }
+            out.push_back((unsigned char)((hi << 4) | lo));
+        }
+        return true;
+    }
+
+    // 计算 SHA-256，取前 bytes 字节的十六进制
+    std::string sha256Hex(const std::string &data, size_t bytes) {
+        unsigned char digest[EVP_MAX_MD_SIZE];
+        unsigned int len = 0;
+        EVP_MD_CTX *ctx = EVP_MD_CTX_new();
+        if (ctx == nullptr) {
+            return std::string();
+        }
+        EVP_DigestInit_ex(ctx, EVP_sha256(), nullptr);
+        EVP_DigestUpdate(ctx, data.data(), data.size());
+        EVP_DigestFinal_ex(ctx, digest, &len);
+        EVP_MD_CTX_free(ctx);
+        return hexEncode(digest, std::min<size_t>(bytes, len));
+    }
+}
+
+std::string Password::hash(const std::string &plain) {
+    unsigned char salt[16];
+    if (RAND_bytes(salt, sizeof(salt)) != 1) {
+        // 极端情况下退化：用随机数填充（仍保证每次不同）
+        std::random_device rd;
+        for (size_t i = 0; i < sizeof(salt); i++) {
+            salt[i] = (unsigned char)(rd() & 0xFF);
+        }
+    }
+    std::string salt_hex = hexEncode(salt, sizeof(salt));
+    // 摘要输入用「盐的十六进制 + 明文」，与 verify 保持一致
+    return salt_hex + sha256Hex(salt_hex + plain, 16);
+}
+
+bool Password::verify(const std::string &stored, const std::string &plain) {
+    // 历史明文密码：长度不是 64 或不是十六进制，按明文比较
+    if (stored.size() != 64) {
+        return stored == plain;
+    }
+    std::vector<unsigned char> salt;
+    if (!hexDecode(stored.substr(0, 32), salt)) {
+        return stored == plain;
+    }
+    std::string expect = stored.substr(0, 32) + sha256Hex(stored.substr(0, 32) + plain, 16);
+    return expect == stored;
 }
 
 }

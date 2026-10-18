@@ -52,3 +52,19 @@ TEST(File, ReadWrite) {
 
     std::filesystem::remove(path);
 }
+
+// 密码哈希：加盐 SHA-256（64 位十六进制），兼容历史明文
+TEST(Password, HashAndVerify) {
+    auto h = JianLiuUtil::Password::hash("secret123");
+    EXPECT_EQ(h.size(), 64u);
+    EXPECT_TRUE(JianLiuUtil::Password::verify(h, "secret123"));
+    EXPECT_FALSE(JianLiuUtil::Password::verify(h, "secret124"));
+    // 两次 hash 盐不同，结果不同
+    EXPECT_NE(JianLiuUtil::Password::hash("secret123"), h);
+    // 历史明文密码兼容
+    EXPECT_TRUE(JianLiuUtil::Password::verify("plain123", "plain123"));
+    EXPECT_FALSE(JianLiuUtil::Password::verify("plain123", "plain124"));
+    // 非十六进制的 64 位字符串按明文比较
+    std::string not_hex(64, 'z');
+    EXPECT_TRUE(JianLiuUtil::Password::verify(not_hex, not_hex));
+}

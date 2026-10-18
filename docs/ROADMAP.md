@@ -355,7 +355,9 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
   **38/38 接口一致、JSON 字段全部匹配**（`pageIndex` 等驼峰字段由 brpc 自动映射）；
 - 新增 `docs/07-client-integration.md`：页面↔接口映射、`config.ini`/libmpv 说明、Windows 构建步骤、
   8 步联调顺序与已知差异（分页从 1 开始、上传是裸字节流、列表 3s 缓存、ES 降级）；
-- 新增 `client/BitPlayer/build-windows.ps1`：一行命令完成 MinGW 配置 + 构建，并检查 libmpv。
+- 新增 `client/BitPlayer/build-windows.ps1`：一行命令完成 MinGW 配置 + 构建，并检查 libmpv；
+- 密码改为加盐 SHA-256（64 位十六进制 = 32 位盐 + 32 位摘要），`setPassword` 存哈希、
+  `passwdLogin` 校验，兼容历史明文密码；新增 1 个单测（哈希/校验/盐随机/明文兼容）。
 
 ---
 

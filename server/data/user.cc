@@ -40,13 +40,13 @@ namespace vp_data{
         User::ptr user;
         try {
             user = getUserByEmailFromDB(username);
-            if (user && user->password()) return user->password().get() == passwd ? user : nullptr;
+            if (user && user->password() && JianLiuUtil::Password::verify(user->password().get(), passwd)) return user;
             user = getUserByPhoneFromDB(username);
-            if (user && user->password()) return user->password().get() == passwd ? user : nullptr;
+            if (user && user->password() && JianLiuUtil::Password::verify(user->password().get(), passwd)) return user;
             user = getUserByNicknameFromDB(username);
-            if (user && user->password()) return user->password().get() == passwd ? user : nullptr;
+            if (user && user->password() && JianLiuUtil::Password::verify(user->password().get(), passwd)) return user;
             user = getUserByBaknameFromDB(username);
-            if (user && user->password()) return user->password().get() == passwd ? user : nullptr;
+            if (user && user->password() && JianLiuUtil::Password::verify(user->password().get(), passwd)) return user;
         }catch (const vp_error::VPException &e) {
             throw ;
         }
@@ -156,12 +156,12 @@ namespace vp_data{
                 ERR("用户信息不存在: {}", uid);
                 throw vp_error::VPException(vp_error::VpError::USER_NOT_EXIST);
             }
-            if (user->password() && user->password().get() == passwd) {
-                ERR("新密码不能与原密码相同: {}", passwd);
+            if (user->password() && JianLiuUtil::Password::verify(user->password().get(), passwd)) {
+                ERR("新密码不能与原密码相同: {}", uid);
                 throw vp_error::VPException(vp_error::VpError::NEW_PASSWD_SAME_OLD);
             }
-            //2. 更新用户密码
-            user->set_password(passwd);
+            //2. 更新用户密码（加盐哈希存储）
+            user->set_password(JianLiuUtil::Password::hash(passwd));
             updateToDB(user);
             //因为缓存中没有保存密码信息，因此不需要进行缓存同步
         } catch (const vp_error::VPException &e) {

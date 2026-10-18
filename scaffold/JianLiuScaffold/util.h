@@ -44,4 +44,12 @@ namespace JianLiuUtil {
             //生成一个指定区间的随机数
             static size_t number(size_t min, size_t max);
     };
+
+    // 密码哈希：加盐 SHA-256（截断 128 位），输出 64 位十六进制（32 位盐 + 32 位摘要）
+    class Password {
+        public:
+            static std::string hash(const std::string &plain);
+            // 校验；兼容历史明文密码（stored 不是 64 位十六进制时按明文比较）
+            static bool verify(const std::string &stored, const std::string &plain);
+    };
 }
