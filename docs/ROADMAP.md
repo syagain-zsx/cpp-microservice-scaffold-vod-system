@@ -290,7 +290,13 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 - 链路：`tempLogin → sessionLogin(isGuest=false) → uploadPhoto(6480B) → downloadPhoto(字节一致)`
   → `uploadVideo(318KB) → newVideo → MQ 转码 → HLS(1 个 m3u8 + 2 个 ts 上传 FastDFS)`
   → `allVideoList（返回视频，playCount=1）→ setLike/judgeLike → newBarrage/getBarrage`；
-- 转码后视频状态为「待审核(1)」，手工置为「上架(2)」后出现在首页列表（审核流程属 M5）。
+- 转码后视频状态为「待审核(1)」，通过审核接口置为「上架(2)」后出现在首页列表。
+
+**审核 / 上下架（管理端链路）**
+
+- 给测试用户追加 B 端身份（`identify_type=2`）与普通管理员角色（`role_type=2`），清 Redis 角色缓存；
+- `checkVideo(checkResult=true)` → 状态 `ONLINE(2)` 且写入 `auditor_uid`；
+- `haltVideo` → `OFFLINE(4)`；`saleVideo` → `ONLINE(2)`；`allVideoList` 始终可查到该视频。
 
 **命名重构（品牌：笺流 / JianLiu）**
 
