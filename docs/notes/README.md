@@ -7,9 +7,9 @@
 | --- | --- | --- |
 | [01-redis-cache.md](01-redis-cache.md) | Redis 缓存设计、延迟双删、计数回写 | `server/data/video.cc`、`server/svc_video/source/svc_sync.cc` |
 | [02-rabbitmq-delay.md](02-rabbitmq-delay.md) | RabbitMQ 延迟队列（DLX + TTL） | `scaffold/JianLiuScaffold/mq.cc`、`server/svc_transcode` |
-| 03-brpc-etcd.md（待补） | 服务注册发现与 RPC | `JianLiuScaffold/rpc.cc`、`etcd.cc` |
-| 04-odb.md（待补） | ODB 实体/事务/连接池 | `server/data/data.h`、`JianLiuScaffold/odb.cc` |
-| 05-hls-ffmpeg.md（待补） | HLS 切片与 FFmpeg remux | `JianLiuScaffold/hls.cc`、`svc_transcode` |
+| [03-brpc-etcd.md](03-brpc-etcd.md) | 服务注册发现与 RPC | `JianLiuScaffold/rpc.cc`、`etcd.cc` |
+| [04-odb.md](04-odb.md) | ODB 实体/事务/连接池 | `server/data/data.h`、`JianLiuScaffold/odb.cc` |
+| [05-hls-ffmpeg.md](05-hls-ffmpeg.md) | HLS 切片与 FFmpeg remux | `JianLiuScaffold/hls.cc`、`svc_transcode` |
 
 ## 通用学习方法
 

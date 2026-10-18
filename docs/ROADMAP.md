@@ -336,6 +336,6 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 ## 九、下一步（交接）
 
 1. **M4**：在 Windows 侧用 Qt 6.7 构建 BitPlayer，`config.ini` 指向网关 `http://<host>:10000`，跑登录/首页/播放；
-2. 学习笔记 `docs/notes/`：Redis 缓存一致性、RabbitMQ 延迟队列、brpc+etcd 服务发现、ODB、HLS；
+2. ✅ 学习笔记 `docs/notes/`：Redis 缓存、RabbitMQ 延迟队列、brpc+etcd、ODB、HLS 五篇已完成；
 3. 客户端联调时补齐：m3u8 播放、弹幕渲染、上传进度、分页；
 4. 可选优化：消息 confirm/幂等、缓存穿透保护、Prometheus 指标。
