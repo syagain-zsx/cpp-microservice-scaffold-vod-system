@@ -148,6 +148,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | [docs/02-api.md](docs/02-api.md) | 接口清单、错误码、curl 联调示例 |
 | [docs/01-architecture.md](docs/01-architecture.md) | 服务划分、代码分层、数据模型、关键流程 |
 | [docs/03-deploy.md](docs/03-deploy.md) | 部署手册（本地实测 + Docker）、常见问题 |
+| [docs/04-interview.md](docs/04-interview.md) | 面试讲述稿、高频问答、简历模板 |
 | docs/notes/ | 中间件学习笔记（持续更新） |
 
 ---

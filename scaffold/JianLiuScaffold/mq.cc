@@ -1,5 +1,6 @@
 #include "mq.h"
 #include "log.h"
+#include <chrono>
 
 namespace JianLiuMq {
 
@@ -94,10 +95,12 @@ namespace JianLiuMq {
                 _cv.notify_all();
                 abort(); // 终止程序
             });
-        _cv.wait(lock);
+        if (_cv.wait_for(lock, std::chrono::seconds(5)) == std::cv_status::timeout) {
+            ERR("声明交换机/队列超时(5s)，请检查 RabbitMQ 状态: {} / {}", exchange, queue);
+            abort();
+        }
     }
-    void MQClient::declare(const declare_settings &settings) {
-        //1. 判断当前是否是延时队列
+    void MQClient::declare(const declare_settings &settings) {        //1. 判断当前是否是延时队列
         AMQP::Table args;
         if (settings.exchange_type == DELAYED) {
             //声明死信交换机和队列，并进行绑定
@@ -133,7 +136,10 @@ namespace JianLiuMq {
                 DBG("订阅队列消息成功: {}", queue);
                 _cv.notify_all();
             });
-        _cv.wait(lock);
+        if (_cv.wait_for(lock, std::chrono::seconds(5)) == std::cv_status::timeout) {
+            ERR("订阅队列超时(5s)，请检查 RabbitMQ 状态: {}", queue);
+            abort();
+        }
     }
     // 有些场景下，我们程序只进行消息的处理，没有其他业务，因此就希望能够阻塞当前主线程
     void MQClient::wait() {
