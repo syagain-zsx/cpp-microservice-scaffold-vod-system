@@ -1,3 +1,11 @@
 {
-    "cmake.sourceDirectory": "/home/dev/workspace/cpp-microservice-scaffold"
+    "cmake.sourceDirectory": "${workspaceFolder}",
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.configureArgs": [
+        "-DJIANLIU_FFMPEG_ROOT=${env:HOME}/local/ffmpeg/usr"
+    ],
+    "files.associations": {
+        "*.h": "cpp",
+        "*.hxx": "cpp"
+    }
 }
