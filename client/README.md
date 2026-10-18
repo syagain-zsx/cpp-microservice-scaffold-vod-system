@@ -27,6 +27,19 @@ client/BitPlayer/mpv/dll/libmpv-2.dll
 
 > 该 DLL 约 100 MB，已加入 `.gitignore`，不进仓库。
 
+### 上传封面的 ffmpeg
+
+上传视频时，客户端会调用「程序当前工作目录/ffmpeg/ffmpeg.exe」截取视频首帧作为默认封面：
+
+```text
+<运行目录>/ffmpeg/ffmpeg.exe
+```
+
+- Windows：把 ffmpeg.exe 放到 exe 同级的 `ffmpeg/` 目录；
+- Linux（验证用）：放一个同名的 shell 包装脚本即可。
+
+缺失时上传仍会成功，但封面为空，后续「提交」可能被拦截。
+
 ---
 
 ## 2. 构建

@@ -404,7 +404,9 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
   点击「通过」→ 弹窗确认 → 状态由「待审核」变为「已审核」（数据库 status 1 → 2）；
 - 截图入库 `docs/images/admin.png`，README 界面预览扩展为 4 张（首页/播放/我的/审核）；
 - CMake：Windows 下缺少 `libmpv-2.dll` 时给出明确报错和下载地址，避免链接期才暴露；
-- 测试数据标题整理（第二轮转码验证 → 山间溪流，E2E-* → 街头随拍）。
+- 测试数据标题整理（第二轮转码验证 → 山间溪流，E2E-* → 街头随拍）；
+- **上传流程 GUI 验证**：上传页选文件 → `uploadVideo` 成功 → 调 `ffmpeg/ffmpeg.exe` 截首帧并
+  `uploadPhoto` 成功 → 填标题/简介/分类/标签 → 提交 `newVideo` → MQ 转码成功（数据库出现 status=1 的新视频）。
 
 ---
 
