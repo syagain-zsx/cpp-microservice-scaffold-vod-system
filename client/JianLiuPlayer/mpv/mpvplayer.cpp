@@ -3,6 +3,8 @@
 #include <QWidget>
 #include <QDir>
 #include <QProcess>
+#include <QFile>
+#include <QPixmap>
 
 static void wakeup(void* ctx)
 {
@@ -200,19 +202,51 @@ QString MpvPlayer::getVideoFirstFrame(const QString &videoPath)
     // 猜测：ffmpeg工具在解析命令时，可能是将参数的和值分开来解析的，即需要先解析出参数，然后在解析出参数的值
     // 放到一个字符串中，可能就会被当成某个参数 或者 某个参数的值来进行处理
     QStringList cmd;
-    cmd<<"-ss"<<"00:00:00"
+    cmd<<"-y"<<"-ss"<<"00:00:00"
         <<"-i"<<videoPath
         <<"-vframes"<<"1"
         <<firstFrame;
 
-    // 创建进程，让该进程调用ffmpeg工具完成截图
-    QProcess ffmpegProcess;
-    ffmpegProcess.start(ffmpegPath, cmd);
+    if(!QFile::exists(ffmpegPath)){
+        LOG()<<"未找到 ffmpeg："<<ffmpegPath<<"，将使用默认封面";
+    } else {
+        // 第一次：优先输出 PNG
+        QProcess ffmpegProcess;
+        ffmpegProcess.start(ffmpegPath, cmd);
+        if(!ffmpegProcess.waitForFinished(15000)){
+            LOG()<<"ffmpeg 截帧超时，强制结束";
+            ffmpegProcess.kill();
+            ffmpegProcess.waitForFinished(2000);
+        }
 
-    // 等待进程截图完成, -1: 无限等待，直到进程结束
-    if(!ffmpegProcess.waitForFinished(-1)){
-        LOG()<<"ffmpeg 进程执行失败";
-        return "";
+        // 第二次：部分精简版 ffmpeg 没编 PNG 编码器，退回 MJPEG
+        // 扩展名仍是 .png，Qt 的 QImageReader 按文件内容识别格式
+        if(!QFile::exists(firstFrame)){
+            LOG()<<"PNG 截帧失败，尝试 MJPEG 编码";
+            QStringList cmd2;
+            cmd2<<"-y"<<"-ss"<<"00:00:00"
+                <<"-i"<<videoPath
+                <<"-c:v"<<"mjpeg"
+                <<"-vframes"<<"1"
+                <<firstFrame;
+            QProcess mjpegProcess;
+            mjpegProcess.start(ffmpegPath, cmd2);
+            if(!mjpegProcess.waitForFinished(15000)){
+                mjpegProcess.kill();
+                mjpegProcess.waitForFinished(2000);
+            }
+        }
+    }
+
+    // 兜底：用内置默认封面，避免上传流程被封面卡住
+    if(!QFile::exists(firstFrame)){
+        QPixmap cover(":/images/admin/defaultVideoCover.png");
+        if(!cover.isNull() && cover.save(firstFrame, "PNG")){
+            LOG()<<"使用内置默认封面："<<firstFrame;
+        } else {
+            LOG()<<"获取视频首帧失败，且默认封面不可用";
+            return "";
+        }
     }
 
     // 返回视频首帧图的路径
