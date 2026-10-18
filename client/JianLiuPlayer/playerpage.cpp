@@ -8,7 +8,7 @@
 #include <QToolTip>
 #include "toast.h"
 #include "./model/datacenter.h"
-#include "bitplayer.h"
+#include "jianliuplayer.h"
 
 PlayerPage::PlayerPage(const model::VideoInfo& videoInfo, QWidget *parent)
     : QWidget(parent)
@@ -336,8 +336,8 @@ void PlayerPage::onUserAvatarBtnClicked()
 #if 0
     // 关闭当前窗口
     onQuitBtnClicked();
-    // 让BitPlayer切换页面
-    BitPlayer::getInstance()->switchToUserInfoPage(videoInfo.userId);
+    // 让JianLiuPlayer切换页面
+    JianLiuPlayer::getInstance()->switchToUserInfoPage(videoInfo.userId);
 #endif
 
     auto dataCenter = model::DataCenter::getInstance();
@@ -348,15 +348,15 @@ void PlayerPage::onUserAvatarBtnClicked()
         timer->setInterval(2000);
         connect(timer, &QTimer::timeout, this, [=]{
             onQuitBtnClicked();
-            BitPlayer::getInstance()->switchToUserInfoPage(videoInfo.userId);
+            JianLiuPlayer::getInstance()->switchToUserInfoPage(videoInfo.userId);
             delete timer;
         });
         timer->start();
     }else{
         // 关闭当前窗口
         onQuitBtnClicked();
-        // 让BitPlayer切换页面
-        BitPlayer::getInstance()->switchToUserInfoPage(videoInfo.userId);
+        // 让JianLiuPlayer切换页面
+        JianLiuPlayer::getInstance()->switchToUserInfoPage(videoInfo.userId);
     }
 }
 

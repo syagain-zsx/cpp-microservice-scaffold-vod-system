@@ -57,11 +57,11 @@ generated/
 client/**/build/
 client/**/build-*/
 client/**/*.user
-client/BitPlayer/mpv/dll/
-client/BitPlayer/mpv/mpv/
-client/BitPlayer/videos/
-client/BitPlayerMockServer/videos/
-client/BitPlayer/config.ini
+client/JianLiuPlayer/mpv/dll/
+client/JianLiuPlayer/mpv/mpv/
+client/JianLiuPlayer/videos/
+client/JianLiuMockServer/videos/
+client/JianLiuPlayer/config.ini
 
 # ============================================================
 # 媒体 / 大文件（示例与测试用）

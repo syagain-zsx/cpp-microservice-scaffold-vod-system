@@ -204,9 +204,9 @@ curl -s -X POST http://127.0.0.1:10000/HttpService/newBarrage -d '{"requestId":"
 
 ---
 
-## 6. 与客户端（BitPlayer）的对应关系
+## 6. 与客户端（JianLiuPlayer）的对应关系
 
-- `client/BitPlayer/netclient/netclient.cpp` 里每个 `xxxAsync` 方法对应上表一个接口；
+- `client/JianLiuPlayer/netclient/netclient.cpp` 里每个 `xxxAsync` 方法对应上表一个接口；
 - 客户端从可执行文件同目录的 `config.ini` 读取网关地址：
 
 ```ini

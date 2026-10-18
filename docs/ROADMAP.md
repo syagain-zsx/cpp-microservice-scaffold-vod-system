@@ -39,8 +39,8 @@
 | 服务端 5 个微服务 | `server/svc_*/` | 🟡 已导入，构建中 |
 | 数据层（ODB 实体 + DAO，16 个类） | `server/data/` | 🟡 参与构建 |
 | protobuf 接口定义（6 个 .proto） | `server/proto/` | ✅ protoc 生成通过 |
-| Qt6 客户端 BitPlayer | `client/BitPlayer/` | ⬜ 待联调（仅能在 Windows + Qt6.7.3 构建） |
-| 部署配置 | `deploy/`（compose/Dockerfile/global.conf/SQL） | 🟡 待适配新目录 |
+| Qt6 客户端 JianLiuPlayer | `client/JianLiuPlayer/` | ✅ Linux（Xvfb）完整验证；Windows 实机待验证 |
+| 部署配置 | `deploy/`（compose/Dockerfile/global.conf/SQL） | ✅ 已适配新目录（Docker 未实机验证） |
 | 中间件环境 | Docker 网络 `dev-environment_dev-network` | ✅ mysql/redis/etcd/rabbitmq/fastdfs 在跑；❌ ES 未启动 |
 
 ### 2.2 与课程原版的差异（本次重构做的事）
@@ -68,7 +68,7 @@
 
 ```text
                         ┌──────────────────────────────┐
-                        │   BitPlayer (Qt6 + mpv)      │
+                        │   JianLiuPlayer (Qt6 + mpv)      │
                         │  登录/首页/搜索/播放/上传/后台 │
                         └──────────────┬───────────────┘
                                        │ HTTP + protobuf
@@ -130,8 +130,8 @@ vod-system/
 │   ├── svc_file/               # 文件服务
 │   └── svc_transcode/          # 转码服务（FFmpeg）
 ├── client/                     # Qt6 客户端（Windows 构建）
-│   ├── BitPlayer/
-│   └── BitPlayerMockServer/    # 客户端 Mock 服务（可选）
+│   ├── JianLiuPlayer/
+│   └── JianLiuMockServer/    # 客户端 Mock 服务（可选）
 ├── deploy/
 │   ├── docker-compose.yml
 │   ├── Dockerfile
@@ -155,7 +155,7 @@ vod-system/
 | **M1** 构建系统 | 一次构建出全部产物 | 脚手架 CMake、统一服务端构建、FFmpeg 本地前缀 | `cmake --build build` 产出 5 个可执行文件 | ✅ 已完成 |
 | **M2** 服务端可运行 | 5 个服务能启动、注册到 etcd | 配置文件、启动脚本、端口、日志 | `etcdctl get --prefix /` 能看到 4 个注册节点；`curl :10000/` 有响应 | ✅ 已完成 |
 | **M3** 核心接口联调 | 登录/视频/文件主链路通 | 用 `file_client`、curl 或脚本验证 RPC | 能完成"注册登录 → 上传 → 建视频 → 列表查询" | ✅ 已完成（含转码/HLS/点赞/弹幕） |
-| **M4** 客户端打通 | BitPlayer 能连真实后端 | 接口地址配置、编译、修 bug | 登录、首页、播放页可用 | ✅ Linux（Xvfb）下完整验证，Windows 实机待验证 |
+| **M4** 客户端打通 | JianLiuPlayer 能连真实后端 | 接口地址配置、编译、修 bug | 登录、首页、播放页可用 | ✅ Linux（Xvfb）下完整验证，Windows 实机待验证 |
 | **M5** 业务闭环 | 转码 + HLS 播放 + 互动 | FFmpeg 转码链路、弹幕、点赞、关注、搜索 | 上传的 mp4 能自动转 HLS 并在客户端播放，互动数据正确 | 🔄 服务端已完成（转码/HLS/点赞/弹幕/关注/审核），客户端播放待 M4 |
 | **M6** 质量与部署 | 可交付 | 清理死代码、补测试、docker-compose、一键脚本 | `docker compose up` 起全栈；gtest 通过 | 🔄 进行中（测试/脚本/编排已完成，Docker 未在本环境验证） |
 | **M7** 文档与求职 | 能讲出来 | 架构文档、学习笔记、面试题、简历 | docs 完整；能脱稿讲 10 分钟 | 1 周 |
@@ -355,7 +355,7 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
   **38/38 接口一致、JSON 字段全部匹配**（`pageIndex` 等驼峰字段由 brpc 自动映射）；
 - 新增 `docs/07-client-integration.md`：页面↔接口映射、`config.ini`/libmpv 说明、Windows 构建步骤、
   8 步联调顺序与已知差异（分页从 1 开始、上传是裸字节流、列表 3s 缓存、ES 降级）；
-- 新增 `client/BitPlayer/build-windows.ps1`：一行命令完成 MinGW 配置 + 构建，并检查 libmpv；
+- 新增 `client/JianLiuPlayer/build-windows.ps1`：一行命令完成 MinGW 配置 + 构建，并检查 libmpv；
 - 密码改为加盐 SHA-256（64 位十六进制 = 32 位盐 + 32 位摘要），`setPassword` 存哈希、
   `passwdLogin` 校验，兼容历史明文密码；新增 1 个单测（哈希/校验/盐随机/明文兼容）。
 
@@ -371,7 +371,7 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 ### 2026-10-18（第六轮：客户端编译验证）
 
 - 在容器内用「apt 下载 + dpkg 解包」方式准备 Qt 6.2.4 Base 与 libmpv 0.34（私有前缀，不需要 root），
-  成功编译 `client/BitPlayer`（17MB 可执行文件）；
+  成功编译 `client/JianLiuPlayer`（17MB 可执行文件）；
 - 修复 3 个真实问题：
   1) Qt 组件名 `network` → `Network`（Linux 大小写敏感，Windows 下同样建议大写）；
   2) CMake 源文件列表引用了已剔除的 `mpv/mpv/*.h`（导入时排除了该目录）；
@@ -382,7 +382,7 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 
 ### 2026-10-18（第七轮：客户端清理与 Release 对比）
 
-- 客户端清理：删除未使用的 `hello/ping` 接口、`DataCenter` 对应信号与 `client/BitPlayer/test/`
+- 客户端清理：删除未使用的 `hello/ping` 接口、`DataCenter` 对应信号与 `client/JianLiuPlayer/test/`
   课程草稿；重新编译通过，服务端日志确认仍能 tempLogin + 拉列表；
 - Release 构建（-O2/-O3）验证通过（`/tmp/build-release`，6 个可执行文件）；
 - 压测对比：Debug+缓存 765/804 QPS，Release+缓存 768/797 QPS —— **无显著差异**，
@@ -420,7 +420,7 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
 
 项目主体已完成（服务端 + 客户端 + 文档 + 测试 + 性能），剩余事项：
 
-1. **Windows 实机验证**：用 Qt 6.7 构建 BitPlayer（需 `mpv/dll/libmpv-2.dll` 与 `ffmpeg/ffmpeg.exe`），
+1. **Windows 实机验证**：用 Qt 6.7 构建 JianLiuPlayer（需 `mpv/dll/libmpv-2.dll` 与 `ffmpeg/ffmpeg.exe`），
    按 [07-client-integration.md](07-client-integration.md) 的 8 步走一遍；
 2. **Docker 编排实机验证**：`scripts/package.sh` 收集依赖 → `docker compose -f deploy/docker-compose.yml up -d --build`；
 3. 可选优化：

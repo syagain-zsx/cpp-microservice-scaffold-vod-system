@@ -119,7 +119,7 @@ curl -s -X POST http://<etcd>:2379/v3/kv/range \
 
 ```bash
 ssh -L 10000:127.0.0.1:10000 dev@<host> -p <port>
-# 然后 client/BitPlayer/config.ini：
+# 然后 client/JianLiuPlayer/config.ini：
 # [server]
 # serverIp=127.0.0.1
 # serverPort=10000

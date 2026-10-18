@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>BitPlayerServer</class>
- <widget class="QWidget" name="BitPlayerServer">
+ <class>JianLiuMockServer</class>
+ <widget class="QWidget" name="JianLiuMockServer">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>BitPlayerServer</string>
+   <string>JianLiuMockServer</string>
   </property>
  </widget>
  <resources/>

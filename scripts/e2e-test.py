@@ -70,7 +70,7 @@ class Api:
 
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PHOTO = os.path.join(ROOT, "client/BitPlayerMockServer/images/touxiang.png")
+PHOTO = os.path.join(ROOT, "client/JianLiuMockServer/images/touxiang.png")
 VIDEO = os.path.join(ROOT, "tools/file-client/movie.mp4")
 
 

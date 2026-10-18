@@ -61,7 +61,7 @@ void StartupPage::startTimer()
 
     timer->start(2000);
 
-    // 如果sessionId为空，说明用户是第一次使用BitPlayer，此时以临时用户方式登录
+    // 如果sessionId为空，说明用户是第一次使用JianLiuPlayer，此时以临时用户方式登录
     // 如果sessionId非空，但是当前用户是临时用户，此时以临时用户方式登录
     // 如果sessionId非空，当前用户也是非临时用户，此时使用session登录
     auto dataCenter = model::DataCenter::getInstance();

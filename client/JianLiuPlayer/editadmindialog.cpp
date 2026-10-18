@@ -1,6 +1,6 @@
 #include "editadmindialog.h"
 #include "ui_editadmindialog.h"
-#include "bitplayer.h"
+#include "jianliuplayer.h"
 #include "./model/datacenter.h"
 #include "toast.h"
 
@@ -14,9 +14,9 @@ EditAdminDialog::EditAdminDialog(QWidget *parent, const QString& text, model::Ad
     setAttribute(Qt::WA_TranslucentBackground);
     ui->tittleLabel->setText(text);
 
-    // 移动窗口位置,和主界面左上角对齐--BitPlayer
-    BitPlayer* bitPlayer = BitPlayer::getInstance();
-    this->move(bitPlayer->mapToGlobal(QPoint(0, 0)));
+    // 移动窗口位置,和主界面左上角对齐--JianLiuPlayer
+    JianLiuPlayer* jianliuPlayer = JianLiuPlayer::getInstance();
+    this->move(jianliuPlayer->mapToGlobal(QPoint(0, 0)));
 
     // 对emailEdit中的邮箱进行校验
     QRegularExpression regExp(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");

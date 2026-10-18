@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(BitPlayer VERSION 0.1 LANGUAGES CXX)
+project(JianLiuPlayer VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -18,13 +18,13 @@ INCLUDE_DIRECTORIES(
 
 set(PROJECT_SOURCES
         main.cpp
-        bitplayer.cpp
-        bitplayer.h
-        bitplayer.ui
+        jianliuplayer.cpp
+        jianliuplayer.h
+        jianliuplayer.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(BitPlayer
+    qt_add_executable(JianLiuPlayer
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         iamgeRes.qrc
@@ -62,7 +62,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         model/data.cpp
         netclient/netclient.h netclient/netclient.cpp
         confirmdialog.h confirmdialog.cpp
-        BitPlayer.rc
+        JianLiuPlayer.rc
 
 
 
@@ -75,24 +75,24 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
     )
 # Define target properties for Android with Qt 6 as:
-#    set_property(TARGET BitPlayer APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+#    set_property(TARGET JianLiuPlayer APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
 # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
     if(ANDROID)
-        add_library(BitPlayer SHARED
+        add_library(JianLiuPlayer SHARED
             ${PROJECT_SOURCES}
         )
 # Define properties for Android with Qt 5 after find_package() calls as:
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
-        add_executable(BitPlayer
+        add_executable(JianLiuPlayer
             ${PROJECT_SOURCES}
         )
     endif()
 endif()
 
-target_link_libraries(BitPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(JianLiuPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 if(WIN32)
     # Windows：直接链接 mpv/dll 下的导入库（libmpv-2.dll）
@@ -101,7 +101,7 @@ if(WIN32)
         message(FATAL_ERROR
             "缺少 libmpv：${MPV_LIBRARY}\n"
             "请从 https://sourceforge.net/projects/mpv-player-windows/files/libmpv/ 下载 libmpv-2.dll，"
-            "放到 client/BitPlayer/mpv/dll/ 后重新配置。")
+            "放到 client/JianLiuPlayer/mpv/dll/ 后重新配置。")
     endif()
 else()
     # Linux/macOS：使用系统或私有前缀的 libmpv（便于在 Linux 上做编译检查）
@@ -110,15 +110,15 @@ else()
         message(FATAL_ERROR "未找到 libmpv：Linux 请安装 libmpv-dev，Windows 请把 libmpv-2.dll 放到 mpv/dll/")
     endif()
 endif()
-target_link_libraries(BitPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${MPV_LIBRARY} Qt6::Network)
+target_link_libraries(JianLiuPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${MPV_LIBRARY} Qt6::Network)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
 if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.BitPlayer)
+  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.JianLiuPlayer)
 endif()
-set_target_properties(BitPlayer PROPERTIES
+set_target_properties(JianLiuPlayer PROPERTIES
     ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -127,12 +127,12 @@ set_target_properties(BitPlayer PROPERTIES
 )
 
 include(GNUInstallDirs)
-install(TARGETS BitPlayer
+install(TARGETS JianLiuPlayer
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(BitPlayer)
+    qt_finalize_executable(JianLiuPlayer)
 endif()

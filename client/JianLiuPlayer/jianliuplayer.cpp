@@ -1,22 +1,22 @@
-#include "bitplayer.h"
-#include "./ui_bitplayer.h"
+#include "jianliuplayer.h"
+#include "./ui_jianliuplayer.h"
 #include <QGraphicsDropShadowEffect>
 #include <QMouseEvent>
 #include "util.h"
 #include "./model/datacenter.h"
 
 
-BitPlayer* BitPlayer::instance = nullptr;
-BitPlayer* BitPlayer::getInstance()
+JianLiuPlayer* JianLiuPlayer::instance = nullptr;
+JianLiuPlayer* JianLiuPlayer::getInstance()
 {
     if(nullptr == instance){
-        instance = new BitPlayer();
+        instance = new JianLiuPlayer();
     }
 
     return instance;
 }
 
-void BitPlayer::showSystemPageBtn(bool isShow)
+void JianLiuPlayer::showSystemPageBtn(bool isShow)
 {
     if(isShow){
         ui->sysPageBtn->show();
@@ -25,9 +25,9 @@ void BitPlayer::showSystemPageBtn(bool isShow)
     }
 }
 
-BitPlayer::BitPlayer(QWidget *parent)
+JianLiuPlayer::JianLiuPlayer(QWidget *parent)
     : QWidget(parent)
-    , ui(new Ui::BitPlayer)
+    , ui(new Ui::JianLiuPlayer)
 {
     ui->setupUi(this);
     initUI();
@@ -35,12 +35,12 @@ BitPlayer::BitPlayer(QWidget *parent)
     connectSigalAndSlot();
 }
 
-BitPlayer::~BitPlayer()
+JianLiuPlayer::~JianLiuPlayer()
 {
     delete ui;
 }
 
-void BitPlayer::onSwitchPage(int pageId)
+void JianLiuPlayer::onSwitchPage(int pageId)
 {
     onSwitchPageUI(pageId);
 
@@ -55,7 +55,7 @@ void BitPlayer::onSwitchPage(int pageId)
     }
 }
 
-void BitPlayer::switchToUserInfoPage(const QString &userId)
+void JianLiuPlayer::switchToUserInfoPage(const QString &userId)
 {
     onSwitchPageUI(MyselfPage);
     auto dataCenter = model::DataCenter::getInstance();
@@ -70,13 +70,13 @@ void BitPlayer::switchToUserInfoPage(const QString &userId)
 
 }
 
-void BitPlayer::onSwitchPageUI(int pageId)
+void JianLiuPlayer::onSwitchPageUI(int pageId)
 {
     ui->stackedWidget->setCurrentIndex(pageId);
     resetswitchBtnInfo(pageId);
 }
 
-void BitPlayer::initUI()
+void JianLiuPlayer::initUI()
 {
     // 去除窗口的边框
     setWindowFlags(Qt::FramelessWindowHint);
@@ -90,7 +90,7 @@ void BitPlayer::initUI()
     dropShadow->setColor(Qt::black);
     dropShadow->setBlurRadius(5);
     dropShadow->setOffset(0, 0);
-    ui->bitPlayerBg->setGraphicsEffect(dropShadow);
+    ui->jianliuPlayerBg->setGraphicsEffect(dropShadow);
 
     // 设置页面切换按钮的文本和图片
     ui->homePageBtn->setTextColor("#000000");
@@ -113,7 +113,7 @@ void BitPlayer::initUI()
     }
 }
 
-void BitPlayer::connectSigalAndSlot()
+void JianLiuPlayer::connectSigalAndSlot()
 {
     connect(ui->minBtn, &QPushButton::clicked, this, &QWidget::showMinimized);
     connect(ui->quitBtn, &QPushButton::clicked, this, [=]{
@@ -122,9 +122,9 @@ void BitPlayer::connectSigalAndSlot()
         close();
     });
 
-    connect(ui->homePageBtn, &PageSwitchButton::switchPage, this, &BitPlayer::onSwitchPage);
-    connect(ui->myPageBtn, &PageSwitchButton::switchPage, this, &BitPlayer::onSwitchPage);
-    connect(ui->sysPageBtn, &PageSwitchButton::switchPage, this, &BitPlayer::onSwitchPage);
+    connect(ui->homePageBtn, &PageSwitchButton::switchPage, this, &JianLiuPlayer::onSwitchPage);
+    connect(ui->myPageBtn, &PageSwitchButton::switchPage, this, &JianLiuPlayer::onSwitchPage);
+    connect(ui->sysPageBtn, &PageSwitchButton::switchPage, this, &JianLiuPlayer::onSwitchPage);
     connect(ui->myPage, &MyselfWidget::switchUploadVideoPage, this, [=](int pageId, const QString& videoPath){
         onSwitchPage(pageId);
         ui->uploadVideoPage->setVideoTittle(videoPath);
@@ -135,7 +135,7 @@ void BitPlayer::connectSigalAndSlot()
     });
 }
 
-void BitPlayer::resetswitchBtnInfo(int pageId)
+void JianLiuPlayer::resetswitchBtnInfo(int pageId)
 {
     // 重新设置bodyLeft中按钮上的文本和图片的高亮
     // 设置文本的颜色
@@ -166,7 +166,7 @@ void BitPlayer::resetswitchBtnInfo(int pageId)
     }
 }
 
-void BitPlayer::mousePressEvent(QMouseEvent *event)
+void JianLiuPlayer::mousePressEvent(QMouseEvent *event)
 {
     // 先要获取鼠标点击时的位置
     QPoint point = event->position().toPoint();
@@ -182,7 +182,7 @@ void BitPlayer::mousePressEvent(QMouseEvent *event)
     QWidget::mousePressEvent(event);
 }
 
-void BitPlayer::mouseMoveEvent(QMouseEvent *event)
+void JianLiuPlayer::mouseMoveEvent(QMouseEvent *event)
 {
     QPoint point = event->position().toPoint();
     if(ui->head->geometry().contains(point)){

@@ -4,7 +4,7 @@
 #include "newpassworddialog.h"
 #include "./model/datacenter.h"
 #include "toast.h"
-#include "bitplayer.h"
+#include "jianliuplayer.h"
 
 ModifyMyselfDialog::ModifyMyselfDialog(bool isModifyPassoword, QWidget *parent)
     : QDialog(parent)
@@ -39,10 +39,10 @@ ModifyMyselfDialog::ModifyMyselfDialog(bool isModifyPassoword, QWidget *parent)
     });
 
     // 位置在主窗口中心显示
-    BitPlayer* bitplayer = BitPlayer::getInstance();
-    QPoint point = bitplayer->mapToGlobal(QPoint(0, 0));
-    point.setX(point.x() + (bitplayer->width()-width())/2);
-    point.setY(point.y() + (bitplayer->height()-height())/2);
+    JianLiuPlayer* jianliuplayer = JianLiuPlayer::getInstance();
+    QPoint point = jianliuplayer->mapToGlobal(QPoint(0, 0));
+    point.setX(point.x() + (jianliuplayer->width()-width())/2);
+    point.setY(point.y() + (jianliuplayer->height()-height())/2);
     move(point);
 }
 

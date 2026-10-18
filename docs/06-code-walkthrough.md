@@ -31,7 +31,7 @@ python3 scripts/e2e-test.py --session <sid> --admin   # 端到端
 | `server/svc_*/source/svc_rpc.cc` | RPC 实现：校验、调 data、组响应 | `VideoServiceImpl::allVideoList` |
 | `server/svc_*/source/svc_data.cc` | 业务编排（跨 DAO） | `SvcData::newVideo` |
 | `server/svc_*/source/svc_sync.cc` | 缓存同步/MQ 回调 | `CacheToDB::callback` |
-| `client/BitPlayer/` | Qt 客户端 | `netclient/netclient.cpp` |
+| `client/JianLiuPlayer/` | Qt 客户端 | `netclient/netclient.cpp` |
 
 ---
 

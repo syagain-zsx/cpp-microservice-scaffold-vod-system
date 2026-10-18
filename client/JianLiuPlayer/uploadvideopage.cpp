@@ -1,6 +1,6 @@
 #include "uploadvideopage.h"
 #include "ui_uploadvideopage.h"
-#include "bitplayer.h"
+#include "jianliuplayer.h"
 #include "util.h"
 #include <QFileDialog>
 #include "./model/datacenter.h"

@@ -1,4 +1,4 @@
-# 笺流客户端（BitPlayer）Windows 构建脚本
+# 笺流客户端（JianLiuPlayer）Windows 构建脚本
 #
 # 用法（PowerShell）:
 #   .\build-windows.ps1 -QtPath "D:/Qt/6.7.3/mingw_64" [-BuildDir build] [-Jobs 8]
@@ -42,8 +42,8 @@ cmake --build $BuildDir -j $Jobs
 if ($LASTEXITCODE -ne 0) { throw "编译失败" }
 
 Write-Host ""
-Write-Host "[build] 完成：$BuildDir\BitPlayer.exe"
+Write-Host "[build] 完成：$BuildDir\JianLiuPlayer.exe"
 Write-Host "[build] 运行前："
-Write-Host "  1) 用 windeployqt 收集 Qt DLL： windeployqt $BuildDir\BitPlayer.exe"
+Write-Host "  1) 用 windeployqt 收集 Qt DLL： windeployqt $BuildDir\JianLiuPlayer.exe"
 Write-Host "  2) 把 libmpv-2.dll 复制到 exe 同目录"
 Write-Host "  3) 在「当前工作目录」放置 config.ini（serverIp/serverPort）"

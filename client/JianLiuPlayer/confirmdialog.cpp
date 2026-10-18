@@ -1,5 +1,5 @@
 #include "confirmdialog.h"
-#include "bitplayer.h"
+#include "jianliuplayer.h"
 #include <QFrame>
 #include <QPushButton>
 
@@ -10,12 +10,12 @@ ConfirmDialog::ConfirmDialog(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
     setFixedSize(1450, 860);
 
-    // BitPlayer* bitplayer = BitPlayer::getInstance();
-    // QPoint point = bitplayer->mapToGlobal(QPoint(0, 0));
+    // JianLiuPlayer* jianliuplayer = JianLiuPlayer::getInstance();
+    // QPoint point = jianliuplayer->mapToGlobal(QPoint(0, 0));
     // move(point);
 
     // 设置父窗口--将来窗口就是基于父窗口位置显示的
-    this->setParent(BitPlayer::getInstance());
+    this->setParent(JianLiuPlayer::getInstance());
     this->move(0, 0);  // 移动到父窗口的左上角
 
     // 遮罩层

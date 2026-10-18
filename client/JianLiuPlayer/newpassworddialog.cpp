@@ -1,6 +1,6 @@
 #include "newpassworddialog.h"
 #include "ui_newpassworddialog.h"
-#include "bitplayer.h"
+#include "jianliuplayer.h"
 
 NewPasswordDialog::NewPasswordDialog(QWidget *parent)
     : QDialog(parent)
@@ -17,10 +17,10 @@ NewPasswordDialog::NewPasswordDialog(QWidget *parent)
     connect(ui->passwordEdit2, &QLineEdit::editingFinished, this, &NewPasswordDialog::onEdittingFinished);
 
     // 位置在主窗口中心显示
-    BitPlayer* bitplayer = BitPlayer::getInstance();
-    QPoint point = bitplayer->mapToGlobal(QPoint(0, 0));
-    point.setX(point.x() + (bitplayer->width()-width())/2);
-    point.setY(point.y() + (bitplayer->height()-height())/2);
+    JianLiuPlayer* jianliuplayer = JianLiuPlayer::getInstance();
+    QPoint point = jianliuplayer->mapToGlobal(QPoint(0, 0));
+    point.setX(point.x() + (jianliuplayer->width()-width())/2);
+    point.setY(point.y() + (jianliuplayer->height()-height())/2);
     move(point);
 }
 

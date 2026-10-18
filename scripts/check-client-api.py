@@ -24,7 +24,7 @@ def main():
     server_rpcs = set(re.findall(r"rpc\s+(\w+)\s*\(", proto))
 
     client_paths = set()
-    for f in glob.glob(os.path.join(ROOT, "client/BitPlayer/netclient/*.cpp")):
+    for f in glob.glob(os.path.join(ROOT, "client/JianLiuPlayer/netclient/*.cpp")):
         for m in re.findall(r"/HttpService/(\w+)", open(f, encoding="utf-8").read()):
             client_paths.add(m)
 
@@ -35,7 +35,7 @@ def main():
             r"(?:optional\s+|repeated\s+|required\s+)?[\w\.]+\s+(\w+)\s*=\s*\d+\s*;", text))
 
     client_keys = set()
-    for pattern in ("client/BitPlayer/netclient/*.cpp", "client/BitPlayer/model/*.cpp"):
+    for pattern in ("client/JianLiuPlayer/netclient/*.cpp", "client/JianLiuPlayer/model/*.cpp"):
         for f in glob.glob(os.path.join(ROOT, pattern)):
             client_keys.update(re.findall(r'\["(\w+)"\]', open(f, encoding="utf-8").read()))
 

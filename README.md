@@ -29,7 +29,7 @@
 ## 架构总览
 
 ```text
- Qt6 客户端 (BitPlayer)
+ Qt6 客户端 (JianLiuPlayer)
         │  HTTP + protobuf
         ▼
  ┌──────────────┐
@@ -90,8 +90,8 @@
 │   ├── svc_file/           # 文件服务
 │   └── svc_transcode/      # 转码服务
 ├── client/
-│   ├── BitPlayer/          # Qt6 客户端
-│   └── BitPlayerMockServer/# 客户端联调用的 Mock 服务
+│   ├── JianLiuPlayer/          # Qt6 客户端
+│   └── JianLiuMockServer/# 客户端联调用的 Mock 服务
 ├── deploy/                 # docker-compose / Dockerfile / 配置 / SQL
 ├── docs/                   # 架构、接口、部署、学习笔记、面试题
 ├── examples/               # 脚手架各模块示例（学习用，不参与主构建）
@@ -162,17 +162,17 @@ python3 scripts/check-doc-links.py
 
 ## 客户端
 
-`client/BitPlayer` 是 Qt 6.7 工程（Windows + MinGW 构建），依赖 libmpv 的 DLL：
+`client/JianLiuPlayer` 是 Qt 6.7 工程（Windows + MinGW 构建），依赖 libmpv 的 DLL：
 
 ```bash
-# 在 Windows / Qt Creator 中打开 client/BitPlayer/CMakeLists.txt
-# 运行前把 config.ini 放到「当前工作目录」（模板见 client/BitPlayer/config.ini.example）：
+# 在 Windows / Qt Creator 中打开 client/JianLiuPlayer/CMakeLists.txt
+# 运行前把 config.ini 放到「当前工作目录」（模板见 client/JianLiuPlayer/config.ini.example）：
 # [server]
 # serverIp=192.168.131.128
 # serverPort=10000
 ```
 
-mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/dll/`。
+mpv 运行库（约 108 MB）不入库，下载后放到 `client/JianLiuPlayer/mpv/dll/`。
 
 ---
 

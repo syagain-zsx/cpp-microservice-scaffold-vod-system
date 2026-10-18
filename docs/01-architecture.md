@@ -42,7 +42,7 @@ server/svc_*/                服务装配层：
         svc_rpc.*             RPC 实现：参数校验、调用 data 层、组织响应
         svc_data.*            业务编排：跨 DAO 组合、权限、状态机
         svc_mq.* / svc_sync.* 消息生产/消费、缓存同步
-client/BitPlayer/            Qt6 客户端（UI + netclient + model）
+client/JianLiuPlayer/            Qt6 客户端（UI + netclient + model）
 ```
 
 **依赖方向**：`svc_*` → `data` → `JianLiuScaffold`；`data` 不感知 RPC，`svc_*` 不直接写 SQL。
@@ -50,7 +50,7 @@ client/BitPlayer/            Qt6 客户端（UI + netclient + model）
 ### 请求在代码里的路径（以 `newVideo` 为例）
 
 ```text
-BitPlayer::uploadVideo 页面
+JianLiuPlayer::uploadVideo 页面
   → NetClient::newVideoAsync            HTTP POST /HttpService/newVideo
     → gateway/svc_rpc.cc: HttpServiceImpl::newVideo
       → gateway/svc_data.cc: judgePermission()          查 URL→角色 + 会话角色

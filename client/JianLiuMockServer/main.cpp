@@ -1,4 +1,4 @@
-#include "bitplayerserver.h"
+#include "jianliumockserver.h"
 
 #include <QApplication>
 #include "httpserver.h"
@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     LOG()<<"Http服务器启动成功";
 
-    BitPlayerServer w;
+    JianLiuMockServer w;
     w.show();
     return a.exec();
 }

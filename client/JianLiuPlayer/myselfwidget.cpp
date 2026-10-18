@@ -6,7 +6,7 @@
 #include <QFileInfo>
 #include <QScrollBar>
 #include "modifymyselfdialog.h"
-#include "bitplayer.h"
+#include "jianliuplayer.h"
 #include "./model/data.h"
 #include "./model/datacenter.h"
 #include "toast.h"
@@ -117,9 +117,9 @@ void MyselfWidget::getMyselfInfoDone()
         return;
     }else if(myselfInfo->isBUser()){
         // 该用户为B端用户：管理员 或者 超级管理员，需要显示系统页面切换按钮
-        // bitPlayer
-        BitPlayer* bitPlayer = BitPlayer::getInstance();
-        bitPlayer->showSystemPageBtn(true);
+        // jianliuPlayer
+        JianLiuPlayer* jianliuPlayer = JianLiuPlayer::getInstance();
+        jianliuPlayer->showSystemPageBtn(true);
     }
 
     // 普通用户 或者 管理员
@@ -632,7 +632,7 @@ void MyselfWidget::logoutDone()
     loadMyself();
 
     // 注意：主界面上的系统页面切换按钮隐藏
-    BitPlayer::getInstance()->showSystemPageBtn(false);
+    JianLiuPlayer::getInstance()->showSystemPageBtn(false);
 }
 
 void MyselfWidget::setNicknameDone(const QString &nickname)

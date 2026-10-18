@@ -1,4 +1,4 @@
-# 笺流客户端（BitPlayer）
+# 笺流客户端（JianLiuPlayer）
 
 Qt 6 桌面客户端：登录、首页、搜索、播放（libmpv）、上传、弹幕、个人中心、后台管理。
 
@@ -22,7 +22,7 @@ Qt 6 桌面客户端：登录、首页、搜索、播放（libmpv）、上传、
 2. 解压后把 `libmpv-2.dll` 放到：
 
 ```text
-client/BitPlayer/mpv/dll/libmpv-2.dll
+client/JianLiuPlayer/mpv/dll/libmpv-2.dll
 ```
 
 > 该 DLL 约 100 MB，已加入 `.gitignore`，不进仓库。
@@ -46,18 +46,18 @@ client/BitPlayer/mpv/dll/libmpv-2.dll
 
 ### Qt Creator（推荐）
 
-1. `文件 → 打开文件或项目`，选择 `client/BitPlayer/CMakeLists.txt`；
+1. `文件 → 打开文件或项目`，选择 `client/JianLiuPlayer/CMakeLists.txt`；
 2. 选择 `Desktop Qt 6.7.x MinGW 64-bit` 套件，配置后构建。
 
 ### 命令行
 
 ```powershell
-cd client/BitPlayer
+cd client/JianLiuPlayer
 cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="D:/Qt/6.7.3/mingw_64"
 cmake --build build -j
 ```
 
-产物：`build/BitPlayer.exe`（需要把 Qt 的 `windeployqt` 跑一遍，或将 Qt bin 加入 PATH）。
+产物：`build/JianLiuPlayer.exe`（需要把 Qt 的 `windeployqt` 跑一遍，或将 Qt bin 加入 PATH）。
 
 ### Linux 编译（可选，用于快速验证）
 
@@ -86,7 +86,7 @@ serverIp=192.168.131.128
 serverPort=10000
 ```
 
-仓库里提供了模板 [`config.ini.example`](BitPlayer/config.ini.example)，复制为 `config.ini` 后按需修改。
+仓库里提供了模板 [`config.ini.example`](JianLiuPlayer/config.ini.example)，复制为 `config.ini` 后按需修改。
 
 - `serverIp` 填运行网关的机器 IP（本地联调用 `127.0.0.1`）；
 - `serverPort` 默认 `10000`；
@@ -97,9 +97,9 @@ serverPort=10000
 ## 4. 代码结构
 
 ```text
-BitPlayer/
+JianLiuPlayer/
 ├── main.cpp                启动页 + 主窗口
-├── bitplayer.*             主框架（页面切换）
+├── jianliuplayer.*             主框架（页面切换）
 ├── login.*                 登录/注册（邮箱验证码）
 ├── startuppage.*           启动页
 ├── homepagewidget.*        首页（推荐列表）

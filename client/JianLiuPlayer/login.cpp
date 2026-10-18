@@ -4,7 +4,7 @@
 #include <QGraphicsDropShadowEffect>
 #include "toast.h"
 #include "./model/datacenter.h"
-#include "bitplayer.h"
+#include "jianliuplayer.h"
 
 Login::Login(QWidget *parent)
     : QWidget(parent)
@@ -95,10 +95,10 @@ void Login::reset()
 
 void Login::showWindow()
 {
-    BitPlayer* bitplayer = BitPlayer::getInstance();
-    QPoint point = bitplayer->mapToGlobal(QPoint(0, 0));
-    point.setX(point.x() + (bitplayer->width()-width())/2);
-    point.setY(point.y() + (bitplayer->height()-height())/2);
+    JianLiuPlayer* jianliuplayer = JianLiuPlayer::getInstance();
+    QPoint point = jianliuplayer->mapToGlobal(QPoint(0, 0));
+    point.setX(point.x() + (jianliuplayer->width()-width())/2);
+    point.setY(point.y() + (jianliuplayer->height()-height())/2);
     move(point);
 }
 

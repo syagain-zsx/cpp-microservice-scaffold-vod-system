@@ -1,6 +1,6 @@
 # 客户端联调指南（M4）
 
-> 目标：在 Windows 上把 BitPlayer 编译起来，按顺序打通「登录 → 首页 → 播放 → 上传 → 个人中心 → 后台」。
+> 目标：在 Windows 上把 JianLiuPlayer 编译起来，按顺序打通「登录 → 首页 → 播放 → 上传 → 个人中心 → 后台」。
 > 服务端已通过 `scripts/e2e-test.py` 验证（18/18）。
 >
 > **验证进展（2026-10-18）**：客户端已在 Linux（Qt 6.2.4 + libmpv 0.34）下**编译通过**，
@@ -57,7 +57,7 @@ serverPort=10000
 > 客户端用 `QDir::currentPath()` 找 `config.ini`，不是 exe 同目录。
 > Qt Creator 运行时默认工作目录是构建目录，把 `config.ini` 放过去，或改运行配置的工作目录。
 
-libmpv：`client/BitPlayer/mpv/dll/libmpv-2.dll`（约 100MB，需自行下载，见 [client/README.md](../client/README.md)）。
+libmpv：`client/JianLiuPlayer/mpv/dll/libmpv-2.dll`（约 100MB，需自行下载，见 [client/README.md](../client/README.md)）。
 
 ---
 
@@ -65,14 +65,14 @@ libmpv：`client/BitPlayer/mpv/dll/libmpv-2.dll`（约 100MB，需自行下载�
 
 ```powershell
 # 前提：Qt 6.7.x MinGW 64-bit 已安装，MinGW 的 bin 在 PATH
-cd client/BitPlayer
+cd client/JianLiuPlayer
 cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="D:/Qt/6.7.3/mingw_64"
 cmake --build build -j
 # 或用脚本：
 ./build-windows.ps1 -QtPath "D:/Qt/6.7.3/mingw_64"
 ```
 
-构建后建议用 `windeployqt build/BitPlayer.exe` 收集 Qt DLL，再把 `libmpv-2.dll` 放到 exe 同目录。
+构建后建议用 `windeployqt build/JianLiuPlayer.exe` 收集 Qt DLL，再把 `libmpv-2.dll` 放到 exe 同目录。
 
 ---
 

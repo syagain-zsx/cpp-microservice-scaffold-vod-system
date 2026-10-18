@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>BitPlayer</class>
- <widget class="QWidget" name="BitPlayer">
+ <class>JianLiuPlayer</class>
+ <widget class="QWidget" name="JianLiuPlayer">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -27,9 +27,9 @@
     <number>5</number>
    </property>
    <item>
-    <widget class="QWidget" name="bitPlayerBg" native="true">
+    <widget class="QWidget" name="jianliuPlayerBg" native="true">
      <property name="styleSheet">
-      <string notr="true">#bitPlayerBg
+      <string notr="true">#jianliuPlayerBg
 {
     background-color : #FFFFFF;  /*设置背景色*/
 }</string>

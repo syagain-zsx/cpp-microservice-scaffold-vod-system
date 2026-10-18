@@ -1,11 +1,11 @@
-#ifndef BITPLAYER_H
-#define BITPLAYER_H
+#ifndef JIANLIUPLAYER_H
+#define JIANLIUPLAYER_H
 
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class BitPlayer;
+class JianLiuPlayer;
 }
 QT_END_NAMESPACE
 
@@ -14,13 +14,13 @@ enum StackedWidgetPage{
     HomePage, MyselfPage, AdminPage, UploadPage
 };
 
-class BitPlayer : public QWidget
+class JianLiuPlayer : public QWidget
 {
     Q_OBJECT
 
 public:
-    ~BitPlayer();
-    static BitPlayer* getInstance();
+    ~JianLiuPlayer();
+    static JianLiuPlayer* getInstance();
 
     // 是否显示系统页面切换按钮
     void showSystemPageBtn(bool isShow);
@@ -33,7 +33,7 @@ private slots:
     void onSwitchPage(int pageId);
 
 private:
-    BitPlayer(QWidget *parent = nullptr);
+    JianLiuPlayer(QWidget *parent = nullptr);
 
     // 设置界面的UI部分
     void initUI();
@@ -51,9 +51,9 @@ private:
     void mouseMoveEvent(QMouseEvent *event);
 
 private:
-    Ui::BitPlayer *ui;
+    Ui::JianLiuPlayer *ui;
 
     QPoint dragPos;
-    static BitPlayer* instance;
+    static JianLiuPlayer* instance;
 };
-#endif // BITPLAYER_H
+#endif // JIANLIUPLAYER_H

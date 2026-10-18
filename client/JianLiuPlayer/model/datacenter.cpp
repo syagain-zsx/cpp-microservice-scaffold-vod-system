@@ -42,7 +42,7 @@ void DataCenter::initDataFile()
 {
     // 构造出要保存的文件的路径  保存到系统 appdata目录
     QString basePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QString filePath = basePath + "/BitPlayer.json";
+    QString filePath = basePath + "/JianLiuPlayer.json";
     LOG()<<filePath;
 
     // 检测路径是否存在
@@ -67,7 +67,7 @@ void DataCenter::initDataFile()
 void DataCenter::saveDataFile()
 {
     QString basePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QString filePath = basePath + "/BitPlayer.json";
+    QString filePath = basePath + "/JianLiuPlayer.json";
 
     QFile file(filePath);
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
@@ -103,7 +103,7 @@ void DataCenter::saveDataFile()
 void DataCenter::loadDataFile()
 {
     QString basePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QString filePath = basePath + "/BitPlayer.json";
+    QString filePath = basePath + "/JianLiuPlayer.json";
 
     // 判定文件是否存在，不存在则创建，此处创建一个空白的json文件
     QFileInfo fileInfo(filePath);
