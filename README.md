@@ -157,6 +157,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | [docs/01-architecture.md](docs/01-architecture.md) | 服务划分、代码分层、数据模型、关键流程 |
 | [docs/03-deploy.md](docs/03-deploy.md) | 部署手册（本地实测 + Docker）、常见问题 |
 | [docs/04-interview.md](docs/04-interview.md) | 面试讲述稿、高频问答、简历模板 |
+| [docs/05-performance.md](docs/05-performance.md) | 压测方法、基线数据、优化清单 |
 | [docs/notes/](docs/notes/README.md) | 中间件学习笔记（Redis/MQ/RPC/ODB/HLS） |
 
 ---
@@ -183,6 +184,6 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | M5 业务闭环（服务端） | ✅（转码/HLS/点赞/弹幕/关注/审核） |
 | M6 测试与部署（gtest 7 项 / Docker 编排） | 🔄 |
 | M7 文档、学习笔记、面试材料 | ✅ |
-| M8 性能优化与压测 | ⬜ |
+| M8 性能优化与压测 | 🔄（基线 ~290 QPS，优化待做） |
 
 详见 [docs/ROADMAP.md](docs/ROADMAP.md)。

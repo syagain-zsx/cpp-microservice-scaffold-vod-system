@@ -159,7 +159,7 @@ vod-system/
 | **M5** 业务闭环 | 转码 + HLS 播放 + 互动 | FFmpeg 转码链路、弹幕、点赞、关注、搜索 | 上传的 mp4 能自动转 HLS 并在客户端播放，互动数据正确 | 🔄 服务端已完成（转码/HLS/点赞/弹幕/关注/审核），客户端播放待 M4 |
 | **M6** 质量与部署 | 可交付 | 清理死代码、补测试、docker-compose、一键脚本 | `docker compose up` 起全栈；gtest 通过 | 🔄 进行中（测试/脚本/编排已完成，Docker 未在本环境验证） |
 | **M7** 文档与求职 | 能讲出来 | 架构文档、学习笔记、面试题、简历 | docs 完整；能脱稿讲 10 分钟 | 1 周 |
-| **M8** 优化与压测 | 有数据支撑 | 缓存命中、连接池、RPC 压测、转码耗时 | 一张压测/优化对比表 | 可穿插 |
+| **M8** 优化与压测 | 有数据支撑 | 缓存命中、连接池、RPC 压测、转码耗时 | 一张压测/优化对比表 | 🔄 基线已完成（scripts/bench.py + docs/05-performance.md） |
 
 ### M1 任务清单
 
@@ -324,6 +324,9 @@ curl -X POST .../HttpService/allVideoList   # -> 视频列表
   镜像把依赖库放 `/usr/local/lib/jianliu` 避免覆盖系统库；
 - 新增 `docs/03-deploy.md`：本地部署（实测）+ Docker（未验证）+ 常见问题；
 - 验证 gflags 行为：`--flagfile` 中的未知参数会被忽略（Docker 共用一份配置可行），命令行传未知参数会报错。
+- 从零构建验证：`BUILD_DIR=/tmp/build-check ./scripts/build.sh` 通过，产出 5 个可执行文件；
+- 压测基线：`allVideoList` 在 20 并发下 276 QPS（p50 68ms），50 并发下 290 QPS（p99 346ms），
+  2 核 Debug 环境，脚本 `scripts/bench.py`，分析见 `docs/05-performance.md`。
 
 **业务闭环补验（服务端）**
 
