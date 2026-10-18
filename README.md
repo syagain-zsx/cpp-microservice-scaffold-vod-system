@@ -122,6 +122,14 @@ cmake --build build -j$(nproc)
 
 服务端口：网关 `10000`、文件 `10001`、用户 `10002`、视频 `10003`。
 
+### 4. 验证
+
+```bash
+./scripts/smoke-test.sh      # 网关 + 会话 + 列表（4 项）
+ctest --test-dir build       # 7 个单元测试
+curl -s http://127.0.0.1:10000/status | head   # brpc 状态页
+```
+
 ---
 
 ## 客户端
@@ -130,7 +138,7 @@ cmake --build build -j$(nproc)
 
 ```bash
 # 在 Windows / Qt Creator 中打开 client/BitPlayer/CMakeLists.txt
-# 运行前在同目录放置 config.ini：
+# 运行前把 config.ini 放到「当前工作目录」（模板见 client/BitPlayer/config.ini.example）：
 # [server]
 # serverIp=192.168.131.128
 # serverPort=10000
@@ -174,6 +182,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | M4 客户端联调 | ⬜（需 Windows + Qt6 + libmpv） |
 | M5 业务闭环（服务端） | ✅（转码/HLS/点赞/弹幕/关注/审核） |
 | M6 测试与部署（gtest 7 项 / Docker 编排） | 🔄 |
-| M7–M8 文档、面试材料、优化 | ⬜ |
+| M7 文档、学习笔记、面试材料 | ✅ |
+| M8 性能优化与压测 | ⬜ |
 
 详见 [docs/ROADMAP.md](docs/ROADMAP.md)。

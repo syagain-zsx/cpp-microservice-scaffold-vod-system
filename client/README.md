@@ -58,7 +58,7 @@ serverIp=192.168.131.128
 serverPort=10000
 ```
 
-仓库里提供了模板 [`config.ini.example`](config.ini.example)，复制为 `config.ini` 后按需修改。
+仓库里提供了模板 [`config.ini.example`](BitPlayer/config.ini.example)，复制为 `config.ini` 后按需修改。
 
 - `serverIp` 填运行网关的机器 IP（本地联调用 `127.0.0.1`）；
 - `serverPort` 默认 `10000`；

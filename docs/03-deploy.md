@@ -25,7 +25,7 @@
 
 ## 2. 中间件连接参数
 
-默认值在 [`deploy/conf/global.conf`](conf/global.conf)（`${XXX}` 由 `envsubst` 注入），
+默认值在 [`deploy/conf/global.conf`](../deploy/conf/global.conf)（`${XXX}` 由 `envsubst` 注入），
 本地联调时由 [`scripts/run-dev.sh`](../scripts/run-dev.sh) 通过 gflags 传入：
 
 | 变量 | 默认（Docker 网络） | 说明 |
