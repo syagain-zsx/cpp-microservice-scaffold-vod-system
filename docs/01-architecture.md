@@ -54,7 +54,7 @@ BitPlayer::uploadVideo 页面
   → NetClient::newVideoAsync            HTTP POST /HttpService/newVideo
     → gateway/svc_rpc.cc: HttpServiceImpl::newVideo
       → gateway/svc_data.cc: judgePermission()          查 URL→角色 + 会话角色
-      → biterpc channel 选一个 video 节点
+      → JianLiuRpc channel 选一个 video 节点
         → video/svc_rpc.cc: VideoServiceImpl::newVideo
           → video/svc_data.cc: SvcData::newVideo()      生成 video_id、写库、发 MQ
             → data/video.cc: VideoData::insert()         MySQL + Redis
