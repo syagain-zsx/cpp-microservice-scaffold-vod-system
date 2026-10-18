@@ -29,8 +29,8 @@ namespace JianLiuSvc {
     class SvcWatcher {
         public:
             using ptr = std::shared_ptr<SvcWatcher>;
-            //回调函数，在产生事件时，传入两个数据：1-服务名称，2-节点地址
-            using ModCallbck = std::function<void(std::string, std::string)>;
+            //回调函数，在产生事件时传入：1-服务名称，2-节点地址，3-etcd 实例键（/svc/instance）
+            using ModCallbck = std::function<void(const std::string &, const std::string &, const std::string &)>;
             SvcWatcher(const std::string &reg_center_addr, ModCallbck &&online_callback, ModCallbck &&offline_callback);
             ~SvcWatcher();
             // 数据监控并不针对单独数据，而是针对 / 目录

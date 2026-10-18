@@ -59,6 +59,10 @@ ChannelPtr Channels::select() {
 }
 ```
 
+**节点表按 etcd 实例键跟踪**：`_instances[服务名][/svc/instance_id] = 地址`。
+重启后新旧实例可能共用同一地址，旧 key 到期删除时，只有「该地址没有其它实例」才摘除信道，
+避免把新实例的通道误删（这是本项目踩过的一个真实 bug，见 04-interview 排错一节）。
+
 brpc 参数：`protocol = baidu_std`、`timeout_ms = 30000`。
 大文件上传不走 RPC，改用 `PROTOCOL_HTTP` 直接 POST 到 file 节点（见 `svc_gateway` 的 uploadVideo）。
 

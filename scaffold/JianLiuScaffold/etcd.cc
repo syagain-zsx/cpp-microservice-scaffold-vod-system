@@ -80,12 +80,12 @@ void SvcWatcher::callback(const etcd::Response &resp) {
             std::string svc_name = parse_key(e.kv().key());
             std::string svc_addr = e.kv().as_string();
             DBG(" {} 服务上线节点: {}", svc_name, svc_addr);
-            if (_online_callback) _online_callback(svc_name, svc_addr);
+            if (_online_callback) _online_callback(svc_name, svc_addr, e.kv().key());
         }else if (e.event_type() == etcd::Event::EventType::DELETE_) {
             std::string svc_name = parse_key(e.prev_kv().key());
             std::string svc_addr = e.prev_kv().as_string();
             DBG(" {} 服务下线节点: {}", svc_name, svc_addr);
-            if (_offline_callback) _offline_callback(svc_name, svc_addr);
+            if (_offline_callback) _offline_callback(svc_name, svc_addr, e.prev_kv().key());
         }else {
             WRN("无效通知类型");
         }
@@ -111,7 +111,7 @@ bool SvcWatcher::watch() {
             std::string svc_name = parse_key(v.key());
             std::string svc_addr = v.as_string();
             DBG("已有 {} 节点: {}", svc_name, svc_addr);
-            if (_online_callback) _online_callback(svc_name, svc_addr);
+            if (_online_callback) _online_callback(svc_name, svc_addr, v.key());
         }
     }
     //4. 周期性全量同步：修复链路抖动漏掉的事件，以及「同地址的新旧实例」下线误删
@@ -139,7 +139,7 @@ void SvcWatcher::resync() {
         }
         for (auto &v : resp.values()) {
             if (_online_callback) {
-                _online_callback(parse_key(v.key()), v.as_string());
+                _online_callback(parse_key(v.key()), v.as_string(), v.key());
             }
         }
     } catch (const std::exception &e) {

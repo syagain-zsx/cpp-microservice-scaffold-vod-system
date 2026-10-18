@@ -31,8 +31,9 @@ class SvcChannels {
         using ptr = std::shared_ptr<SvcChannels>;
         SvcChannels() = default;
         void setWatch(const std::string &svc_name);
-        void addNode(const std::string &svc_name, const std::string &addr);
-        void delNode(const std::string &svc_name, const std::string &addr);
+        // key 为 etcd 实例键（/svc/instance），用于区分同地址的新旧实例
+        void addNode(const std::string &svc_name, const std::string &addr, const std::string &key);
+        void delNode(const std::string &svc_name, const std::string &key);
         ChannelPtr getNode(const std::string &svc_name);
         std::optional<std::string> getNodeAddr(const std::string &svc_name);
     private:
@@ -40,6 +41,8 @@ class SvcChannels {
     private:
         std::mutex _mtx;
         std::unordered_map<std::string, Channels::ptr> _maps;
+        // svc_name -> (etcd 实例键 -> 地址)
+        std::unordered_map<std::string, std::unordered_map<std::string, std::string>> _instances;
 };
 
 class ClosureFactory {

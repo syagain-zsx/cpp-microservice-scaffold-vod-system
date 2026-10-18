@@ -34,8 +34,13 @@ namespace svc_gateway {
         channels->setWatch(_dis_settings.user_svc_name);
         channels->setWatch(_dis_settings.file_svc_name);
         channels->setWatch(_dis_settings.video_svc_name);
-        auto online_cb = std::bind(&JianLiuRpc::SvcChannels::addNode, channels.get(), std::placeholders::_1, std::placeholders::_2);
-        auto offline_cb = std::bind(&JianLiuRpc::SvcChannels::delNode, channels.get(), std::placeholders::_1, std::placeholders::_2);
+        auto online_cb = [channels](const std::string &svc, const std::string &addr, const std::string &key) {
+            channels->addNode(svc, addr, key);
+        };
+        auto offline_cb = [channels](const std::string &svc, const std::string &addr, const std::string &key) {
+            (void)addr;
+            channels->delNode(svc, key);
+        };
         //4. 构造服务发现对象
         auto watcher = std::make_shared<JianLiuSvc::SvcWatcher>(_dis_settings.registry_center_addr, online_cb, offline_cb);
         watcher->watch();

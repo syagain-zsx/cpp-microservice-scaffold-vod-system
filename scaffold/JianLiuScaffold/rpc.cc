@@ -70,27 +70,54 @@ void SvcChannels::setWatch(const std::string &svc_name) {
     auto channels = std::make_shared<Channels>();
     _maps.insert(std::make_pair(svc_name, channels));
 }
-void SvcChannels::addNode(const std::string &svc_name, const std::string &addr) {
-    // 加锁，查找集合，没找到则直接返回
-    // 找到了：获取集合，通过集合，添加节点
-    Channels::ptr channels = _Channels(svc_name);
-    if (!channels) { 
+void SvcChannels::addNode(const std::string &svc_name, const std::string &addr, const std::string &key) {
+    std::unique_lock<std::mutex> lock(_mtx);
+    auto &instances = _instances[svc_name];
+    // 同一地址可能对应多个 etcd 实例键（重启后新实例还是同一地址），只要有一个就保留信道
+    bool existed = false;
+    for (auto &item : instances) {
+        if (item.second == addr) {
+            existed = true;
+            break;
+        }
+    }
+    instances[key] = addr;
+    if (existed) {
+        return;
+    }
+    auto it = _maps.find(svc_name);
+    if (it == _maps.end()) {
         DBG("{} 有节点上线：{}, 未找到管理对象", svc_name, addr);
-        return; 
+        return;
     }
     DBG("添加 {} 服务节点 {} 管理", svc_name, addr);
-    return channels->insert(addr);
+    it->second->insert(addr);
 }
-void SvcChannels::delNode(const std::string &svc_name, const std::string &addr) {
-    // 加锁，查找集合，没找到则直接返回
-    // 找到了：获取集合，通过集合，删除节点
-    Channels::ptr channels = _Channels(svc_name);
-    if (!channels) { 
-        DBG("{} 有节点下线：{}, 未找到管理对象", svc_name, addr);
-        return; 
+void SvcChannels::delNode(const std::string &svc_name, const std::string &key) {
+    std::unique_lock<std::mutex> lock(_mtx);
+    auto sit = _instances.find(svc_name);
+    if (sit == _instances.end()) {
+        return;
+    }
+    auto kit = sit->second.find(key);
+    if (kit == sit->second.end()) {
+        return;
+    }
+    std::string addr = kit->second;
+    sit->second.erase(kit);
+    // 若该地址还有其它实例键（例如同地址的新实例），则不摘除信道
+    for (auto &item : sit->second) {
+        if (item.second == addr) {
+            DBG("{} 节点 {} 仍有其它实例，保留信道", svc_name, addr);
+            return;
+        }
+    }
+    auto it = _maps.find(svc_name);
+    if (it == _maps.end()) {
+        return;
     }
     DBG("移除 {} 服务节点 {} 管理", svc_name, addr);
-    return channels->remove(addr);
+    it->second->remove(addr);
 }
 ChannelPtr SvcChannels::getNode(const std::string &svc_name) {
     // 加锁，查找集合，没找到则直接返回

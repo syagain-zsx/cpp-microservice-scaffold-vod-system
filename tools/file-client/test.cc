@@ -42,8 +42,13 @@ int main(int argc, char *argv[])
     // 4. 定义JianLiuRpc::SvcChannels服务管理对象
     JianLiuRpc::SvcChannels scs;
     scs.setWatch(FLAGS_service_name);
-    auto online_cb = std::bind(&JianLiuRpc::SvcChannels::addNode, &scs, std::placeholders::_1, std::placeholders::_2);
-    auto offline_cb = std::bind(&JianLiuRpc::SvcChannels::delNode, &scs, std::placeholders::_1, std::placeholders::_2);
+    auto online_cb = [&scs](const std::string &svc, const std::string &addr, const std::string &key) {
+        scs.addNode(svc, addr, key);
+    };
+    auto offline_cb = [&scs](const std::string &svc, const std::string &addr, const std::string &key) {
+        (void)addr;
+        scs.delNode(svc, key);
+    };
     // 5. 定义JianLiuSvc::SvcWatcher服务发现对象
     JianLiuSvc::SvcWatcher watcher(FLAGS_registry_center_addr, online_cb, offline_cb);
     watcher.watch();
