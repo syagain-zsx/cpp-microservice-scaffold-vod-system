@@ -3,20 +3,20 @@
 int main()
 {
     // 1. 初始化各项操作句柄：日志，mysql，reids
-    bitelog::bitelog_init();
-    biteodb::mysql_settings msettings = {
+    JianLiuLog::init();
+    JianLiuOdb::mysql_settings msettings = {
         .host = "192.168.65.128",
         .passwd = "123456",
         .db = "vptest",
         .connection_pool_size = 5
     };
-    auto mysql = biteodb::DBFactory::mysql(msettings);
-    biteredis::redis_settings rsettings = {
+    auto mysql = JianLiuOdb::DBFactory::mysql(msettings);
+    JianLiuRedis::redis_settings rsettings = {
         .host = "192.168.65.128",
         .passwd = "123456",
         .connection_pool_size = 5
     };
-    auto redis = biteredis::RedisFactory::create(rsettings);
+    auto redis = JianLiuRedis::RedisFactory::create(rsettings);
     // 2. 开始测试
     // {
     //     //获取用户统计数据（输出数据进行对比，再看看缓存中统计数据是否添加了）

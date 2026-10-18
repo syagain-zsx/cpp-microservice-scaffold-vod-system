@@ -111,7 +111,7 @@ namespace vp_data{
                 auto redis = rtx.redis();
                 redis.zadd(key, video_info.begin(), video_info.end());
                 // 4. 设置过期时间
-                redis.expire(key, _expire_time + biteutil::Random::number(0, _expire_time));
+                redis.expire(key, _expire_time + JianLiuUtil::Random::number(0, _expire_time));
             }
         }catch (const sw::redis::Error &e) {
             ERR("向缓存添加主页视频列表失败: {}-{}", key, e.what());
@@ -421,7 +421,7 @@ namespace vp_data{
                 auto redis = rtx.redis();
                 redis.zadd(key, video_info.begin(), video_info.end());
                 // 4. 设置过期时间
-                redis.expire(key, _expire_time + biteutil::Random::number(0, _expire_time));
+                redis.expire(key, _expire_time + JianLiuUtil::Random::number(0, _expire_time));
             }
          }catch (const sw::redis::Error &e) {
              ERR("向缓存添加用户视频列表失败: {}-{}", key, e.what());
@@ -444,7 +444,7 @@ namespace vp_data{
                 // 3. 添加缓存
                 redis.zadd(key, video_info.begin(), video_info.end());
                 // 4. 设置过期时间
-                redis.expire(key, _expire_time + biteutil::Random::number(0, _expire_time));
+                redis.expire(key, _expire_time + JianLiuUtil::Random::number(0, _expire_time));
             }
         }catch (const sw::redis::Error &e) {
             ERR("向缓存添加分类视频列表失败: {}-{}", key, e.what());
@@ -467,7 +467,7 @@ namespace vp_data{
                 // 3. 添加缓存
                 redis.zadd(key, video_info.begin(), video_info.end());
                 // 4. 设置过期时间
-                redis.expire(key, _expire_time + biteutil::Random::number(0, _expire_time));
+                redis.expire(key, _expire_time + JianLiuUtil::Random::number(0, _expire_time));
             }
         }catch (const sw::redis::Error &e) {
             ERR("向缓存添加标签视频列表失败: {}-{}", key, e.what());

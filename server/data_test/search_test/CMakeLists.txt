@@ -26,6 +26,6 @@ include_directories(${comm_dir})
 include_directories(${data_dir})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 # 6. 依赖检查（依赖库的查找以及链接选项的添加）
-find_package(bite_scaffold REQUIRED)
+find_package(JianLiuScaffold REQUIRED)
 # 7. 设置链接库
-target_link_libraries(${PROJECT_NAME} PRIVATE bite_scaffold::bite_scaffold)
+target_link_libraries(${PROJECT_NAME} PRIVATE JianLiuScaffold::JianLiuScaffold)

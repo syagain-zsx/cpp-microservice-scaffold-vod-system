@@ -3,25 +3,25 @@
 int main()
 {
     // 1. 初始化构造各项数据操作句柄（数据库操作句柄，缓存操作句柄，缓存同步操作句柄）
-    bitelog::bitelog_init();
+    JianLiuLog::init();
     //1. 实例化消息队列客户端对象
     const std::string url = "amqp://admin:123456@192.168.65.128:5672/";
-    auto mq_client = bitemq::MQFactory::create<bitemq::MQClient>(url);
+    auto mq_client = JianLiuMq::MQFactory::create<JianLiuMq::MQClient>(url);
     //2. 实例化数据库操作对象
-    biteodb::mysql_settings msettings = {
+    JianLiuOdb::mysql_settings msettings = {
         .host = "192.168.65.128",
         .passwd = "123456",
         .db = "vptest",
         .connection_pool_size = 5
     };
-    auto mysql = biteodb::DBFactory::mysql(msettings);
+    auto mysql = JianLiuOdb::DBFactory::mysql(msettings);
     //3. 实例化缓存操作对象
-    biteredis::redis_settings rsettings = {
+    JianLiuRedis::redis_settings rsettings = {
         .host = "192.168.65.128",
         .passwd = "123456",
         .connection_pool_size = 5
     };
-    auto redis = biteredis::RedisFactory::create(rsettings);
+    auto redis = JianLiuRedis::RedisFactory::create(rsettings);
     //4. 实例化缓存同步删除对象
     auto sync = vp_data::RemoveCacheFactory::create(mq_client, redis);
     // 2. 开始测试

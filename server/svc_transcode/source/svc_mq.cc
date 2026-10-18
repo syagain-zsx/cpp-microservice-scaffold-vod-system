@@ -5,9 +5,9 @@
 
 namespace svc_transcode {
     TranscodeMQ::TranscodeMQ(const SvcData::ptr &svc_data,
-        const bitehls::HLSTranscoder::ptr &transcoder,
-        const bitemq::MQClient::ptr &mq_client,
-        const bitemq::declare_settings &trans_settings,
+        const JianLiuHls::HLSTranscoder::ptr &transcoder,
+        const JianLiuMq::MQClient::ptr &mq_client,
+        const JianLiuMq::declare_settings &trans_settings,
         const std::string &temp_path,
         const std::string &access_url)
         : _access_url(access_url)
@@ -16,7 +16,7 @@ namespace svc_transcode {
         , _worker(std::make_shared<SvcWorker>())
         , _transcoder(transcoder){
         std::filesystem::create_directories(_temp_path);
-        _subscriber = bitemq::MQFactory::create<bitemq::Subscriber>(mq_client, trans_settings);
+        _subscriber = JianLiuMq::MQFactory::create<JianLiuMq::Subscriber>(mq_client, trans_settings);
         _subscriber->consume(std::bind(&TranscodeMQ::callback, this, std::placeholders::_1, std::placeholders::_2));
     }
     bool TranscodeMQ::transcode(const std::string &video_id) {
@@ -31,7 +31,7 @@ namespace svc_transcode {
             auto file = _svc_data->getFile(file_id);
             std::string file_path = file->path();
             //4. 从FDFS中通过视频存储路径，下载视频文件数据到本地
-            bool ret = bitefdfs::FDFSClient::download_to_file(file_path, local_path);
+            bool ret = JianLiuFdfs::FDFSClient::download_to_file(file_path, local_path);
             if (ret == false) {
                 ERR("文件下载失败: {} - {} - {} - {}", video_id, file_id, file_path, local_path);
                 throw vp_error::VPException(vp_error::VpError::TRANSCODE_FAILED);
@@ -45,7 +45,7 @@ namespace svc_transcode {
             //    1. m3u8文件： 内部记录的所有的分片信息，以及分片获取方式
             //    2. ts文件： 视频分片数据
             //6. 解析m3u8文件，获取到所有的分片信息
-            bitehls::M3U8Info m3u8_info(m3u8_path);
+            JianLiuHls::M3U8Info m3u8_info(m3u8_path);
             ret = m3u8_info.parse();
             if (ret == false) {
                 ERR("m3u8文件解析失败: {}", m3u8_path);
@@ -60,13 +60,13 @@ namespace svc_transcode {
                 //6. 将生成的ts文件，上传到FDFS中,并获取到分片各自的存储路径（用于修改m3u8文件中的分片路径）
                 // <#EXTINF:10.0, http://xxx:90000/segment1.ts>
                 std::string ts_local_path = _temp_path + "/" + piece.second;
-                auto ts_remote_path = bitefdfs::FDFSClient::upload_from_file(ts_local_path);
+                auto ts_remote_path = JianLiuFdfs::FDFSClient::upload_from_file(ts_local_path);
                 if (!ts_remote_path) {
                     ERR("ts文件上传失败: {} - {}", ts_local_path, *ts_remote_path);
                     throw vp_error::VPException(vp_error::VpError::TRANSCODE_FAILED);
                 }
                 // 为生成的ts文件，生成一个新的文件元信息，并添加到数据库中
-                std::string file_id = biteutil::Random::code();
+                std::string file_id = JianLiuUtil::Random::code();
                 piece.second = _access_url + file_id;
                 vp_data::File ts_file;
                 ts_file.set_file_id(file_id);
@@ -79,7 +79,7 @@ namespace svc_transcode {
             
             //7. 修改m3u8文件中的分片路径， 将m3u8文件上传到FDFS中，并获取到m3u8文件的存储路径
             m3u8_info.write();
-            auto m3u8_remote_path = bitefdfs::FDFSClient::upload_from_file(m3u8_path);
+            auto m3u8_remote_path = JianLiuFdfs::FDFSClient::upload_from_file(m3u8_path);
             if (!m3u8_remote_path) {
                 ERR("m3u8文件上传失败: {} - {}", m3u8_path, *m3u8_remote_path);
                 throw vp_error::VPException(vp_error::VpError::TRANSCODE_FAILED);
@@ -93,7 +93,7 @@ namespace svc_transcode {
             video->set_status(vp_data::VideoStatus::AUDITING);
             _svc_data->setVideo(video);
             //11. 删除FDFS中转码前的视频文件
-            bitefdfs::FDFSClient::remove(file_path);
+            JianLiuFdfs::FDFSClient::remove(file_path);
             DBG("视频转码成功: {}", video_id);
         } catch (std::exception &e) {
             ERR("视频转码失败: {}", e.what());

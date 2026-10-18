@@ -25,7 +25,7 @@ namespace vp_data{
             //3. 添加缓存
             redis.hmset(key, map.begin(), map.end());
             //4. 设置过期时间
-            redis.expire(key, _expire_time + biteutil::Random::number(0, _expire_time));
+            redis.expire(key, _expire_time + JianLiuUtil::Random::number(0, _expire_time));
         }catch (const std::exception &e) {
             ERR("向缓存添加验证码失败: {}-{}-{}", ssid, code, e.what());
             throw vp_error::VPException(vp_error::VpError::REDIS_OP_FAILED);

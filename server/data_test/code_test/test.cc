@@ -3,13 +3,13 @@
 int main()
 {
     //初始化：日志模块，redis操作句柄
-    bitelog::bitelog_init();
-    biteredis::redis_settings rsettings = {
+    JianLiuLog::init();
+    JianLiuRedis::redis_settings rsettings = {
         .host = "192.168.65.128",
         .passwd = "123456",
         .connection_pool_size = 5
     };
-    auto redis = biteredis::RedisFactory::create(rsettings);
+    auto redis = JianLiuRedis::RedisFactory::create(rsettings);
     {
         //新增验证码缓存
         try {

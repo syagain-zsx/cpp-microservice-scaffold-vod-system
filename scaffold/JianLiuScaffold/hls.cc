@@ -3,18 +3,18 @@
 #include "util.h"
 #include "hls.h"
 
-namespace bitehls {
+namespace JianLiuHls {
     
 M3U8Info::M3U8Info(const std::string &filename): _filename(filename) {}
 bool M3U8Info::parse() {
     std::string body;
-    bool ret = biteutil::FUTIL::read(_filename, body);
+    bool ret = JianLiuUtil::FUTIL::read(_filename, body);
     if (ret == false) {
         ERR("M3U8文件读取数据失败: {}", _filename);
         return false;
     }
     std::vector<std::string> str_list;
-    int count = biteutil::STR::split(body, "\n", str_list);
+    int count = JianLiuUtil::STR::split(body, "\n", str_list);
 
     for (int i = 0; i < count; i++) {
         if (str_list[i].find(HLS_ENDLIST) != std::string::npos) {
@@ -38,7 +38,7 @@ bool M3U8Info::write() {
         ss << p.first << "\n" << p.second << "\n";
     }
     ss << HLS_ENDLIST;
-    bool ret = biteutil::FUTIL::write(_filename, ss.str());
+    bool ret = JianLiuUtil::FUTIL::write(_filename, ss.str());
     if (ret == false) {
         ERR("M3U8文件写入数据失败: {}", _filename);
         return false;

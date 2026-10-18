@@ -3,10 +3,10 @@
 
 namespace svc_file {
     CacheDelete::CacheDelete(const std::shared_ptr<sw::redis::Redis> &redis, 
-        const bitemq::MQClient::ptr &mq_client, 
-        const bitemq::declare_settings &mqsettings): _redis(redis) {
-        _publisher = std::make_shared<bitemq::Publisher>(mq_client, mqsettings);
-        _subscriber = std::make_shared<bitemq::Subscriber>(mq_client, mqsettings);
+        const JianLiuMq::MQClient::ptr &mq_client, 
+        const JianLiuMq::declare_settings &mqsettings): _redis(redis) {
+        _publisher = std::make_shared<JianLiuMq::Publisher>(mq_client, mqsettings);
+        _subscriber = std::make_shared<JianLiuMq::Subscriber>(mq_client, mqsettings);
         _subscriber->consume(std::bind(&CacheDelete::callback, this, std::placeholders::_1, std::placeholders::_2));
     }
     //2. 缓存同步接口，传入缓存key，内部发布删除消息

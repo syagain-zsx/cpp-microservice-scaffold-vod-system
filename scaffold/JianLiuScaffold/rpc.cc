@@ -1,7 +1,7 @@
 #include "rpc.h"
 #include "log.h"
 
-namespace biterpc {
+namespace JianLiuRpc {
     
 Channels::Channels() : _idx(0) {};
 void Channels::insert(const std::string &addr) {

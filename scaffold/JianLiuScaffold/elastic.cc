@@ -3,7 +3,7 @@
 #include "log.h"
 #include <optional>
 
-namespace biteics {
+namespace JianLiuIcs {
     
     Base::Base(const std::string &key): _key(key) {}
     const std::string& Base::key() const { return _key; }
@@ -11,7 +11,7 @@ namespace biteics {
     std::string Base::to_string() const { 
         Json::Value root;
         root[_key] = _val;
-        return *biteutil::JSON::serialize(root, true); 
+        return *JianLiuUtil::JSON::serialize(root, true); 
     }
     
     Object::Object(const std::string &key): Base(key) {}
@@ -50,7 +50,7 @@ namespace biteics {
         for (auto &i: _subs) {   //再拿自己的子对象的数据
             root[i.first] = i.second->val();
         }
-        return *biteutil::JSON::serialize(root, true); 
+        return *JianLiuUtil::JSON::serialize(root, true); 
     }
 
 
@@ -80,7 +80,7 @@ namespace biteics {
         for (auto &i: _subs) {
             root.append(i->val());
         }
-        return *biteutil::JSON::serialize(root, true);
+        return *JianLiuUtil::JSON::serialize(root, true);
     }
 
     
@@ -488,7 +488,7 @@ namespace biteics {
             ERR("搜索数据失败: {}/{}/{} - {}", index_name, index_type, index_body, resp.text);
             return std::optional<Json::Value>();
         }
-        auto json_resp = biteutil::JSON::unserialize(resp.text);
+        auto json_resp = JianLiuUtil::JSON::unserialize(resp.text);
         if (!json_resp) {
             ERR("搜索数据,对响应进行反序列化失败: {}/{}/{} - {}", index_name, index_type, index_body, resp.text);
             return std::optional<Json::Value>();

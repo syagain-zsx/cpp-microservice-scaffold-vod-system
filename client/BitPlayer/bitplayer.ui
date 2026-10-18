@@ -10,9 +10,9 @@
     <height>865</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>BitPlayer</string>
-  </property>
+    <property name="windowTitle">
+     <string>笺流</string>
+    </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="leftMargin">
     <number>5</number>
@@ -206,7 +206,7 @@
                  <property name="styleSheet">
                   <string notr="true">#tittle
 {
-    border-image : url(&quot;:/images/homePage/biteshipin.png&quot;);
+    border-image : url(&quot;:/images/homePage/jianliushipin.png&quot;);
 }</string>
                  </property>
                  <property name="text">

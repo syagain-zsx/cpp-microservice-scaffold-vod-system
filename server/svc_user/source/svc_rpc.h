@@ -1,6 +1,6 @@
 #pragma once
-#include <bite_scaffold/rpc.h>
-#include <bite_scaffold/mail.h>
+#include <JianLiuScaffold/rpc.h>
+#include <JianLiuScaffold/mail.h>
 #include <user.pb.h>
 #include <base.pb.h>
 #include <message.pb.h>
@@ -11,8 +11,8 @@ namespace svc_user {
     class UserServiceImpl : public api_message::UserService {
         public:
             UserServiceImpl(const SvcData::ptr &svc_data, 
-                const bitemq::Publisher::ptr &publisher,
-                const bitecode::MailClient::ptr &mail_client);
+                const JianLiuMq::Publisher::ptr &publisher,
+                const JianLiuCode::MailClient::ptr &mail_client);
             virtual void tempLogin(::google::protobuf::RpcController* controller,
                 const ::api_message::TempLoginReq* request,
                 ::api_message::TempLoginRsp* response,
@@ -89,8 +89,8 @@ namespace svc_user {
             // 业务数据层的封装对象
             SvcData::ptr _svc_data;
             // 文件删除消息发布者对象
-            bitemq::Publisher::ptr _publisher;
+            JianLiuMq::Publisher::ptr _publisher;
             // 邮箱客户端发送邮件验证码
-            bitecode::MailClient::ptr _mail_client;
+            JianLiuCode::MailClient::ptr _mail_client;
     };
 }

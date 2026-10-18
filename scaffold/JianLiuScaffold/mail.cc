@@ -1,7 +1,7 @@
 #include "mail.h"
 #include "log.h"
 
-namespace bitecode {
+namespace JianLiuCode {
     
     // 操作：初始化全局配置，保存服务配置信息
     MailClient::MailClient(const mail_settings& settings) : _settings(settings) {

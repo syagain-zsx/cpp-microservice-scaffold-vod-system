@@ -1,6 +1,6 @@
 #pragma once
-#include <bite_scaffold/rpc.h>
-#include <bite_scaffold/etcd.h>
+#include <JianLiuScaffold/rpc.h>
+#include <JianLiuScaffold/etcd.h>
 #include <video.pb.h>
 #include <file.pb.h>
 #include <user.pb.h>
@@ -14,8 +14,8 @@ namespace svc_gateway {
             HttpServiceImpl(const std::string &user_svc_name,
                 const std::string &file_svc_name,
                 const std::string &video_svc_name,
-                const bitesvc::SvcWatcher::ptr &watcher,
-                const biterpc::SvcChannels::ptr &channels,
+                const JianLiuSvc::SvcWatcher::ptr &watcher,
+                const JianLiuRpc::SvcChannels::ptr &channels,
                 const SvcData::ptr &svc_data);
             virtual void tempLogin(::google::protobuf::RpcController* controller,
                 const ::api_message::TempLoginReq* request,
@@ -173,8 +173,8 @@ namespace svc_gateway {
             std::string _user_svc_name;
             std::string _file_svc_name;
             std::string _video_svc_name;
-            bitesvc::SvcWatcher::ptr _watcher;
-            biterpc::SvcChannels::ptr _channels;
+            JianLiuSvc::SvcWatcher::ptr _watcher;
+            JianLiuRpc::SvcChannels::ptr _channels;
             SvcData::ptr _svc_data;
     };
 }

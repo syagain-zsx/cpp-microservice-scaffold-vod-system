@@ -101,7 +101,7 @@ namespace vp_data{
             map[_follower_ckey] = std::to_string(uc->follower_count);
             map[_followed_ckey] = std::to_string(uc->followed_count);
             std::string key = getCacheKey(uid);
-            int timeout = _expire_time + biteutil::Random::number(0, _expire_time);
+            int timeout = _expire_time + JianLiuUtil::Random::number(0, _expire_time);
             redis.hmset(key, map.begin(), map.end());
             redis.expire(key, timeout);
         }catch (const std::exception& e) {

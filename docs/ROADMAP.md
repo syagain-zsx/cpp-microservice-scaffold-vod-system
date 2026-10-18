@@ -1,4 +1,4 @@
-# 视频点播系统（VOD）· 重构路线图
+# 笺流（JianLiu）· 重构路线图
 
 > 版本：2026-10-18 ｜ 当前分支：`feature/vod-system` ｜ 当前阶段：**M3 接口联调**
 >
@@ -35,7 +35,7 @@
 
 | 资产 | 位置 | 状态 |
 | --- | --- | --- |
-| 脚手架基础库（11 个模块） | `scaffold/bite_scaffold/` | ✅ 已编译通过（静态库） |
+| 脚手架基础库（11 个模块） | `scaffold/JianLiuScaffold/` | ✅ 已编译通过（静态库） |
 | 服务端 5 个微服务 | `server/svc_*/` | 🟡 已导入，构建中 |
 | 数据层（ODB 实体 + DAO，16 个类） | `server/data/` | 🟡 参与构建 |
 | protobuf 接口定义（6 个 .proto） | `server/proto/` | ✅ protoc 生成通过 |
@@ -48,13 +48,13 @@
 - **合并为一个仓库**：原课程 `client/` + `server/` + 脚手架库三方分离，现在 `scaffold + server + client + deploy + docs` 同仓；
 - **统一构建**：删掉 5 个服务各自的 `CMakeLists.txt`（内容几乎复制粘贴），改成顶层一个函数批量生成；
 - **重新组织目录**：`sql.d → deploy/sql`、`dockerfile → deploy/Dockerfile`、`global.conf → deploy/conf/`、`svc_file/client → tools/file-client`；
-- **补上脚手架工程**：原课程的 `bite_scaffold` 是预装在镜像里的，仓库里只有源码没有构建；现在补了 `scaffold/CMakeLists.txt`（导出 `bite_scaffold::bite_scaffold`）。
+- **补上脚手架工程**：原课程的 `JianLiuScaffold` 是预装在镜像里的，仓库里只有源码没有构建；现在补了 `scaffold/CMakeLists.txt`（导出 `JianLiuScaffold::JianLiuScaffold`）。
 
 ### 2.3 已知缺口 / 风险
 
 | 问题 | 影响 | 处理方案 |
 | --- | --- | --- |
-| 无 root 权限（sudo 需密码） | 不能 `apt install ffmpeg` | ✅ 已解决：`apt-get download` + `dpkg -x` 到 `~/local/ffmpeg`，CMake 通过 `BITE_FFMPEG_ROOT` 引用 |
+| 无 root 权限（sudo 需密码） | 不能 `apt install ffmpeg` | ✅ 已解决：`apt-get download` + `dpkg -x` 到 `~/local/ffmpeg`，CMake 通过 `JIANLIU_FFMPEG_ROOT` 引用 |
 | `dev-icsearch` 不解析/9200 不通 | 搜索功能不可用 | ✅ 已降级：video 服务捕获连接异常，`_enabled=false`，搜索返回空，其余业务正常；待 ES 恢复后自动启用 |
 | 客户端依赖 mpv DLL（108 MB，未入库） | 客户端无法直接运行 | 仓库提供 `client/README.md` 说明下载方式；`.gitignore` 排除 |
 | 课程遗留 `data_test`（16 个独立小工程） | 目录噪音、无法统一构建 | M6 阶段改写为 gtest 用例，移入 `server/tests/` |
@@ -116,9 +116,9 @@
 vod-system/
 ├── CMakeLists.txt              # 顶层构建入口
 ├── README.md                   # 项目介绍 / 快速开始 / 架构速览
-├── scaffold/                   # bite_scaffold 基础库
+├── scaffold/                   # JianLiuScaffold 基础库
 │   ├── CMakeLists.txt
-│   └── bite_scaffold/          # log/util/rpc/etcd/mq/redis/odb/elastic/fdfs/hls/mail
+│   └── JianLiuScaffold/          # log/util/rpc/etcd/mq/redis/odb/elastic/fdfs/hls/mail
 ├── server/
 │   ├── CMakeLists.txt          # 公共库 + 5 个服务的统一构建
 │   ├── common/                 # 错误码、缓存同步抽象
@@ -154,7 +154,7 @@ vod-system/
 | **M0** 盘点与骨架 | 摸清家底，定目标 | 源码导入、目录重构、路线图 | 仓库结构落定，本文档完成 | ✅ 已完成 |
 | **M1** 构建系统 | 一次构建出全部产物 | 脚手架 CMake、统一服务端构建、FFmpeg 本地前缀 | `cmake --build build` 产出 5 个可执行文件 | ✅ 已完成 |
 | **M2** 服务端可运行 | 5 个服务能启动、注册到 etcd | 配置文件、启动脚本、端口、日志 | `etcdctl get --prefix /` 能看到 4 个注册节点；`curl :10000/` 有响应 | ✅ 已完成 |
-| **M3** 核心接口联调 | 登录/视频/文件主链路通 | 用 `file_client`、curl 或脚本验证 RPC | 能完成"注册登录 → 上传 → 建视频 → 列表查询" | 🔄 进行中（tempLogin / sessionLogin / allVideoList 已验证） |
+| **M3** 核心接口联调 | 登录/视频/文件主链路通 | 用 `file_client`、curl 或脚本验证 RPC | 能完成"注册登录 → 上传 → 建视频 → 列表查询" | ✅ 已完成（含转码/HLS/点赞/弹幕） |
 | **M4** 客户端打通 | BitPlayer 能连真实后端 | 接口地址配置、编译、修 bug | 登录、首页、播放页可用 | 1.5 周 |
 | **M5** 业务闭环 | 转码 + HLS 播放 + 互动 | FFmpeg 转码链路、弹幕、点赞、关注、搜索 | 上传的 mp4 能自动转 HLS 并在客户端播放，互动数据正确 | 1.5 周 |
 | **M6** 质量与部署 | 可交付 | 清理死代码、补测试、docker-compose、一键脚本 | `docker compose up` 起全栈；gtest 通过 | 1 周 |
@@ -163,7 +163,7 @@ vod-system/
 
 ### M1 任务清单
 
-- [x] `scaffold/CMakeLists.txt`：11 个模块 → `bite_scaffold::bite_scaffold`
+- [x] `scaffold/CMakeLists.txt`：11 个模块 → `JianLiuScaffold::JianLiuScaffold`
 - [x] 顶层 `CMakeLists.txt` + `server/CMakeLists.txt`：protoc/ODB 生成 + 公共库 + 5 服务
 - [x] 移除 5 个复制的服务级 CMakeLists，改为 `add_vod_service()` 统一生成
 - [x] FFmpeg 依赖落到 `~/local/ffmpeg`（无 root 方案），transcode 参与构建
@@ -205,7 +205,7 @@ vod-system/
 > 不要只"看懂"，要能**默写调用链**。
 
 1. **原理**：这个中间件解决什么问题？核心机制是什么？
-2. **本项目**：`scaffold/bite_scaffold/xxx.h` 封装了哪些能力？服务端怎么用？
+2. **本项目**：`scaffold/JianLiuScaffold/xxx.h` 封装了哪些能力？服务端怎么用？
 3. **动手**：改一个 demo（`examples/` 里有 16 个），或者加一个功能验证理解；
 4. **输出**：写一页笔记 + 3 个面试问答，放进 `docs/notes/`。
 
@@ -254,8 +254,8 @@ vod-system/
 **仓库与构建**
 
 - 导入 `server`（150 文件）、`client`（源码，剔除 build / mpv DLL / 测试视频）；
-- 目录重构：`cpp-microservice-scaffold/source → scaffold/bite_scaffold`，`example → examples`；
-- 新增 `scaffold/CMakeLists.txt`（11 模块 → `bite_scaffold::bite_scaffold`，自动探测依赖）；
+- 目录重构：`cpp-microservice-scaffold/source → scaffold/JianLiuScaffold`，`example → examples`；
+- 新增 `scaffold/CMakeLists.txt`（11 模块 → `JianLiuScaffold::JianLiuScaffold`，自动探测依赖）；
 - 重写 `server/CMakeLists.txt`：protoc + ODB 自定义命令 → `libvideoplayer.a` → 5 个服务；
 - 统一 LF 换行 + `.gitattributes`；`.gitignore` 重写；
 - **`cmake --build build` 通过，产出 5 个可执行文件**（含 FFmpeg 转码服务）。
@@ -273,16 +273,31 @@ vod-system/
 - `scripts/run-dev.sh` 启动 5 服务；etcd 注册 `/file`、`/user`、`/video`；
 - 网关 watch 到服务上线/下线；`curl :10000/status` 正常。
 
-**接口（M3 起步）**
+**接口（M3 完成）**
 
 ```bash
 curl -X POST http://127.0.0.1:10000/HttpService/tempLogin \
      -H 'Content-Type: application/json' -d '{"requestId":"R1"}'
 # -> {"errorCode":0,"result":{"sessionId":"..."}}
 
-curl -X POST .../HttpService/sessionLogin   # -> isGuest=true
-curl -X POST .../HttpService/allVideoList   # -> errorCode=0（暂无视频）
+curl -X POST .../HttpService/sessionLogin   # -> isGuest=true（未登录）/ false（已登录）
+curl -X POST .../HttpService/allVideoList   # -> 视频列表
 ```
+
+**端到端联调结果（2026-10-18）**
+
+- 造数：SQL 直插普通用户 + 绑定会话（绕过邮件验证码），清 Redis 会话缓存；
+- 链路：`tempLogin → sessionLogin(isGuest=false) → uploadPhoto(6480B) → downloadPhoto(字节一致)`
+  → `uploadVideo(318KB) → newVideo → MQ 转码 → HLS(1 个 m3u8 + 2 个 ts 上传 FastDFS)`
+  → `allVideoList（返回视频，playCount=1）→ setLike/judgeLike → newBarrage/getBarrage`；
+- 转码后视频状态为「待审核(1)」，手工置为「上架(2)」后出现在首页列表（审核流程属 M5）。
+
+**命名重构（品牌：笺流 / JianLiu）**
+
+- `bite* → JianLiu*`：11 个命名空间（`JianLiuLog`、`JianLiuUtil`、`JianLiuRpc`、`JianLiuSvc`、
+  `JianLiuMq`、`JianLiuRedis`、`JianLiuOdb`、`JianLiuIcs`、`JianLiuFdfs`、`JianLiuHls`、`JianLiuCode`）；
+- 基础库 `bite_scaffold → JianLiuScaffold`（目录、target、头文件路径、CMake 选项 `JIANLIU_*`）；
+- 客户端品牌：窗口标题与应用名改为「笺流」，资源图 `biteshipin.png → jianliushipin.png`。
 
 **过程中修掉的问题**
 
@@ -296,8 +311,7 @@ curl -X POST .../HttpService/allVideoList   # -> errorCode=0（暂无视频）
 
 ## 九、下一步（交接）
 
-1. **M3 继续**：跑通 `getCode → regOrLogin`（邮件验证码依赖外部 SMTP，可先用数据库直插用户绕过）、
-   `uploadPhoto/uploadVideo`（FastDFS）、`newVideo`、`typeVideoList`；
-2. 用 `tools/file-client` 验证文件服务上传/下载；
-3. 写 `docs/01-architecture.md`、`docs/02-api.md` 第一版；
-4. 准备 M4：在 Windows 侧用 Qt 6.7 构建 BitPlayer，配置 `config.ini` 指向网关。
+1. **M4**：在 Windows 侧用 Qt 6.7 构建 BitPlayer，`config.ini` 指向网关 `http://<host>:10000`，跑登录/首页/播放；
+2. **M5**：补管理员审核链路（checkVideo/saleVideo/haltVideo）、关注、搜索（待 ES 可用）；
+3. 写 `docs/01-architecture.md`、`docs/02-api.md`（含本次联调的 curl 样例）；
+4. 清理 `server/data_test`（16 个旧测试工程）→ 改为 gtest 用例。

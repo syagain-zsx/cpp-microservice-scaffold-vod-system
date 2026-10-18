@@ -383,7 +383,7 @@ namespace vp_data{
             //3. 向缓存添加用户信息
             redis.hmset(key, map.begin(), map.end());
             //4. 设置缓存key的过期时间
-            redis.expire(key, _expire_time + biteutil::Random::number(0, _expire_time));
+            redis.expire(key, _expire_time + JianLiuUtil::Random::number(0, _expire_time));
         }catch (const std::exception &e) {
             ERR("向缓存添加用户信息失败: {}-{}", user->user_id(), e.what());
             throw vp_error::VPException(vp_error::VpError::REDIS_OP_FAILED);

@@ -2,7 +2,7 @@
 
 namespace svc_video {
     VideoServer::VideoServer(const std::shared_ptr<brpc::Server> &server,
-        const bitesvc::SvcProvider::ptr &registry)
+        const JianLiuSvc::SvcProvider::ptr &registry)
         : _server(server), _registry(registry) {}
     void VideoServer::start() {
         _server->RunUntilAskedToQuit();
@@ -20,11 +20,11 @@ namespace svc_video {
         _reg_settings = reg_settings;
         return *this;
     }
-    VideoServerBuilder &VideoServerBuilder::withMysqlSettings(const biteodb::mysql_settings &mysql_settings) {
+    VideoServerBuilder &VideoServerBuilder::withMysqlSettings(const JianLiuOdb::mysql_settings &mysql_settings) {
         _mysql_settings = mysql_settings;
         return *this;
     }
-    VideoServerBuilder &VideoServerBuilder::withRedisSettings(const biteredis::redis_settings &redis_settings){
+    VideoServerBuilder &VideoServerBuilder::withRedisSettings(const JianLiuRedis::redis_settings &redis_settings){
         _redis_settings = redis_settings;
         return *this;
     }
@@ -33,7 +33,7 @@ namespace svc_video {
         return *this;
     }
     VideoServerBuilder &VideoServerBuilder::withMqDelCacheSettings(const std::string &mqsettings) {
-        auto queue_info = biteutil::JSON::unserialize(mqsettings);
+        auto queue_info = JianLiuUtil::JSON::unserialize(mqsettings);
         if (!queue_info) {
             ERR("queue_info 格式错误");
             abort();
@@ -46,7 +46,7 @@ namespace svc_video {
         return *this;
     }
     VideoServerBuilder &VideoServerBuilder::withMqSyncCacheSettings(const std::string &mqsettings) {
-        auto queue_info = biteutil::JSON::unserialize(mqsettings);
+        auto queue_info = JianLiuUtil::JSON::unserialize(mqsettings);
         if (!queue_info) {
             ERR("queue_info 格式错误");
             abort();
@@ -59,7 +59,7 @@ namespace svc_video {
         return *this;
     }
     VideoServerBuilder &VideoServerBuilder::withMqDelFileSettings(const std::string &mqsettings)  {
-        auto queue_info = biteutil::JSON::unserialize(mqsettings);
+        auto queue_info = JianLiuUtil::JSON::unserialize(mqsettings);
         if (!queue_info) {
             ERR("queue_info 格式错误");
             abort();
@@ -71,7 +71,7 @@ namespace svc_video {
         return *this;
     }
     VideoServerBuilder &VideoServerBuilder::withMqTranscodeSettings(const std::string &mqsettings) {
-        auto queue_info = biteutil::JSON::unserialize(mqsettings);
+        auto queue_info = JianLiuUtil::JSON::unserialize(mqsettings);
         if (!queue_info) {
             ERR("queue_info 格式错误");
             abort();
@@ -83,14 +83,14 @@ namespace svc_video {
         return *this;
     }
     VideoServer::ptr VideoServerBuilder::build() {
-        auto mysql = biteodb::DBFactory::mysql(_mysql_settings);
-        auto redis = biteredis::RedisFactory::create(_redis_settings);
+        auto mysql = JianLiuOdb::DBFactory::mysql(_mysql_settings);
+        auto redis = JianLiuRedis::RedisFactory::create(_redis_settings);
         std::vector<std::string> urls = {_es_url};
-        auto elastic = std::make_shared<biteics::ESClient>(urls);
+        auto elastic = std::make_shared<JianLiuIcs::ESClient>(urls);
         vp_data::VideoSearchData::init(elastic);
-        auto mq_client = bitemq::MQFactory::create<bitemq::MQClient>(_mq_url);
-        auto del_file_publisher = bitemq::MQFactory::create<bitemq::Publisher>(mq_client, _del_file_settings);
-        auto transcode_publisher = bitemq::MQFactory::create<bitemq::Publisher>(mq_client, _transcode_settings);
+        auto mq_client = JianLiuMq::MQFactory::create<JianLiuMq::MQClient>(_mq_url);
+        auto del_file_publisher = JianLiuMq::MQFactory::create<JianLiuMq::Publisher>(mq_client, _del_file_settings);
+        auto transcode_publisher = JianLiuMq::MQFactory::create<JianLiuMq::Publisher>(mq_client, _transcode_settings);
         
         auto del_cache = std::make_shared<svc_video::CacheDelete>(redis, mq_client, _del_cache_settings);
         auto sync_cache = std::make_shared<svc_video::CacheToDB>(mysql, redis, del_cache, mq_client, _sync_cache_settings);
@@ -114,7 +114,7 @@ namespace svc_video {
             abort();
         }
         //注册服务
-        auto provider = std::make_shared<bitesvc::SvcProvider>(_reg_settings.registry_center_addr, 
+        auto provider = std::make_shared<JianLiuSvc::SvcProvider>(_reg_settings.registry_center_addr, 
             _reg_settings.service_name, _reg_settings.service_addr);
         provider->registry();
         auto video_server = std::make_shared<VideoServer>(server, provider);

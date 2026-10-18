@@ -15,29 +15,29 @@ namespace svc_gateway {
         _dis_settings = dis_settings;
         return *this;
     }
-    GatewayServerBuilder &GatewayServerBuilder::withMysqlSettings(const biteodb::mysql_settings &mysql_settings) {
+    GatewayServerBuilder &GatewayServerBuilder::withMysqlSettings(const JianLiuOdb::mysql_settings &mysql_settings) {
         _mysql_settings = mysql_settings;
         return *this;
     }
-    GatewayServerBuilder &GatewayServerBuilder::withRedisSettings(const biteredis::redis_settings &redis_settings) {
+    GatewayServerBuilder &GatewayServerBuilder::withRedisSettings(const JianLiuRedis::redis_settings &redis_settings) {
         _redis_settings = redis_settings;
         return *this;
     }
     GatewayServer::ptr GatewayServerBuilder::build() {
         //1. 构造数据库以及缓存操作对象
-        auto mysql = biteodb::DBFactory::mysql(_mysql_settings);
-        auto redis = biteredis::RedisFactory::create(_redis_settings);
+        auto mysql = JianLiuOdb::DBFactory::mysql(_mysql_settings);
+        auto redis = JianLiuRedis::RedisFactory::create(_redis_settings);
         //2. 构造数据操作对象
         auto svc_data = std::make_shared<SvcData>(redis, mysql);
         //3. 构造信道管理对象
-        auto channels = std::make_shared<biterpc::SvcChannels>();
+        auto channels = std::make_shared<JianLiuRpc::SvcChannels>();
         channels->setWatch(_dis_settings.user_svc_name);
         channels->setWatch(_dis_settings.file_svc_name);
         channels->setWatch(_dis_settings.video_svc_name);
-        auto online_cb = std::bind(&biterpc::SvcChannels::addNode, channels.get(), std::placeholders::_1, std::placeholders::_2);
-        auto offline_cb = std::bind(&biterpc::SvcChannels::delNode, channels.get(), std::placeholders::_1, std::placeholders::_2);
+        auto online_cb = std::bind(&JianLiuRpc::SvcChannels::addNode, channels.get(), std::placeholders::_1, std::placeholders::_2);
+        auto offline_cb = std::bind(&JianLiuRpc::SvcChannels::delNode, channels.get(), std::placeholders::_1, std::placeholders::_2);
         //4. 构造服务发现对象
-        auto watcher = std::make_shared<bitesvc::SvcWatcher>(_dis_settings.registry_center_addr, online_cb, offline_cb);
+        auto watcher = std::make_shared<JianLiuSvc::SvcWatcher>(_dis_settings.registry_center_addr, online_cb, offline_cb);
         watcher->watch();
 
 

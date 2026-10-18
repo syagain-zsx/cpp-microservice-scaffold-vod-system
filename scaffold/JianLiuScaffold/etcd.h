@@ -5,7 +5,7 @@
 #include <etcd/Response.hpp>
 #include <etcd/Value.hpp>
 
-namespace bitesvc {
+namespace JianLiuSvc {
     
     extern void wait_for_connection(etcd::Client &client);
     class SvcProvider {

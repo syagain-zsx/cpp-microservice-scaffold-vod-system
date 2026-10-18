@@ -1,7 +1,7 @@
 #include "mq.h"
 #include "log.h"
 
-namespace bitemq {
+namespace JianLiuMq {
 
     std::string declare_settings::dlx_exchange() const {
         return DLX_PREFIX + exchange;

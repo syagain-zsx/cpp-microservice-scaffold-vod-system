@@ -9,9 +9,9 @@ namespace vp_data {
     const std::string VideoSearchData::_key_video_desc = "videoDesc";
     const std::string VideoSearchData::_key_video_status = "videoStatus";
     bool VideoSearchData::_enabled = true;
-    VideoSearchData::VideoSearchData(const biteics::ESClient::ptr &es_client) :_es_client(es_client){}
-    void VideoSearchData::init(const biteics::ESClient::ptr &es_client) {
-        biteics::Indexer indexer(_index_name);
+    VideoSearchData::VideoSearchData(const JianLiuIcs::ESClient::ptr &es_client) :_es_client(es_client){}
+    void VideoSearchData::init(const JianLiuIcs::ESClient::ptr &es_client) {
+        JianLiuIcs::Indexer indexer(_index_name);
         indexer.tokenizer("ikmax");
         indexer.field(_key_video_id)->type("keyword");
         indexer.field(_key_video_status)->type("boolean");
@@ -40,7 +40,7 @@ namespace vp_data {
     }
     void VideoSearchData::insert(const std::string &vid, const std::string &title, const std::string &desc, bool status) {
         if (!_enabled) { return; }   // ES 不可用时降级
-        biteics::Inserter inserter(_index_name, vid);
+        JianLiuIcs::Inserter inserter(_index_name, vid);
         inserter.add(_key_video_id, vid);
         inserter.add(_key_video_title, title);
         inserter.add(_key_video_desc, desc);
@@ -53,7 +53,7 @@ namespace vp_data {
     }
     void VideoSearchData::update(const std::string &vid, const std::string &title, const std::string &desc, bool status) {
         if (!_enabled) { return; }   // ES 不可用时降级
-        biteics::Inserter inserter(_index_name, vid);
+        JianLiuIcs::Inserter inserter(_index_name, vid);
         inserter.add(_key_video_id, vid);
         inserter.add(_key_video_title, title);
         inserter.add(_key_video_desc, desc);
@@ -66,7 +66,7 @@ namespace vp_data {
     }
     void VideoSearchData::remove(const std::string &vid) {
         if (!_enabled) { return; }   // ES 不可用时降级
-        biteics::Deleter deleter(_index_name, vid);
+        JianLiuIcs::Deleter deleter(_index_name, vid);
         auto res = _es_client->remove(deleter);
         if (res == false) {
             WRN("从ES中删除视频信息失败!");
@@ -81,7 +81,7 @@ namespace vp_data {
     }
     std::vector<std::string> VideoSearchData::search(const std::string &key, size_t page, size_t count) {
         if (!_enabled) { return {}; }   // ES 不可用时降级：返回空结果
-        biteics::Searcher searcher(_index_name);
+        JianLiuIcs::Searcher searcher(_index_name);
         auto query = searcher.query();
         auto must = query->must();
         auto mm = query->must()->multi_match();
@@ -101,7 +101,7 @@ namespace vp_data {
             if (!res) {
                 ERR("从ES中搜索视频信息失败!");
             }else {
-                ERR("检索结果为空: {}", *biteutil::JSON::serialize(*res));
+                ERR("检索结果为空: {}", *JianLiuUtil::JSON::serialize(*res));
             }
             return result;
         }

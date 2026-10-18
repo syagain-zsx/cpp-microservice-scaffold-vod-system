@@ -4,10 +4,10 @@
 
 namespace svc_video {
     CacheDelete::CacheDelete(const std::shared_ptr<sw::redis::Redis> &redis, 
-        const bitemq::MQClient::ptr &mq_client, 
-        const bitemq::declare_settings &mqsettings): _redis(redis) {
-        _publisher = std::make_shared<bitemq::Publisher>(mq_client, mqsettings);
-        _subscriber = std::make_shared<bitemq::Subscriber>(mq_client, mqsettings);
+        const JianLiuMq::MQClient::ptr &mq_client, 
+        const JianLiuMq::declare_settings &mqsettings): _redis(redis) {
+        _publisher = std::make_shared<JianLiuMq::Publisher>(mq_client, mqsettings);
+        _subscriber = std::make_shared<JianLiuMq::Subscriber>(mq_client, mqsettings);
         _subscriber->consume(std::bind(&CacheDelete::callback, this, std::placeholders::_1, std::placeholders::_2));
     }
     //2. 缓存同步接口，传入缓存key，内部发布删除消息
@@ -53,13 +53,13 @@ namespace svc_video {
     CacheToDB::CacheToDB(const std::shared_ptr<odb::database> &mysql,
         const std::shared_ptr<sw::redis::Redis> &redis,
         const CacheDelete::ptr &delete_cache,
-        const bitemq::MQClient::ptr &mq_client, 
-        const bitemq::declare_settings &mqsettings) 
+        const JianLiuMq::MQClient::ptr &mq_client, 
+        const JianLiuMq::declare_settings &mqsettings) 
         : _mysql(mysql)
         , _redis(redis)
         , _delete_cache(delete_cache) {
-        _publisher = std::make_shared<bitemq::Publisher>(mq_client, mqsettings);
-        _subscriber = std::make_shared<bitemq::Subscriber>(mq_client, mqsettings);
+        _publisher = std::make_shared<JianLiuMq::Publisher>(mq_client, mqsettings);
+        _subscriber = std::make_shared<JianLiuMq::Subscriber>(mq_client, mqsettings);
         _subscriber->consume(std::bind(&CacheToDB::callback, this, std::placeholders::_1, std::placeholders::_2));
     }
     void CacheToDB::sync(const std::string &key) {

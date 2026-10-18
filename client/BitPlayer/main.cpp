@@ -8,6 +8,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setApplicationName("笺流");
+    a.setApplicationDisplayName("笺流");
     // 不使用系统的默认样式，使用Fusion样式来创建元素
     a.setStyle(QStyleFactory::create("Fusion"));
 
@@ -17,7 +19,7 @@ int main(int argc, char *argv[])
     // 由于只能运行一个实例，让第二个实例直接退出，即让第一个进程结束
     if(sharedMemoty.attach())
     {
-        QMessageBox::information(nullptr, "BitPlayer提示", "BitPlayer已经在运行...");
+        QMessageBox::information(nullptr, "笺流提示", "笺流已经在运行...");
         return 0;
     }
 

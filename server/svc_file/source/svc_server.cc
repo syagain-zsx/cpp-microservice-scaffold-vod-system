@@ -5,7 +5,7 @@ namespace svc_file {
     void FileServer::start() {
         _server->RunUntilAskedToQuit();
     }
-    FileServer::FileServer(const bitesvc::SvcProvider::ptr &provider, 
+    FileServer::FileServer(const JianLiuSvc::SvcProvider::ptr &provider, 
         const FileRemoveMQ::ptr &file_remove_mq,
         const std::shared_ptr<brpc::Server> &server)
         : _provider(provider)
@@ -25,16 +25,16 @@ namespace svc_file {
         _reg_settings = reg_settings;
         return *this;
     }
-    FileServerBuilder &FileServerBuilder::withMysqlSettings(const biteodb::mysql_settings &mysql_settings) {
+    FileServerBuilder &FileServerBuilder::withMysqlSettings(const JianLiuOdb::mysql_settings &mysql_settings) {
         _mysql_settings = mysql_settings;
         return *this;
     }
-    FileServerBuilder &FileServerBuilder::withRedisSettings(const biteredis::redis_settings &redis_settings) {
+    FileServerBuilder &FileServerBuilder::withRedisSettings(const JianLiuRedis::redis_settings &redis_settings) {
         _redis_settings = redis_settings;
         return *this;
     }
     FileServerBuilder &FileServerBuilder::withMqDelFileSettings(const std::string &declare_settings) {
-        auto queue_info = biteutil::JSON::unserialize(declare_settings);
+        auto queue_info = JianLiuUtil::JSON::unserialize(declare_settings);
         if (!queue_info) {
             ERR("queue_info 格式错误");
             abort();
@@ -46,7 +46,7 @@ namespace svc_file {
         return *this;
     }
     FileServerBuilder &FileServerBuilder::withMqDelCacheSettings(const std::string &declare_settings) {
-        auto queue_info = biteutil::JSON::unserialize(declare_settings);
+        auto queue_info = JianLiuUtil::JSON::unserialize(declare_settings);
         if (!queue_info) {
             ERR("queue_info 格式错误");
             abort();
@@ -58,24 +58,24 @@ namespace svc_file {
         _del_cache_settings.delayed_ttl = (*queue_info)["delayed_ttl"].asInt64() * 1000;
         return *this;
     }
-    FileServerBuilder &FileServerBuilder::withFdfsSettings(const bitefdfs::fdfs_settings &fdfs_settings) {
+    FileServerBuilder &FileServerBuilder::withFdfsSettings(const JianLiuFdfs::fdfs_settings &fdfs_settings) {
         _fdfs_settings = fdfs_settings;
         return *this;
     }
     FileServer::ptr FileServerBuilder::build() {
-        auto mysql = biteodb::DBFactory::mysql(_mysql_settings);
-        auto redis = biteredis::RedisFactory::create(_redis_settings);
+        auto mysql = JianLiuOdb::DBFactory::mysql(_mysql_settings);
+        auto redis = JianLiuRedis::RedisFactory::create(_redis_settings);
         //1. 基于mq_url构造MQClient对象
-        auto mq_client = bitemq::MQFactory::create<bitemq::MQClient>(_mq_url);
+        auto mq_client = JianLiuMq::MQFactory::create<JianLiuMq::MQClient>(_mq_url);
         auto del_cache = std::make_shared<svc_file::CacheDelete>(redis, mq_client, _del_cache_settings);
         //2. 基于mysql_settings & redis_settings & mq_client 构造SvcData对象
         auto svc_data = std::make_shared<SvcData>(redis, mysql, del_cache);
         //3. 基于fdfs_settings初始化FASTDFS客户端全局配置
-        bitefdfs::FDFSClient::init(_fdfs_settings);
+        JianLiuFdfs::FDFSClient::init(_fdfs_settings);
         //4. 基于SvcData & mq_settings构造FileRemoveMQ对象
         auto file_remove_mq = std::make_shared<FileRemoveMQ>(svc_data, mq_client, _del_file_settings);
         //5. 基于reg_settings构造SvcProvider对象
-        auto provider = std::make_shared<bitesvc::SvcProvider>(_reg_settings.registry_center_addr, 
+        auto provider = std::make_shared<JianLiuSvc::SvcProvider>(_reg_settings.registry_center_addr, 
             _reg_settings.service_name, _reg_settings.service_addr);
         //6. 基于SvcData 构造FileServiceImpl对象
         auto file_service_impl = new FileServiceImpl(svc_data);

@@ -3,22 +3,22 @@
 int main()
 {
     //初始化：日志模块，odb句柄，redis句柄，sync对象
-    bitelog::bitelog_init();
-    biteodb::mysql_settings msettings = {
+    JianLiuLog::init();
+    JianLiuOdb::mysql_settings msettings = {
         .host = "192.168.65.128",
         .passwd = "123456",
         .db = "vptest",
         .connection_pool_size = 5
     };
-    auto mysql = biteodb::DBFactory::mysql(msettings);
-    biteredis::redis_settings rsettings = {
+    auto mysql = JianLiuOdb::DBFactory::mysql(msettings);
+    JianLiuRedis::redis_settings rsettings = {
         .host = "192.168.65.128",
         .passwd = "123456",
         .connection_pool_size = 5
     };
-    auto redis = biteredis::RedisFactory::create(rsettings);
+    auto redis = JianLiuRedis::RedisFactory::create(rsettings);
     const std::string url = "amqp://admin:123456@192.168.65.128:5672/";
-    auto mq_client = bitemq::MQFactory::create<bitemq::MQClient>(url);
+    auto mq_client = JianLiuMq::MQFactory::create<JianLiuMq::MQClient>(url);
     auto sync = vp_data::RemoveCacheFactory::create(mq_client, redis);
 
     // {
@@ -28,11 +28,11 @@ int main()
     //         // mtx.tracer(odb::stderr_full_tracer);
     //         auto rtx = redis->transaction(false, false);
     //         vp_data::UserData tbl_ud(mtx, rtx, sync);
-    //         bool ret = tbl_ud.isExist("bite@qq.com");
+    //         bool ret = tbl_ud.isExist("JianLiu@qq.com");
     //         if (ret == false) {
-    //             tbl_ud.insert("user_id_1", "bite@qq.com");
+    //             tbl_ud.insert("user_id_1", "JianLiu@qq.com");
     //         }else {
-    //             std::cout << "bite@qq.com 已经注册！\n";
+    //             std::cout << "JianLiu@qq.com 已经注册！\n";
     //         }
     //         mtx.commit();
     //     }catch (const vp_error::VPException &e) {
@@ -59,8 +59,8 @@ int main()
     //         auto rtx = redis->transaction(false, false);
     //         vp_data::UserData tbl_ud(mtx, rtx, sync);
     //         std::cout << tbl_ud.verify("zhangsan", "123456") << std::endl;
-    //         std::cout << tbl_ud.verify("bite@qq.com", "123456") << std::endl;
-    //         std::cout << tbl_ud.verify("bite@qq.com", "456789") << std::endl;
+    //         std::cout << tbl_ud.verify("JianLiu@qq.com", "123456") << std::endl;
+    //         std::cout << tbl_ud.verify("JianLiu@qq.com", "456789") << std::endl;
     //         mtx.commit();
     //     }catch (const vp_error::VPException &e) {
     //         std::cout << e.what() << std::endl;

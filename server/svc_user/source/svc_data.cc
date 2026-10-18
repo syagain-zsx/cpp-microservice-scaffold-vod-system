@@ -9,7 +9,7 @@ namespace svc_user {
         , _cache_sync(cache_sync) {}
     //临时用户登录数据处理: 生成会话ID,向数据库新增临时会话信息
     std::string SvcData::tempLogin() {
-        std::string ssid = biteutil::Random::code();
+        std::string ssid = JianLiuUtil::Random::code();
         vp_data::Session ss(ssid);
         try {
             odb::transaction mtx(_mysql->begin());
@@ -45,8 +45,8 @@ namespace svc_user {
     }
     //获取验证码: 生成验证码和验证码ID,添加验证码信息缓存; 返回验证码ID
     void SvcData::getVCode(const std::string &ssid, std::string &code_id, std::string &code, const std::string &email) {
-        code_id = biteutil::Random::code();
-        code = biteutil::Random::code(_code_length, biteutil::UuidType::DIGIT);
+        code_id = JianLiuUtil::Random::code();
+        code = JianLiuUtil::Random::code(_code_length, JianLiuUtil::UuidType::DIGIT);
         try {
             vp_data::VerifyCodeData vcd(_redis);
             vcd.insert(code_id, ssid, code, email);
@@ -73,7 +73,7 @@ namespace svc_user {
             bool ret = ud.isExist(email);
             if (ret == false) {
                 //4. 未注册处理: 新增用户信息; 新增用户身份角色;  更新会话信息(有用户ID的会话信息)
-                std::string uid = biteutil::Random::code();
+                std::string uid = JianLiuUtil::Random::code();
                 ud.insert(uid, email);
                 vp_data::UserIdentifyRoleData uird(mtx, _redis, _cache_sync);
                 uird.insert(uid, vp_data::IdentifyType::NORMAL, vp_data::RoleType::USER_NORNAL);
@@ -430,7 +430,7 @@ namespace svc_user {
             //新增管理员:1-当前管理员邮箱是否已经注册普通用户(未注册-先注册普通用户,然后新增身份角色信息; 已注册-只需要新增用户身份角色信息即可)
             ret = ud.isExist(info.email());
             if (ret == false) {
-                std::string uid = biteutil::Random::code();
+                std::string uid = JianLiuUtil::Random::code();
                 ud.insert(uid, info.email());
                 ud.updateAdmin(uid, info.nickname(), info.usermemo(), (vp_data::UserStatus)info.userstatus());
                 uird.insert(uid, vp_data::IdentifyType::NORMAL, vp_data::RoleType::USER_NORNAL);

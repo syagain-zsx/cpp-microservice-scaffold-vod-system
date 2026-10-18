@@ -3,13 +3,13 @@
 int main()
 {
     //1. 实例化database对象
-    biteodb::mysql_settings settings = {
+    JianLiuOdb::mysql_settings settings = {
         .host = "192.168.65.131",
         .passwd = "123456",
         .db = "vptest",
         .connection_pool_size = 5
     };
-    auto handler = biteodb::DBFactory::mysql(settings);
+    auto handler = JianLiuOdb::DBFactory::mysql(settings);
     {
         try {
             odb::transaction tx(handler->begin());

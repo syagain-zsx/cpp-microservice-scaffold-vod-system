@@ -4,7 +4,7 @@
 #include <sstream>
 #include <memory>
 
-namespace bitecode {
+namespace JianLiuCode {
     struct mail_settings {
         std::string username;
         std::string password;

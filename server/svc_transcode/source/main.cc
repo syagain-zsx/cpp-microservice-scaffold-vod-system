@@ -1,6 +1,6 @@
 #include <gflags/gflags.h>
-#include <bite_scaffold/util.h>
-#include <bite_scaffold/log.h>
+#include <JianLiuScaffold/util.h>
+#include <JianLiuScaffold/log.h>
 #include "svc_server.h"
 
 DEFINE_int32(log_level, 1, "日志等级: 1-debug;2-info;3-warn;4-error; 6-off");
@@ -30,15 +30,15 @@ DEFINE_string(temp_dir, "./temp_path", "临时文件存放路径");
 int main(int argc, char *argv[])
 {
     google::ParseCommandLineFlags(&argc, &argv, true);
-    bitelog::log_settings  lsettings = {
+    JianLiuLog::log_settings  lsettings = {
         .async = FLAGS_log_async,
         .level = FLAGS_log_level,
         .format = FLAGS_log_format,
         .path = FLAGS_log_path,
     };
-    bitelog::bitelog_init(lsettings);
+    JianLiuLog::init(lsettings);
 
-    biteodb::mysql_settings msettings = {
+    JianLiuOdb::mysql_settings msettings = {
         .host =     FLAGS_mysql_host,
         .user =     FLAGS_mysql_user,
         .passwd =   FLAGS_mysql_passwd,
@@ -46,12 +46,12 @@ int main(int argc, char *argv[])
         .connection_pool_size = (unsigned int)FLAGS_mysql_connection_pool_size
     };
    
-    bitehls::hls_setttings hsettings = {
+    JianLiuHls::hls_setttings hsettings = {
         .hls_time = (size_t)FLAGS_hls_time,
         .playlist_type = FLAGS_hls_play_type
     };
 
-    bitefdfs::fdfs_settings fsettings = {
+    JianLiuFdfs::fdfs_settings fsettings = {
        .trackers = {FLAGS_fdfs_tracker_host}
     };
     

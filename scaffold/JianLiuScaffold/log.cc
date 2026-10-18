@@ -1,11 +1,11 @@
 #include "log.h"
 
-namespace bitelog
+namespace JianLiuLog
 {
     //全局化定义
     std::shared_ptr<spdlog::logger> g_logger;
 
-    void bitelog_init(const log_settings &settings)
+    void init(const log_settings &settings)
     {
         // 1. 判断日志器类型 - async/sync
         // 2. 判断输出目标 -- stdout, file

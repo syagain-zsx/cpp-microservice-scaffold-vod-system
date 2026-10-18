@@ -21,11 +21,11 @@ namespace svc_video {
             using ptr = std::shared_ptr<SvcData>;
             SvcData(const std::shared_ptr<sw::redis::Redis> &redis, 
                 const std::shared_ptr<odb::database> &mysql,
-                const biteics::ESClient::ptr &es_client,
+                const JianLiuIcs::ESClient::ptr &es_client,
                 const vp_sync::CacheSync::ptr &cache_to_db_sync,
                 const vp_sync::CacheSync::ptr &cache_delete_sync,
-                const bitemq::Publisher::ptr &del_file_publisher,
-                const bitemq::Publisher::ptr &transcode_publisher);
+                const JianLiuMq::Publisher::ptr &del_file_publisher,
+                const JianLiuMq::Publisher::ptr &transcode_publisher);
             void newVideo(const std::string &ssid, const api_message::NewVideoInfo &info);
             void delVideo(const std::string &ssid, const std::string &vid);
             bool judgeLike(const std::string &ssid, const std::string &vid);
@@ -52,10 +52,10 @@ namespace svc_video {
             const int _uuid_length = 16;
             std::shared_ptr<sw::redis::Redis> _redis;
             std::shared_ptr<odb::database> _mysql;
-            biteics::ESClient::ptr _es_client;
+            JianLiuIcs::ESClient::ptr _es_client;
             vp_sync::CacheSync::ptr _cache_to_db_sync;
             vp_sync::CacheSync::ptr _cache_delete_sync;
-            bitemq::Publisher::ptr _del_file_publisher;
-            bitemq::Publisher::ptr _transcode_publisher;
+            JianLiuMq::Publisher::ptr _del_file_publisher;
+            JianLiuMq::Publisher::ptr _transcode_publisher;
     };
 }

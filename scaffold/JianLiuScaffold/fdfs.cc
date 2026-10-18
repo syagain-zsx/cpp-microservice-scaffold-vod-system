@@ -2,7 +2,7 @@
 #include "log.h"
 #include "fdfs.h"
 
-namespace bitefdfs {
+namespace JianLiuFdfs {
     void FDFSClient::init(const fdfs_settings &settings) {
         g_log_context.log_level = LOG_ERR;
         log_init();

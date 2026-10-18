@@ -1,8 +1,8 @@
-#include <bite_scaffold/rpc.h>
-#include <bite_scaffold/mq.h>
-#include <bite_scaffold/log.h>
-#include <bite_scaffold/etcd.h>
-#include <bite_scaffold/util.h>
+#include <JianLiuScaffold/rpc.h>
+#include <JianLiuScaffold/mq.h>
+#include <JianLiuScaffold/log.h>
+#include <JianLiuScaffold/etcd.h>
+#include <JianLiuScaffold/util.h>
 #include <gflags/gflags.h>
 
 #include <file.pb.h>
@@ -23,36 +23,36 @@ int main(int argc, char *argv[])
 {
     google::ParseCommandLineFlags(&argc, &argv, true);
     // 1. 初始化日志输出
-    bitelog::bitelog_init();
+    JianLiuLog::init();
     // 2. 定义MQClient对象
-    auto mq_client = bitemq::MQFactory::create<bitemq::MQClient>(FLAGS_mq_url);
+    auto mq_client = JianLiuMq::MQFactory::create<JianLiuMq::MQClient>(FLAGS_mq_url);
     // 3. 定义Publisher对象
-    auto delete_queue_info = biteutil::JSON::unserialize(FLAGS_delete_queue_info);
+    auto delete_queue_info = JianLiuUtil::JSON::unserialize(FLAGS_delete_queue_info);
     if (!delete_queue_info) {
         ERR("delete_queue_info 格式错误");
         return -1;
     }
-    bitemq::declare_settings dsettings = {
+    JianLiuMq::declare_settings dsettings = {
         .exchange = (*delete_queue_info)["exchange"].asString(),
         .exchange_type = (*delete_queue_info)["type"].asString(),
         .queue = (*delete_queue_info)["queue"].asString(),
         .binding_key = (*delete_queue_info)["binding_key"].asString(),
     };
-    auto publisher = bitemq::MQFactory::create<bitemq::Publisher>(mq_client, dsettings);
-    // 4. 定义biterpc::SvcChannels服务管理对象
-    biterpc::SvcChannels scs;
+    auto publisher = JianLiuMq::MQFactory::create<JianLiuMq::Publisher>(mq_client, dsettings);
+    // 4. 定义JianLiuRpc::SvcChannels服务管理对象
+    JianLiuRpc::SvcChannels scs;
     scs.setWatch(FLAGS_service_name);
-    auto online_cb = std::bind(&biterpc::SvcChannels::addNode, &scs, std::placeholders::_1, std::placeholders::_2);
-    auto offline_cb = std::bind(&biterpc::SvcChannels::delNode, &scs, std::placeholders::_1, std::placeholders::_2);
-    // 5. 定义bitesvc::SvcWatcher服务发现对象
-    bitesvc::SvcWatcher watcher(FLAGS_registry_center_addr, online_cb, offline_cb);
+    auto online_cb = std::bind(&JianLiuRpc::SvcChannels::addNode, &scs, std::placeholders::_1, std::placeholders::_2);
+    auto offline_cb = std::bind(&JianLiuRpc::SvcChannels::delNode, &scs, std::placeholders::_1, std::placeholders::_2);
+    // 5. 定义JianLiuSvc::SvcWatcher服务发现对象
+    JianLiuSvc::SvcWatcher watcher(FLAGS_registry_center_addr, online_cb, offline_cb);
     watcher.watch();
 
     std::string image_file_id, video_file_id;
     {
         //1. 上传图片文件
         //1.1 获取通信通道对象channel
-        biterpc::ChannelPtr channel;
+        JianLiuRpc::ChannelPtr channel;
         while(!channel){
             // ERR("没有可供调用的服务！");
             channel = scs.getNode(FLAGS_service_name);
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
         auto *file_info = request.mutable_fileinfo();
         file_info->set_filemime("image/jpeg");
         std::string body;
-        biteutil::FUTIL::read("./jj.jpg", body);
+        JianLiuUtil::FUTIL::read("./jj.jpg", body);
         file_info->set_filedata(body);
         //1.3 向rpc服务器发起请求
         api_message::FileService_Stub stub(channel.get());
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     // {
     //     //2. 下载图片文件
     //     //1.1 获取通信通道对象channel
-    //     biterpc::ChannelPtr channel;
+    //     JianLiuRpc::ChannelPtr channel;
     //     while(!channel){
     //         // ERR("没有可供调用的服务！");
     //         channel = scs.getNode(FLAGS_service_name);
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
     //     if (response.errorcode() == (int32_t)vp_error::VpError::SUCCESS) {
     //         std::cout << "文件mime: " << response.result().filemime() << std::endl;
     //         const std::string &body = response.result().filedata();
-    //         biteutil::FUTIL::write("./jj2.jpg", body);
+    //         JianLiuUtil::FUTIL::write("./jj2.jpg", body);
     //     }else {
     //         std::cout << "下载图片失败: " << response.errormsg() << std::endl;
     //         return -1;
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
     // {
     //     //4. 上传视频文件
     //     //1.1 获取通信通道对象channel
-    //     biterpc::ChannelPtr channel;
+    //     JianLiuRpc::ChannelPtr channel;
     //     while(!channel){
     //         // ERR("没有可供调用的服务！");
     //         channel = scs.getNode(FLAGS_service_name);
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
     //     auto *file_info = request.mutable_fileinfo();
     //     file_info->set_filemime("mpeg/mp4");
     //     std::string body;
-    //     biteutil::FUTIL::read("./movie.mp4", body);
+    //     JianLiuUtil::FUTIL::read("./movie.mp4", body);
     //     file_info->set_filedata(body);
     //     //1.3 向rpc服务器发起请求
     //     api_message::FileService_Stub stub(channel.get());
@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
     // }
     // {
     //     //5. 下载视频文件
-    //     biterpc::ChannelPtr channel;
+    //     JianLiuRpc::ChannelPtr channel;
     //     while(!channel){
     //         // ERR("没有可供调用的服务！");
     //         channel = scs.getNode(FLAGS_service_name);
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
     //     if (response.errorcode() == (int32_t)vp_error::VpError::SUCCESS) {
     //         std::cout << "文件mime: " << response.result().filemime() << std::endl;
     //         const std::string &body = response.result().filedata();
-    //         biteutil::FUTIL::write("./movie2.mp4", body);
+    //         JianLiuUtil::FUTIL::write("./movie2.mp4", body);
     //     }else {
     //         std::cout << "下载视频失败: " << response.errormsg() << std::endl;
     //         return -1;

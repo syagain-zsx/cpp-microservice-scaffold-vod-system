@@ -8,7 +8,7 @@
 #include <condition_variable>
 #include <functional>
 
-namespace bitemq {
+namespace JianLiuMq {
     const std::string DIRECT = "direct";
     const std::string FANOUT = "fanout";
     const std::string TOPIC = "topic";

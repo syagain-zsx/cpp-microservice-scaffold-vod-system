@@ -5,7 +5,7 @@
 # 用法:
 #   ./scripts/build.sh                 # Debug 构建
 #   BUILD_TYPE=Release ./scripts/build.sh
-#   BITE_FFMPEG_ROOT=/opt/ffmpeg/usr ./scripts/build.sh
+#   JIANLIU_FFMPEG_ROOT=/opt/ffmpeg/usr ./scripts/build.sh
 # ============================================================
 set -euo pipefail
 
@@ -13,12 +13,12 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_DIR="${BUILD_DIR:-$ROOT/build}"
 BUILD_TYPE="${BUILD_TYPE:-Debug}"
 # 无 root 时脚本 fetch-ffmpeg.sh 默认解包到这里
-FFMPEG_PREFIX="${BITE_FFMPEG_ROOT:-$HOME/local/ffmpeg/usr}"
+FFMPEG_PREFIX="${JIANLIU_FFMPEG_ROOT:-$HOME/local/ffmpeg/usr}"
 
 CMAKE_ARGS=(-S "$ROOT" -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE="$BUILD_TYPE")
 
 if [[ -d "$FFMPEG_PREFIX" ]]; then
-    CMAKE_ARGS+=(-DBITE_FFMPEG_ROOT="$FFMPEG_PREFIX")
+    CMAKE_ARGS+=(-DJIANLIU_FFMPEG_ROOT="$FFMPEG_PREFIX")
     echo "[build] 使用 FFmpeg: $FFMPEG_PREFIX"
 else
     echo "[build] 未找到 FFmpeg（$FFMPEG_PREFIX），HLS/transcode 将跳过"

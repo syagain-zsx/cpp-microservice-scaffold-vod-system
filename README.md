@@ -1,7 +1,9 @@
-# 视频点播系统（VOD System）
+# 笺流（JianLiu）· 视频点播系统
 
 > C++17 微服务化视频点播系统：**网关 + 用户 / 视频 / 文件 / 转码 5 个服务 + Qt6 桌面客户端**，
 > 覆盖日志、RPC、服务注册发现、消息队列、缓存、ORM、搜索引擎、分布式文件存储、HLS 转码等中间件实践。
+>
+> 基础库命名统一为 `JianLiu*`（如 `JianLiuLog`、`JianLiuRpc`、`JianLiuScaffold`）。
 
 <p align="center">
   <em>一个可以从头讲清楚、跑起来、写进简历的 C++ 微服务项目</em>
@@ -61,8 +63,8 @@
 ```text
 .
 ├── CMakeLists.txt          # 顶层构建入口
-├── scaffold/               # bite_scaffold 基础库（中间件客户端封装）
-│   └── bite_scaffold/      # log util rpc etcd mq redis odb elastic fdfs hls mail
+├── scaffold/               # JianLiuScaffold 基础库（中间件客户端封装）
+│   └── JianLiuScaffold/      # log util rpc etcd mq redis odb elastic fdfs hls mail
 ├── server/
 │   ├── common/             # 错误码、缓存同步抽象
 │   ├── data/               # ODB 实体 + DAO
@@ -101,7 +103,7 @@ libelasticlient-dev libcpr-dev libwebsocketpp-dev libfastcommon-dev`
 ```bash
 ./scripts/build.sh                # 默认 Debug，产物在 build/ 与 build/bin
 # 或手动：
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DBITE_FFMPEG_ROOT=$HOME/local/ffmpeg/usr
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DJIANLIU_FFMPEG_ROOT=$HOME/local/ffmpeg/usr
 cmake --build build -j$(nproc)
 ```
 
@@ -143,8 +145,8 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | 文档 | 内容 |
 | --- | --- |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | 长远目标、里程碑、学习路线、简历模板 |
-| docs/01-architecture.md | 架构与数据流（M2 补齐） |
-| docs/02-api.md | 接口清单（M3 补齐） |
+| [docs/02-api.md](docs/02-api.md) | 接口清单、错误码、curl 联调示例 |
+| [docs/01-architecture.md](docs/01-architecture.md) | 服务划分、代码分层、数据模型、关键流程 |
 | docs/03-deploy.md | 部署手册（M6 补齐） |
 | docs/notes/ | 中间件学习笔记（持续更新） |
 
@@ -167,7 +169,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/BitPlayer/mpv/d
 | M0 源码盘点、目录重构 | ✅ |
 | M1 统一构建系统（scaffold + 5 服务） | ✅ |
 | M2 服务可运行（etcd 注册 + 网关响应） | ✅ |
-| M3 接口联调 | 🔄 |
+| M3 接口联调（登录/上传/转码/HLS/互动） | ✅ |
 | M4–M5 客户端与业务闭环 | ⬜ |
 | M6–M8 测试、部署、优化 | ⬜ |
 

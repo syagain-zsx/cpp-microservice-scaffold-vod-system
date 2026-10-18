@@ -10,7 +10,7 @@ extern "C" {
 #include <vector>
 #include <memory>
 
-namespace bitehls {
+namespace JianLiuHls {
 
     const std::string HLS_EXTM3U = "#EXTM3U";
     const std::string HLS_VERSION = "#EXT-X-VERSION:";

@@ -3,14 +3,14 @@
 # 在「无 root」环境下准备 FFmpeg 开发包（Ubuntu 22.04 / 24.04）
 #
 # 原理：apt-get download 只下载 .deb，不需要 root；
-#       dpkg -x 把包解到私有前缀，CMake 用 -DBITE_FFMPEG_ROOT 指过去。
+#       dpkg -x 把包解到私有前缀，CMake 用 -DJIANLIU_FFMPEG_ROOT 指过去。
 #
 # 用法:
 #   ./scripts/fetch-ffmpeg.sh [安装前缀]
 #   默认前缀: ~/local/ffmpeg
 #
 # 完成后构建：
-#   BITE_FFMPEG_ROOT=~/local/ffmpeg/usr ./scripts/build.sh
+#   JIANLIU_FFMPEG_ROOT=~/local/ffmpeg/usr ./scripts/build.sh
 # 运行时：
 #   export LD_LIBRARY_PATH=~/local/ffmpeg/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 # ============================================================
@@ -45,5 +45,5 @@ done
 
 echo
 echo "[ffmpeg] 完成：$PREFIX"
-echo "  构建： BITE_FFMPEG_ROOT=$PREFIX/usr ./scripts/build.sh"
+echo "  构建： JIANLIU_FFMPEG_ROOT=$PREFIX/usr ./scripts/build.sh"
 echo "  运行： export LD_LIBRARY_PATH=$PREFIX/usr/lib/x86_64-linux-gnu:\$LD_LIBRARY_PATH"

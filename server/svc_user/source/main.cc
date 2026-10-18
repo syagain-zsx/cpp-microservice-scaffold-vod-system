@@ -1,5 +1,5 @@
-#include <bite_scaffold/util.h>
-#include <bite_scaffold/log.h>
+#include <JianLiuScaffold/util.h>
+#include <JianLiuScaffold/log.h>
 #include "svc_server.h"
 
 
@@ -42,16 +42,16 @@ DEFINE_string(mail_from, "JzSan521@163.com", "发送端邮箱地址信息");
 int main(int argc, char *argv[])
 {
     google::ParseCommandLineFlags(&argc, &argv, true);
-    bitelog::log_settings  lsettings = {
+    JianLiuLog::log_settings  lsettings = {
         .async = FLAGS_log_async,
         .level = FLAGS_log_level,
         .format = FLAGS_log_format,
         .path = FLAGS_log_path,
     };
     //初始化全局日志模块
-    bitelog::bitelog_init(lsettings);
+    JianLiuLog::init(lsettings);
 
-    biteodb::mysql_settings msettings = {
+    JianLiuOdb::mysql_settings msettings = {
         .host =     FLAGS_mysql_host,
         .user =     FLAGS_mysql_user,
         .passwd =   FLAGS_mysql_passwd,
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
         .connection_pool_size = (unsigned int)FLAGS_mysql_connection_pool_size
     };
     
-    biteredis::redis_settings rsettings = {
+    JianLiuRedis::redis_settings rsettings = {
         .port = FLAGS_redis_port,
         .host = FLAGS_redis_host,
         .user = FLAGS_redis_user,
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
         .service_addr = FLAGS_service_addr
      };
 
-    bitecode::mail_settings esettings = {
+    JianLiuCode::mail_settings esettings = {
         .username = FLAGS_mail_username,
         .password = FLAGS_mail_password,
         .url = FLAGS_mail_url,

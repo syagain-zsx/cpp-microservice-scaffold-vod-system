@@ -13,7 +13,7 @@ StartupPage::StartupPage(QDialog *parent)
 
     // 在窗口中显示图片
     QLabel* imageLabel = new QLabel(this);
-    imageLabel->setPixmap(QPixmap(":/images/startupPage/biteshipin.png"));
+    imageLabel->setPixmap(QPixmap(":/images/startupPage/jianliushipin.png"));
     imageLabel->move(524, 374);
 
     // 临时用户登录成功信号槽绑定

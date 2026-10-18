@@ -5,7 +5,7 @@
 #include <chrono>
 #include <unordered_set>
 
-namespace biteredis {
+namespace JianLiuRedis {
     struct redis_settings {
         int db = 0;
         int port = 6379;

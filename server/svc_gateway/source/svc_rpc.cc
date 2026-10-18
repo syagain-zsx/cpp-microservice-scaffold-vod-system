@@ -5,8 +5,8 @@ namespace svc_gateway {
     HttpServiceImpl::HttpServiceImpl(const std::string &user_svc_name,
         const std::string &file_svc_name,
         const std::string &video_svc_name,
-        const bitesvc::SvcWatcher::ptr &watcher,
-        const biterpc::SvcChannels::ptr &channels,
+        const JianLiuSvc::SvcWatcher::ptr &watcher,
+        const JianLiuRpc::SvcChannels::ptr &channels,
         const SvcData::ptr &svc_data)
         : _user_svc_name(user_svc_name) 
         , _file_svc_name(file_svc_name)
@@ -29,10 +29,10 @@ namespace svc_gateway {
             //2. 提取HTTP请求的URI
             //3. 进行客户端请求鉴权  （若鉴权失败，则返回权限不足错误）（临时用户登录不需要鉴权）
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -65,10 +65,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -101,10 +101,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -137,10 +137,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -173,10 +173,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -209,10 +209,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -245,10 +245,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -281,10 +281,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -317,10 +317,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -353,10 +353,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -389,10 +389,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -425,10 +425,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -461,10 +461,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -497,10 +497,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -533,10 +533,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -569,10 +569,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -605,10 +605,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -642,10 +642,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_user_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -687,10 +687,10 @@ namespace svc_gateway {
             file_info->set_filemime(mime);
             file_info->set_filedata(body.to_string());
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_file_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_file_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 std::unique_ptr<api_message::UploadImageReq> req_guard(rpc_req);
@@ -748,10 +748,10 @@ namespace svc_gateway {
             rpc_req->set_sessionid(*ssid);
             rpc_req->set_fileid(*file_id);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_file_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_file_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 std::unique_ptr<api_message::DownloadImageReq> req_guard(rpc_req);
@@ -878,10 +878,10 @@ namespace svc_gateway {
             if (ssid) rpc_req->set_sessionid(*ssid);
             if (file_id) rpc_req->set_fileid(*file_id);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_file_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_file_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 std::unique_ptr<api_message::DownloadVideoReq> req_guard(rpc_req);
@@ -922,10 +922,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -959,10 +959,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -996,10 +996,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1033,10 +1033,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1070,10 +1070,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1107,10 +1107,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1144,10 +1144,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1181,10 +1181,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1218,10 +1218,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1255,10 +1255,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1292,10 +1292,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1329,10 +1329,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1366,10 +1366,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1403,10 +1403,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1440,10 +1440,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {
@@ -1477,10 +1477,10 @@ namespace svc_gateway {
             std::string uri = http_cntl->http_request().uri().path();
             _svc_data->judgePermission(ssid, uri);
             //4. 获取子服务信道，向子服务转发请求（异步处理过程，需要先提前编写并设定响应回调函数--内部就是将响应转发给客户端即可）
-            biterpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
+            JianLiuRpc::ChannelPtr channel = _channels->getNode(_video_svc_name);
             if (!channel) throw vp_error::VPException(vp_error::VpError::SERVICE_NOT_FOUND);
             brpc::Controller* cntl = new brpc::Controller;
-            auto closure = biterpc::ClosureFactory::create([=](){
+            auto closure = JianLiuRpc::ClosureFactory::create([=](){
                 brpc::ClosureGuard done_guard(done);
                 std::unique_ptr<brpc::Controller> cntl_guard(cntl);
                 if (cntl->Failed()) {

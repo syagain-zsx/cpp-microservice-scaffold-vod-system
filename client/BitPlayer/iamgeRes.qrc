@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/startupPage/biteshipin.png</file>
+        <file>images/startupPage/jianliushipin.png</file>
         <file>images/homePage/admin.png</file>
         <file>images/homePage/adminxuan.png</file>
-        <file>images/homePage/biteshipin.png</file>
+        <file>images/homePage/jianliushipin.png</file>
         <file>images/homePage/bofang.png</file>
         <file>images/homePage/dainzan.png</file>
         <file>images/homePage/logo.png</file>
@@ -26,7 +26,7 @@
         <file>images/admin/triangle.png</file>
         <file>images/admin/triangle2.png</file>
         <file>images/admin/unchecked.png</file>
-        <file>images/login/biteshipin.png</file>
+        <file>images/login/jianliushipin.png</file>
         <file>images/login/quxiao.png</file>
         <file>images/login/suoxiao.png</file>
         <file>images/login/xiala.png</file>

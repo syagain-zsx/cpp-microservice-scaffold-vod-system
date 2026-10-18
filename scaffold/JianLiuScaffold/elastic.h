@@ -3,7 +3,7 @@
 #include <cpr/response.h>
 #include <elasticlient/client.h>
 
-namespace biteics {
+namespace JianLiuIcs {
     class Base {
         public:
             using ptr = std::shared_ptr<Base>;

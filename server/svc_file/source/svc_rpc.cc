@@ -1,8 +1,8 @@
-#include <bite_scaffold/util.h>
-#include <bite_scaffold/rpc.h>
+#include <JianLiuScaffold/util.h>
+#include <JianLiuScaffold/rpc.h>
 #include "svc_rpc.h"
 #include <error.h>
-#include <bite_scaffold/fdfs.h>
+#include <JianLiuScaffold/fdfs.h>
 
 
 namespace svc_file {
@@ -29,12 +29,12 @@ namespace svc_file {
             DBG("图片上传用户: {}", p_uploader);
             // 3. 将文件数据上传到FDFS进行存储,并获取FDFS文件ID--作为存储路径PATH
             size_t file_size = file_data.size();
-            auto file_path = bitefdfs::FDFSClient::upload_from_buff(file_data);
+            auto file_path = JianLiuFdfs::FDFSClient::upload_from_buff(file_data);
             if (!file_path) {
                 throw vp_error::VPException(vp_error::VpError::UPLOAD_FILE_TO_FDFS_FAILED);
             }
             // 4. 生成文件ID, 向数据库新增文件信息（文件ID，文件大小，文件mime，上传用户ID，存储路径）
-            std::string file_id = biteutil::Random::code(uuid_length);
+            std::string file_id = JianLiuUtil::Random::code(uuid_length);
             vp_data::File file;
             file.set_file_id(file_id);
             file.set_uploader_uid(p_uploader);
@@ -72,7 +72,7 @@ namespace svc_file {
             // 3. 通过文件信息中的路径,从FDFS进行文件数据下载到内存中
             std::string path = file->path();
             std::string file_data;
-            bool ret = bitefdfs::FDFSClient::download_to_buff(path, file_data);
+            bool ret = JianLiuFdfs::FDFSClient::download_to_buff(path, file_data);
             if (!ret) {
                 throw vp_error::VPException(vp_error::VpError::DOWNLOAD_FILE_FROM_FDFS_FAILED);
             }
@@ -124,12 +124,12 @@ namespace svc_file {
             DBG("视频上传用户: {}", p_uploader);
             // 3. 将文件数据上传到FDFS进行存储,并获取FDFS文件ID--作为存储路径PATH
             size_t file_size = file_data.size();
-            auto file_path = bitefdfs::FDFSClient::upload_from_buff(file_data);
+            auto file_path = JianLiuFdfs::FDFSClient::upload_from_buff(file_data);
             if (!file_path) {
                 throw vp_error::VPException(vp_error::VpError::UPLOAD_FILE_TO_FDFS_FAILED);
             }
             // 4. 生成文件ID, 向数据库新增文件信息（文件ID，文件大小，文件mime，上传用户ID，存储路径）
-            std::string file_id = biteutil::Random::code(uuid_length);
+            std::string file_id = JianLiuUtil::Random::code(uuid_length);
             vp_data::File file;
             file.set_file_id(file_id);
             file.set_uploader_uid(p_uploader);
@@ -174,7 +174,7 @@ namespace svc_file {
             // 3. 通过文件信息中的路径,从FDFS进行文件数据下载到内存中
             std::string path = file->path();
             std::string file_data;
-            bool ret = bitefdfs::FDFSClient::download_to_buff(path, file_data);
+            bool ret = JianLiuFdfs::FDFSClient::download_to_buff(path, file_data);
             if (!ret) {
                 throw vp_error::VPException(vp_error::VpError::DOWNLOAD_FILE_FROM_FDFS_FAILED);
             }

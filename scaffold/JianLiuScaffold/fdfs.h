@@ -8,7 +8,7 @@ extern "C" {
 }
 
 
-namespace bitefdfs {
+namespace JianLiuFdfs {
     struct fdfs_settings {
         std::vector<std::string> trackers;
         int connect_timeout = 30;

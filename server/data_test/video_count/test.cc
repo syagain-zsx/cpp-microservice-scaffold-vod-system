@@ -2,9 +2,9 @@
 #include <message.pb.h>
 
 
-vp_data::CacheSync::ptr create_del_sync(bitemq::MQClient::ptr &mq_client,
+vp_data::CacheSync::ptr create_del_sync(JianLiuMq::MQClient::ptr &mq_client,
     const std::shared_ptr<sw::redis::Redis> &redis)  {
-    bitemq::declare_settings mqsettings = {
+    JianLiuMq::declare_settings mqsettings = {
         .exchange = "delete_cache_exchange",
         .exchange_type = "delayed",
         .queue = "delete_cache_queue",
@@ -29,11 +29,11 @@ vp_data::CacheSync::ptr create_del_sync(bitemq::MQClient::ptr &mq_client,
     return sync;
 }
 
-vp_data::CacheSync::ptr create_cache_sync(bitemq::MQClient::ptr &mq_client, 
+vp_data::CacheSync::ptr create_cache_sync(JianLiuMq::MQClient::ptr &mq_client, 
     const std::shared_ptr<odb::database> &mysql,
     const std::shared_ptr<sw::redis::Redis> &redis,
     const vp_data::CacheSync::ptr& delete_sync)  {
-    bitemq::declare_settings mqsettings = {
+    JianLiuMq::declare_settings mqsettings = {
         .exchange = "cache_sync_to_db_exchange",
         .exchange_type = "delayed",
         .queue = "cache_sync_to_db_queue",
@@ -60,22 +60,22 @@ vp_data::CacheSync::ptr create_cache_sync(bitemq::MQClient::ptr &mq_client,
 
 int main()
 {
-    bitelog::bitelog_init();
-    biteodb::mysql_settings msettings = {
+    JianLiuLog::init();
+    JianLiuOdb::mysql_settings msettings = {
         .host = "192.168.65.128",
         .passwd = "123456",
         .db = "vptest",
         .connection_pool_size = 5
     };
-    auto mysql = biteodb::DBFactory::mysql(msettings);
-    biteredis::redis_settings rsettings = {
+    auto mysql = JianLiuOdb::DBFactory::mysql(msettings);
+    JianLiuRedis::redis_settings rsettings = {
         .host = "192.168.65.128",
         .passwd = "123456",
         .connection_pool_size = 5
     };
-    auto redis = biteredis::RedisFactory::create(rsettings);
+    auto redis = JianLiuRedis::RedisFactory::create(rsettings);
     const std::string url = "amqp://admin:123456@192.168.65.128:5672/";
-    auto mq_client = bitemq::MQFactory::create<bitemq::MQClient>(url);
+    auto mq_client = JianLiuMq::MQFactory::create<JianLiuMq::MQClient>(url);
 
     auto del_sync = create_del_sync(mq_client, redis);
     auto cache_sync = create_cache_sync(mq_client, mysql, redis, del_sync);

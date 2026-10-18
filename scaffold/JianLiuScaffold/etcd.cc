@@ -4,7 +4,7 @@
 #include <thread>
 #include <sstream>
 
-namespace bitesvc {
+namespace JianLiuSvc {
 
 
 void wait_for_connection(etcd::Client &client) {
@@ -18,7 +18,7 @@ void wait_for_connection(etcd::Client &client) {
 SvcProvider::SvcProvider(const std::string &reg_center_addr,
     const std::string &svc_name, const std::string &svc_addr)
     : _reg_center_addr(reg_center_addr)
-    , _instance_id(biteutil::Random::code())
+    , _instance_id(JianLiuUtil::Random::code())
     , _svc_name(svc_name)
     , _svc_addr(svc_addr) {}
 std::string SvcProvider::make_key() {
@@ -63,7 +63,7 @@ SvcWatcher::SvcWatcher(const std::string &reg_center_addr,
 std::string SvcWatcher::parse_key(const std::string &key) {
     // /user/instance_id
     std::vector<std::string> arry;
-    biteutil::STR::split(key, "/", arry);
+    JianLiuUtil::STR::split(key, "/", arry);
     return arry[0];
 }
 void SvcWatcher::callback(const etcd::Response &resp) {

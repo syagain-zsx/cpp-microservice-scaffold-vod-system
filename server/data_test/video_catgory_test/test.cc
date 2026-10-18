@@ -3,14 +3,14 @@
 
 int main()
 {
-    bitelog::bitelog_init();
-    biteodb::mysql_settings msettings = {
+    JianLiuLog::init();
+    JianLiuOdb::mysql_settings msettings = {
         .host = "192.168.65.128",
         .passwd = "123456",
         .db = "vptest",
         .connection_pool_size = 5
     };
-    auto mysql = biteodb::DBFactory::mysql(msettings);
+    auto mysql = JianLiuOdb::DBFactory::mysql(msettings);
     // {
     //     //新增视频分类标签
     //     odb::transaction mtx(mysql->begin());

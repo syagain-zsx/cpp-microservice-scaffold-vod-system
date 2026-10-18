@@ -4,9 +4,9 @@ int main()
 {
     try {
         const std::string url = "http://elastic:123456@192.168.65.128:9200/"; 
-        bitelog::bitelog_init();
+        JianLiuLog::init();
         std::vector<std::string> urls = {url};
-        auto client = std::make_shared<biteics::ESClient>(urls);
+        auto client = std::make_shared<JianLiuIcs::ESClient>(urls);
         vp_data::VideoSearchData vsd(client);
         // {
         //     //1. 新增视频信息

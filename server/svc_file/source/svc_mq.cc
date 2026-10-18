@@ -6,10 +6,10 @@
 namespace svc_file {
     // 实例化类成员，在实例化_subscriber的时候需要先构造对象，声明交换机和队列，订阅队列消息
     FileRemoveMQ::FileRemoveMQ(const SvcData::ptr &svc_data, 
-        const bitemq::MQClient::ptr &mq_client,
-        const bitemq::declare_settings &settings)
+        const JianLiuMq::MQClient::ptr &mq_client,
+        const JianLiuMq::declare_settings &settings)
         : _svc_data(svc_data)
-        , _subscriber(bitemq::MQFactory::create<bitemq::Subscriber>(mq_client, settings)) {
+        , _subscriber(JianLiuMq::MQFactory::create<JianLiuMq::Subscriber>(mq_client, settings)) {
         _subscriber->consume(std::bind(&FileRemoveMQ::callback, this, std::placeholders::_1, std::placeholders::_2));
     }
 
@@ -36,7 +36,7 @@ namespace svc_file {
                 }
                 std::string path = file->path(); //获取存储路径进行删除
                 remove_subfile(path); //删除子文件
-                bitefdfs::FDFSClient::remove(path);
+                JianLiuFdfs::FDFSClient::remove(path);
                 _svc_data->removeFileMeta(msg.file_id(i)); 
                 DBG("文件删除完毕: {}- {}", msg.file_id(i), path);
             }
@@ -51,13 +51,13 @@ namespace svc_file {
         if (ext != ".m3u8") { return; }
         DBG("要删除的文件是一个M3U8文件, 需要优先删除子文件: {}", path);
         //2. 将文件下载到本地，通过M3U8Info解析文件，获取子文件ID
-        std::string tmp_path = "./" + biteutil::Random::code();
-        bool ret = bitefdfs::FDFSClient::download_to_file(path, tmp_path);
+        std::string tmp_path = "./" + JianLiuUtil::Random::code();
+        bool ret = JianLiuFdfs::FDFSClient::download_to_file(path, tmp_path);
         if (ret == false) {
             ERR("从FDFS下载文件失败: {}", path);
             return;
         }
-        bitehls::M3U8Info m3u8(tmp_path);
+        JianLiuHls::M3U8Info m3u8(tmp_path);
         m3u8.parse();
         auto ts_pieces = m3u8.pieces();
         //3. 遍历子文件ID，删除子文件以及子文件的元信息
@@ -74,7 +74,7 @@ namespace svc_file {
             }
             std::string sub_path = file->path();
             // 3. 通过元信息中的文件path，删除FDFS上的文件
-            bitefdfs::FDFSClient::remove(sub_path);
+            JianLiuFdfs::FDFSClient::remove(sub_path);
             // 4. 删除文件元信息
             _svc_data->removeFileMeta(file_id);
         }

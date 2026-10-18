@@ -3,7 +3,7 @@
 #include <odb/mysql/transaction.hxx>
 #include <odb/mysql/database.hxx>
 
-namespace biteodb {
+namespace JianLiuOdb {
     struct mysql_settings {
         std::string host;
         std::string user = "root";

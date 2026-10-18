@@ -168,7 +168,7 @@ namespace vp_data{
             // 3. 缓存数据
             redis.hmset(key, uir_map.begin(), uir_map.end());
             // 4. 设置缓存过期时间
-            redis.expire(key, _expire_time + biteutil::Random::number(0, _expire_time));
+            redis.expire(key, _expire_time + JianLiuUtil::Random::number(0, _expire_time));
         } catch (const sw::redis::Error &e) {
             ERR("向缓存添加用户身份角色信息失败: {}", e.what());
             throw vp_error::VPException(vp_error::VpError::REDIS_OP_FAILED);

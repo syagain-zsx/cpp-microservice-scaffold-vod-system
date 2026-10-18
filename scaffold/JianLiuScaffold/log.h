@@ -19,7 +19,7 @@
 #include <spdlog/async.h>
 
 // 声明命名空间
-namespace bitelog {
+namespace JianLiuLog {
     // 声明日志配置结构体
     struct log_settings {
         bool async = false;     //  是否启用异步日志
@@ -30,11 +30,11 @@ namespace bitelog {
     // 声明全局日志器
     extern std::shared_ptr<spdlog::logger> g_logger;
     // 声明全局日志器初始化接口
-    extern void bitelog_init(const log_settings &settings = log_settings());
+    extern void init(const log_settings &settings = log_settings());
     // 封装日志输出宏
     #define FMT_PREFIX std::string("[{}:{}]: ")
-    #define DBG(fmt, ...) bitelog::g_logger->debug(FMT_PREFIX + fmt, __FILE__, __LINE__, ##__VA_ARGS__)
-    #define INF(fmt, ...) bitelog::g_logger->info(FMT_PREFIX + fmt, __FILE__, __LINE__, ##__VA_ARGS__)
-    #define WRN(fmt, ...) bitelog::g_logger->warn(FMT_PREFIX + fmt, __FILE__, __LINE__, ##__VA_ARGS__)
-    #define ERR(fmt, ...) bitelog::g_logger->error(FMT_PREFIX + fmt, __FILE__, __LINE__, ##__VA_ARGS__)
+    #define DBG(fmt, ...) JianLiuLog::g_logger->debug(FMT_PREFIX + fmt, __FILE__, __LINE__, ##__VA_ARGS__)
+    #define INF(fmt, ...) JianLiuLog::g_logger->info(FMT_PREFIX + fmt, __FILE__, __LINE__, ##__VA_ARGS__)
+    #define WRN(fmt, ...) JianLiuLog::g_logger->warn(FMT_PREFIX + fmt, __FILE__, __LINE__, ##__VA_ARGS__)
+    #define ERR(fmt, ...) JianLiuLog::g_logger->error(FMT_PREFIX + fmt, __FILE__, __LINE__, ##__VA_ARGS__)
 }

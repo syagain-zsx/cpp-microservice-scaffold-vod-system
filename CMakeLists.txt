@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
-project(vod-system VERSION 1.0.0 LANGUAGES CXX)
+project(JianLiu VERSION 1.0.0 LANGUAGES CXX)
 
 # ============================================================
 # 视频点播系统（VOD）—— 顶层构建入口
 #
 #   源码组织：
-#     scaffold/  bite_scaffold 基础库（中间件客户端封装）
+#     scaffold/  JianLiuScaffold 基础库（中间件客户端封装）
 #     server/    微服务集群（gateway/user/video/file/transcode）
 #     client/    Qt6 桌面客户端（独立工程，见 client/README.md）
 #     deploy/    部署配置（docker-compose / 配置文件 / SQL）

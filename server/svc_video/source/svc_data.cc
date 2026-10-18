@@ -4,11 +4,11 @@ namespace svc_video {
 
     SvcData::SvcData(const std::shared_ptr<sw::redis::Redis> &redis, 
         const std::shared_ptr<odb::database> &mysql,
-        const biteics::ESClient::ptr &es_client,
+        const JianLiuIcs::ESClient::ptr &es_client,
         const vp_sync::CacheSync::ptr &cache_to_db_sync,
         const vp_sync::CacheSync::ptr &cache_delete_sync,
-        const bitemq::Publisher::ptr &del_file_publisher,
-        const bitemq::Publisher::ptr &transcode_publisher)
+        const JianLiuMq::Publisher::ptr &del_file_publisher,
+        const JianLiuMq::Publisher::ptr &transcode_publisher)
         : _redis(redis)
         , _mysql(mysql)
         , _es_client(es_client)
@@ -36,7 +36,7 @@ namespace svc_video {
             // 1. 通过会话ID，获取会话信息，提取当前上传用户ID（若会话不存在则直接抛异常返回）
             std::string cur_uid = getSessionUser(ssid, mtx);
             // 2. 构造视频元信息对象，初始化状态为转码中状态 
-            std::string video_id = biteutil::Random::code(_uuid_length);
+            std::string video_id = JianLiuUtil::Random::code(_uuid_length);
             vp_data::Video  video;
             video.set_video_id(video_id);
             video.set_title(info.videotitle());
@@ -205,7 +205,7 @@ namespace svc_video {
             // 2. 通过会话ID，获取会话信息，提取当前上传用户ID（若会话不存在则直接抛异常返回）
             std::string cur_uid = getSessionUser(ssid, mtx);
             // 3. 生成弹幕ID，构造弹幕信息对象
-            std::string barrage_id = biteutil::Random::code(_uuid_length);
+            std::string barrage_id = JianLiuUtil::Random::code(_uuid_length);
             vp_data::Barrage barrage;
             barrage.set_barrage_id(barrage_id);
             barrage.set_video_id(info.videoid());

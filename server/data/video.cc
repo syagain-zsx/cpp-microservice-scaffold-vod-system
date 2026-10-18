@@ -123,7 +123,7 @@ namespace vp_data{
             // 3. 添加reids缓存
             redis.hmset(key, video_info.begin(), video_info.end());
             // 4. 设置缓存过期时间
-            redis.expire(key, _expire_time + biteutil::Random::number(0, _expire_time));
+            redis.expire(key, _expire_time + JianLiuUtil::Random::number(0, _expire_time));
         }catch (const sw::redis::Error &e) {
             ERR("插入视频信息到缓存失败: {}-{}", video->video_id(), e.what());
             throw vp_error::VPException(vp_error::VpError::REDIS_OP_FAILED);

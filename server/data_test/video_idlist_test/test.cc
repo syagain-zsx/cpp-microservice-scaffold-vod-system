@@ -3,23 +3,23 @@
 
 int main()
 {
-    bitelog::bitelog_init();
-    biteodb::mysql_settings msettings = {
+    JianLiuLog::init();
+    JianLiuOdb::mysql_settings msettings = {
         .host = "192.168.65.128",
         .passwd = "123456",
         .db = "vptest",
         .connection_pool_size = 5
     };
-    auto mysql = biteodb::DBFactory::mysql(msettings);
-    biteredis::redis_settings rsettings = {
+    auto mysql = JianLiuOdb::DBFactory::mysql(msettings);
+    JianLiuRedis::redis_settings rsettings = {
         .host = "192.168.65.128",
         .passwd = "123456",
         .connection_pool_size = 5
     };
-    auto redis = biteredis::RedisFactory::create(rsettings);
+    auto redis = JianLiuRedis::RedisFactory::create(rsettings);
     const std::string url = "amqp://admin:123456@192.168.65.128:5672/";
-    auto mq_client = bitemq::MQFactory::create<bitemq::MQClient>(url);
-    bitemq::declare_settings mqsettings = {
+    auto mq_client = JianLiuMq::MQFactory::create<JianLiuMq::MQClient>(url);
+    JianLiuMq::declare_settings mqsettings = {
         .exchange = "delete_cache_exchange",
         .exchange_type = "delayed",
         .queue = "delete_cache_queue",

@@ -83,17 +83,17 @@ target_include_directories(videoplayer PUBLIC
     ${DATA_DIR}
     ${GEN_DIR}
 )
-target_link_libraries(videoplayer PUBLIC bite_scaffold::bite_scaffold)
+target_link_libraries(videoplayer PUBLIC JianLiuScaffold::JianLiuScaffold)
 
 # ------------------------------------------------------------
 # 子服务
 #   端口约定：gateway 10000 / file 10001 / user 10002 / video 10003
 # ------------------------------------------------------------
 set(VOD_SERVICES gateway user video file)
-if(BITE_ENABLE_HLS)
+if(JIANLIU_ENABLE_HLS)
     list(APPEND VOD_SERVICES transcode)
 else()
-    message(FATAL_ERROR "svc_file 依赖 bite_scaffold/hls.h，必须启用 FFmpeg（-DBITE_FFMPEG_ROOT=...）")
+    message(FATAL_ERROR "svc_file 依赖 JianLiuScaffold/hls.h，必须启用 FFmpeg（-DJIANLIU_FFMPEG_ROOT=...）")
 endif()
 
 foreach(svc ${VOD_SERVICES})
@@ -104,7 +104,7 @@ foreach(svc ${VOD_SERVICES})
         ${DATA_DIR}
         ${GEN_DIR}
     )
-    target_link_libraries(${svc}_server PRIVATE videoplayer bite_scaffold::bite_scaffold)
+    target_link_libraries(${svc}_server PRIVATE videoplayer JianLiuScaffold::JianLiuScaffold)
     install(TARGETS ${svc}_server DESTINATION bin)
 endforeach()
 
@@ -114,5 +114,5 @@ endforeach()
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../tools/file-client/test.cc)
     add_executable(file_client ${CMAKE_CURRENT_SOURCE_DIR}/../tools/file-client/test.cc)
     target_include_directories(file_client PRIVATE ${COMMON_DIR} ${DATA_DIR} ${GEN_DIR})
-    target_link_libraries(file_client PRIVATE videoplayer bite_scaffold::bite_scaffold)
+    target_link_libraries(file_client PRIVATE videoplayer JianLiuScaffold::JianLiuScaffold)
 endif()

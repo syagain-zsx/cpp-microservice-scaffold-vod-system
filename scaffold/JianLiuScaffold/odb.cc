@@ -1,7 +1,7 @@
 #include "odb.h"
 
 
-namespace biteodb {
+namespace JianLiuOdb {
     std::shared_ptr<odb::database> DBFactory::mysql(const mysql_settings &settings) {
         // 1. 创建连接池
         std::unique_ptr<odb::mysql::connection_factory> pool(

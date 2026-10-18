@@ -192,7 +192,7 @@
             </property>
             <property name="styleSheet">
              <string notr="true">#logoLabel{
-    border-image : url(&quot;:/images/login/biteshipin.png&quot;);
+    border-image : url(&quot;:/images/login/jianliushipin.png&quot;);
 }</string>
             </property>
             <property name="text">

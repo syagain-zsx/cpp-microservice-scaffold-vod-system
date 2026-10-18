@@ -2,8 +2,8 @@
 
 namespace svc_user {
     UserServiceImpl::UserServiceImpl(const SvcData::ptr &svc_data, 
-        const bitemq::Publisher::ptr &publisher,
-        const bitecode::MailClient::ptr &mail_client) 
+        const JianLiuMq::Publisher::ptr &publisher,
+        const JianLiuCode::MailClient::ptr &mail_client) 
         : _svc_data(svc_data), _publisher(publisher), _mail_client(mail_client){}
     void UserServiceImpl::tempLogin(::google::protobuf::RpcController* controller,
         const ::api_message::TempLoginReq* request,

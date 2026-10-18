@@ -1,7 +1,7 @@
 #pragma once
-#include <bite_scaffold/etcd.h>
-#include <bite_scaffold/rpc.h>
-#include <bite_scaffold/util.h>
+#include <JianLiuScaffold/etcd.h>
+#include <JianLiuScaffold/rpc.h>
+#include <JianLiuScaffold/util.h>
 #include "svc_rpc.h"
 #include "svc_data.h"
 
@@ -26,13 +26,13 @@ namespace svc_gateway {
             ~GatewayServerBuilder() = default;
             GatewayServerBuilder &withListenPort(unsigned int listen_port);
             GatewayServerBuilder &withDiscoverySettings(const discovery_settings &_dis_settings);
-            GatewayServerBuilder &withMysqlSettings(const biteodb::mysql_settings &mysql_settings);
-            GatewayServerBuilder &withRedisSettings(const biteredis::redis_settings &redis_settings);
+            GatewayServerBuilder &withMysqlSettings(const JianLiuOdb::mysql_settings &mysql_settings);
+            GatewayServerBuilder &withRedisSettings(const JianLiuRedis::redis_settings &redis_settings);
             GatewayServer::ptr build();
         private:
             unsigned int _listen_port;
             discovery_settings _dis_settings;
-            biteodb::mysql_settings _mysql_settings;
-            biteredis::redis_settings _redis_settings;
+            JianLiuOdb::mysql_settings _mysql_settings;
+            JianLiuRedis::redis_settings _redis_settings;
     };
 }

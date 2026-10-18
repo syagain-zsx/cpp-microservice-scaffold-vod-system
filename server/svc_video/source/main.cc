@@ -1,5 +1,5 @@
-#include <bite_scaffold/util.h>
-#include <bite_scaffold/log.h>
+#include <JianLiuScaffold/util.h>
+#include <JianLiuScaffold/log.h>
 #include "svc_server.h"
 
 
@@ -40,22 +40,22 @@ DEFINE_string(cache_del_queue_info, R"({"exchange": "delete_cache_exchange", "ty
 int main(int argc, char *argv[])
 {
     google::ParseCommandLineFlags(&argc, &argv, true);
-    bitelog::log_settings  lsettings = {
+    JianLiuLog::log_settings  lsettings = {
         .async = FLAGS_log_async,
         .level = FLAGS_log_level,
         .format = FLAGS_log_format,
         .path = FLAGS_log_path,
     };
     //初始化全局日志模块
-    bitelog::bitelog_init(lsettings);
-    biteodb::mysql_settings msettings = {
+    JianLiuLog::init(lsettings);
+    JianLiuOdb::mysql_settings msettings = {
         .host =     FLAGS_mysql_host,
         .user =     FLAGS_mysql_user,
         .passwd =   FLAGS_mysql_passwd,
         .db =       FLAGS_mysql_db,
         .connection_pool_size = (unsigned int)FLAGS_mysql_connection_pool_size
     };
-    biteredis::redis_settings rsettings = {
+    JianLiuRedis::redis_settings rsettings = {
         .port = FLAGS_redis_port,
         .host = FLAGS_redis_host,
         .user = FLAGS_redis_user,

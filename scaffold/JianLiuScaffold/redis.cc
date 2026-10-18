@@ -1,6 +1,6 @@
 #include "redis.h"
 
-namespace biteredis {
+namespace JianLiuRedis {
     std::shared_ptr<sw::redis::Redis> RedisFactory::create(const redis_settings& settings) {
         sw::redis::ConnectionOptions conn_opts = {
             .host = settings.host,
