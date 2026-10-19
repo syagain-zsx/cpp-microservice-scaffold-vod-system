@@ -1,5 +1,7 @@
 # 第 4 周 · 异步链路（MQ → transcode → HLS → 审核）
 
+> 术语看不懂？先查 [glossary.md](glossary.md)（DLX、延迟队列、remux、m3u8 等都有大白话解释）。
+
 > 时长：3 次 × 2 小时（约 8–10 小时）
 > 产出：转码时序图（标 4 个队列）、hls_time 改动 diff、失败分支 diff、10 分钟讲解录音
 

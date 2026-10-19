@@ -5,6 +5,7 @@
 
 ## 这套计划怎么用
 
+0. **术语看不懂**：先查 [glossary.md](glossary.md)（lease、watch、TTL、DLX、remux、幂等…都有大白话 + 类比）；
 1. **先读** [cheatsheet.md](cheatsheet.md)，把环境跑起来（`./scripts/learn-check.sh` 自检）；
 2. 按周学习：[week-01](week-01.md) → [week-02](week-02.md) → … → [week-06](week-06.md)；
 3. 读完每周先看 [reading-order.md](reading-order.md) 对应章节，再动手；
@@ -58,6 +59,7 @@
 
 | 文档 | 用途 |
 | --- | --- |
+| [glossary.md](glossary.md) | **术语白皮书：每个词的大白话、类比、项目位置** |
 | [06-code-walkthrough.md](../06-code-walkthrough.md) | 代码地图、三条阅读主线 |
 | [notes/](../notes/README.md) | 5 个中间件的原理 + 实现 + 面试问答 |
 | [04-interview.md](../04-interview.md) | 12 组追问与 STAR 写法 |

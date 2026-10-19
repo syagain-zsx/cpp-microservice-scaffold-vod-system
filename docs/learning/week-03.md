@@ -1,5 +1,7 @@
 # 第 3 周 · Redis 缓存 + MySQL/ODB
 
+> 术语看不懂？先查 [glossary.md](glossary.md)（cache-aside、TTL、ODB、事务等都有大白话解释）。
+
 > 时长：3 次 × 2 小时（约 6–8 小时）
 > 产出：压测对比表、缓存命中/未命中日志 diff、ODB 计数查询 diff、1 页结论
 

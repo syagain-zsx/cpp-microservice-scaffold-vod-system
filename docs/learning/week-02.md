@@ -1,5 +1,7 @@
 # 第 2 周 · 服务注册与发现（etcd + brpc）
 
+> 术语看不懂？先查 [glossary.md](glossary.md)（租约、watch、resync、Channel 等都有大白话解释）。
+
 > 时长：3 次 × 2 小时（约 6–8 小时）
 > 产出：etcd 节点观察记录、lease TTL 改动 diff、上下线时序图、5 分钟讲解录音
 
