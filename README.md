@@ -24,6 +24,8 @@
 > 截图来自 Linux + Xvfb 下的实际运行：客户端拉取视频列表与封面，支持密码登录，
 > 点击视频通过 m3u8 + ts 播放 HLS；管理员可在「系统 → 审核管理」里通过/驳回视频（截图即为通过操作后的状态）。
 
+> 交互式流程图：[端到端业务流程](docs/diagrams/jianliu-vod-e2e.html)（Archify 生成，单文件离线可打开，支持深浅色与导出）。
+
 ---
 
 ## 架构总览
@@ -181,6 +183,7 @@ mpv 运行库（约 108 MB）不入库，下载后放到 `client/JianLiuPlayer/m
 | 文档 | 内容 |
 | --- | --- |
 | [docs/08-project-summary.md](docs/08-project-summary.md) | **项目一页纸总览（简历/面试用）** |
+| [docs/diagrams/jianliu-vod-e2e.html](docs/diagrams/jianliu-vod-e2e.html) | 端到端业务流程交互图（Archify） |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | 长远目标、里程碑、学习路线、简历模板 |
 | [docs/02-api.md](docs/02-api.md) | 接口清单、错误码、curl 联调示例 |
 | [docs/01-architecture.md](docs/01-architecture.md) | 服务划分、代码分层、数据模型、关键流程 |

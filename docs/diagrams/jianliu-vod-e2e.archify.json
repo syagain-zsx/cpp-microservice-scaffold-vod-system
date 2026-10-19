@@ -1,0 +1,100 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "笺流 · 端到端业务流程",
+    "subtitle": "登录 → 浏览 → 上传 → 转码 → 审核 → 播放，以及每一步背后的支撑组件",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "frontend": { "label": "客户端页面" },
+        "backend": { "label": "服务端组件" },
+        "messagebus": { "label": "异步链路" },
+        "security": { "label": "审核门禁" }
+      }
+    },
+    "output": ".archify/workflow-vod-e2e-20261019-153126/jianliu-vod-e2e.html"
+  },
+  "lanes": [
+    { "id": "flow", "label": "业务流程" },
+    { "id": "platform", "label": "支撑组件" }
+  ],
+  "phases": [
+    { "id": "session", "label": "① 会话", "fromCol": 0, "toCol": 0 },
+    { "id": "browse", "label": "② 浏览", "fromCol": 1, "toCol": 1 },
+    { "id": "upload", "label": "③ 上传", "fromCol": 2, "toCol": 2 },
+    { "id": "transcode", "label": "④ 转码", "fromCol": 3, "toCol": 3, "variant": "dashed" },
+    { "id": "audit", "label": "⑤ 审核上架", "fromCol": 4, "toCol": 4, "variant": "security" },
+    { "id": "play", "label": "⑥ 播放与互动", "fromCol": 5, "toCol": 5, "variant": "emphasis" }
+  ],
+  "mainPath": ["login", "browse", "upload", "transcode", "review", "play"],
+  "nodes": [
+    { "id": "login", "lane": "flow", "col": 0, "type": "frontend", "label": "登录 / 会话", "sublabel": "tempLogin · passwdLogin", "width": 148 },
+    { "id": "browse", "lane": "flow", "col": 1, "type": "frontend", "label": "浏览首页", "sublabel": "列表 · 封面 · 搜索", "width": 140 },
+    { "id": "upload", "lane": "flow", "col": 2, "type": "frontend", "label": "上传视频", "sublabel": "视频 + 封面 + 信息", "width": 152 },
+    { "id": "transcode", "lane": "flow", "col": 3, "type": "messagebus", "label": "异步转码", "sublabel": "MQ 触发 · HLS 切片", "width": 148 },
+    { "id": "review", "lane": "flow", "col": 4, "type": "security", "label": "审核上架", "sublabel": "通过 / 驳回 / 下架", "width": 140 },
+    { "id": "play", "lane": "flow", "col": 5, "type": "frontend", "label": "播放与互动", "sublabel": "HLS · 点赞 · 弹幕", "width": 148 },
+
+    { "id": "gateway", "lane": "platform", "col": 0, "type": "backend", "label": "gateway :10000", "sublabel": "鉴权 + etcd 路由", "width": 148 },
+    { "id": "video_redis", "lane": "platform", "col": 1, "type": "backend", "label": "video 服务 + Redis", "sublabel": "ONLINE 列表 · 3s 缓存", "width": 160 },
+    { "id": "file_fdfs", "lane": "platform", "col": 2, "type": "backend", "label": "file 服务 + FastDFS", "sublabel": "mp4 / 封面落盘", "width": 160 },
+    { "id": "mq_trans", "lane": "platform", "col": 3, "type": "messagebus", "label": "RabbitMQ + transcode", "sublabel": "m3u8 + ts 产物", "width": 168 },
+    { "id": "video_audit", "lane": "platform", "col": 4, "type": "backend", "label": "video 服务", "sublabel": "状态机 1 → 2 / 3", "width": 148 },
+    { "id": "mpv_stream", "lane": "platform", "col": 5, "type": "backend", "label": "libmpv + FastDFS", "sublabel": "m3u8 + ts 拉流", "width": 156 }
+  ],
+  "edges": [
+    { "id": "e-login-browse", "from": "login", "to": "browse", "label": "sessionId", "variant": "emphasis" },
+    { "id": "e-browse-upload", "from": "browse", "to": "upload", "label": "选片", "variant": "default" },
+    { "id": "e-upload-transcode", "from": "upload", "to": "transcode", "label": "提交", "variant": "emphasis" },
+    { "id": "e-transcode-review", "from": "transcode", "to": "review", "label": "待审核", "variant": "default" },
+    { "id": "e-review-play", "from": "review", "to": "play", "label": "上架", "variant": "emphasis" },
+
+    { "id": "e-support-login", "from": "login", "to": "gateway", "label": "登录请求", "variant": "dashed" },
+    { "id": "e-support-browse", "from": "browse", "to": "video_redis", "label": "查询", "variant": "dashed" },
+    { "id": "e-support-upload", "from": "upload", "to": "file_fdfs", "label": "上传", "variant": "dashed" },
+    { "id": "e-support-transcode", "from": "transcode", "to": "mq_trans", "label": "消费", "variant": "dashed" },
+    { "id": "e-support-review", "from": "review", "to": "video_audit", "label": "审核", "variant": "dashed" },
+    { "id": "e-support-play", "from": "play", "to": "mpv_stream", "label": "拉流", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "视频状态机",
+      "items": [
+        "提交后 status=5（转码中），transcode 完成置 1（待审核）",
+        "管理员通过 → 2（已上架）；驳回 → 3；下架 → 4",
+        "首页与「我的视频」只查 ONLINE(2)：不审核就看不到"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "关键链路事实",
+      "items": [
+        "gateway :10000 是唯一入口：URL→角色鉴权 + etcd 服务发现",
+        "列表缓存 cache_main_page_<page>_<count>，TTL 3s",
+        "播放 URL=/HttpService/downloadVideo?fileId=<m3u8>，fileId 即凭证",
+        "HLS：hls_time=10、VOD，ts/m3u8 落 FastDFS"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "异常与降级",
+      "items": [
+        "ES 不可用 → 搜索降级为空，其它功能正常",
+        "MQ 声明超时 → 记录并降级运行，不退出进程",
+        "duration=0 短视频 → 不除零、不自动重播（已修复崩溃）"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "验证证据",
+      "items": [
+        "gtest 8/8 · 冒烟 4/4 · e2e 18/18 · 接口一致性 38/38",
+        "Windows 实机：登录 / 播放 / 上传 / 审核 / 上架可见",
+        "Linux 客户端：HLS 播放、上传、管理端审核均已实测"
+      ]
+    }
+  ]
+}
