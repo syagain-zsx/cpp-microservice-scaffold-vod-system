@@ -31,7 +31,7 @@ brpc 也支持命名服务（`bns://`、`consul://`）做客户端 LB，本项�
 ```text
 1. 实例 ID = Random::code()（20 字符，前 16 位随机 + 4 位自增序号）
 2. key = /<service_name>/<instance_id>，value = <host>:<port>
-3. leasegrant(3) 创建 3 秒租约，put(key, value, lease)
+3. leasegrant(10) 创建 10 秒租约，put(key, value, lease)
 4. etcd::KeepAlive 后台自动续租；续租失败回调里重新 registry()
 ```
 
@@ -99,9 +99,8 @@ HTTP POST /HttpService/newVideo
 
 ## 3. 面试问答
 
-**Q：租约为什么是 3 秒？**
-越短下线越快，但续租压力越大。3 秒 + keepalive 是课程折中；生产常用 10–30s，
-配合健康检查（K8s readiness）避免流量打到未就绪实例。
+**Q：租约为什么是 10 秒？**
+最初用 3 秒：下线更快，但高负载下续租压力大、频繁过期，导致服务在注册中心反复上下线（网关偶发 `SERVICE_NOT_FOUND`）。后来改为 10 秒，并配合「watch 先于全量 + 按实例键跟踪 + 5s 周期 resync」兜底。生产常用 10–30s，配合健康检查（K8s readiness）避免流量打到未就绪实例。
 
 **Q：续租失败会怎样？**
 `KeepAlive` 的回调会重新 `registry()`；如果 etcd 整体不可用，已注册 key 会在 TTL 内消失，

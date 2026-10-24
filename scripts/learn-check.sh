@@ -134,6 +134,6 @@ echo "检查点提示："
 echo "  CP1（第 2 周）：服务全在 + 冒烟 + etcd 查询 + lease diff"
 echo "  CP2（第 4 周）：能触发一次转码并 curl 到 m3u8 + 失败分支"
 echo "  CP3（第 6 周）：以上全绿 + e2e 18/18 + check-api 38/38 + 模拟面试"
-echo "  端到端：先拿会话再 python3 scripts/e2e-test.py --session <sid> --admin（见 cheatsheet 第 3 节）"
+echo "  端到端：先拿会话再 python3 scripts/e2e-test.py --session <sid> --admin（见学习手册 §7.1）"
 
 [[ "$FAIL" -eq 0 ]]

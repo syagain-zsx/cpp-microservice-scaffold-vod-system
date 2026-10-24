@@ -200,8 +200,8 @@ vod-system/
 
 ## 六、学习路线（与工程并行，求职导向）
 
-> 配套的 6 周学习计划（每周目标、动手任务、验收、检查点）见
-> [`docs/learning/README.md`](learning/README.md)；本节的“四步法”是它的理论底座。
+> 配套的 6 周学习手册（环境、代码地图、术语、难点、每周任务、CP 评分、面试）见
+> [`docs/learning/ai-study-plan.md`](learning/ai-study-plan.md)；本节的“四步法”是它的理论底座。
 
 ### 6.1 每个模块的"四步法"
 
